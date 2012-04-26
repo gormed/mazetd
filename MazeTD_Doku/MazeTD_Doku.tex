@@ -1,0 +1,286 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                              
+% 	Latex Vorlage  
+%                                                                              
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                              
+% 	PREEMBLE  
+%                                                                              
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Legt die Grundstruktur bzw. die Art des Dokuments sowie die Standardschriftgröße fest. 
+%
+\documentclass[12pt]{article}
+
+%
+% Legt das Seitenlayout fest.
+%
+\usepackage[a4paper, margin=1.0in]{geometry}
+
+%
+% Legt die verwendete Schrift fest.
+%
+
+
+%
+% Legt die Worttrennungsregeln fest.
+%
+\usepackage[ngerman]{babel}
+
+%
+% Legt die Eingabekodierung fest.
+%
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%
+% Ermöglicht die Darstellung von Farben sowie die Bezeichnung von Farben durch Namen.
+%
+\usepackage[usenames, dvipsnames]{color}
+
+%
+% Ermöglicht das Einfügen von Grafiken.
+%
+\usepackage{graphicx}
+
+%
+% Erleichtert die Darstellung von URLs.
+%
+\usepackage{url}
+
+%
+% Erlaubt die Bearbeitung von Bilder-, Diagramm- und Tabellenunterschriften.
+%
+\usepackage[hang, normalsize, bf]{caption}
+
+%
+% Legt fest, dass die AMS-Symbole benutzt werden.
+%
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+%
+% Ermöglicht die Verwendung von vielen mathematischen Symbolen.
+%
+% \usepackage{mathabx}
+
+%
+% Ermöglicht die Verwendung der \today-Anweisung.
+%
+\usepackage[nodayofweek]{datetime}
+
+% Erleichtert die Formattierung von Quelltexten.
+\usepackage{listings}
+
+%
+% Ermöglicht die einfachere Bearbeitung von Tabellen.
+%
+\usepackage{tabularx}
+
+%
+% Ermöglicht die Darstellung von Tabellen auf mehreren Seiten (s. Dokumentation). 
+%
+\usepackage{ltxtable}
+
+%
+% Ermöglicht, Appendices in das Inhaltverzeichnis zu übernehmen.
+%
+\usepackage[toc]{appendix}
+
+%
+% Ermöglicht das Zusammenfügen mehrerer Zeilen einer Tabelle.
+%
+\usepackage{multirow}
+
+%
+% setzt Leerzeichen, wenn welche hingehören (vor nächstem wort, aber nicht vor "." oder ")")
+%
+\usepackage{xspace} 
+
+%
+% Legt fest, welche Sprache in der Bibliographie verwendet werden soll.
+%
+\usepackage[fixlanguage]{babelbib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                              
+% 			Einstellungen                                                                
+%                                                                              
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%			
+%	einstellungen: url
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\urlstyle{tt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% einstellungen: bibliographie
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\selectbiblanguage{german}
+\bibliographystyle{babplain}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                              
+% 			ANWEISUNGEN                                                                  
+%                                                                              
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% anweisungen: römische zahlen
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\makeatletter
+\newcommand{\rmnum}[1]{\romannumeral #1}
+\newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% 			TEMPLATES
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%% links - rechtsbuendig
+%
+%	\begin{flushleft}
+%
+%	\end{flushleft}
+%
+%
+%
+
+%%%%%%%%%%%%%%% BILDER IMPORTIEREN %%%%%%%%%%%%%%%%
+%
+%		\scalebox{0.45}{\includegraphics{data/fig/ganth_Diagramm.png}}
+
+            
+%%%%%%%%%%%%%%% Tabelle %%%%%%%%%%%%%%%% 
+%
+%        \large    
+%        \begin{tabularx}{\textwidth}{ l l X }
+%            
+%            \emph{Autoren}:     &                   & \emph{Betreuer}:             \\
+%                                &                   &                              \\
+%            Hady Khalifa 				& (Mat-Nr.\ 123123) &	Computervisualstik und Design    \\
+%            
+%
+%        \end{tabularx}
+%            
+%        \vfill
+%        {\Large \today}
+%        \end{center}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                              
+% 			DOKUMENT                                                                     
+%                                                                              
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dokument: titelblatt
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+
+        %
+        % CVD-Logo
+        %
+        
+        \begin{center}
+        \includegraphics[scale=0.15, keepaspectratio=true]{data/fig/CVD_Logo.png}
+        \end{center}
+        
+       
+
+        %
+        % university, department & lecture info
+        %
+        
+        \begin{center}
+            
+            
+            {\huge \bfseries
+            		\ \\
+            		\ \\
+            		\ \\
+            		\ \\
+            		\ \\
+            		\ \\
+                Pflichtenheft\\
+				Name des Projekts\\
+				Eindeutige Teamnummer\\
+				Datum\\
+				\ \\
+				\ \\
+			
+            }
+            
+		\end{center}
+
+
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dokument: inhaltsverzeichnis
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Festlegung Art der Zitierung - Havardmethode: Abkuerzung Autor + Jahr
+%
+\bibliographystyle{alphadin}
+
+\tableofcontents{}
+\newpage{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dokument: kapitel
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Management- und Dokumentationsattribute}
+
+       
+	\noindent \input{docs/Projektmanagment}
+
+\section{Visionen und Ziele}
+
+	\noindent \input{docs/visionenZiele}
+	
+\section{Rahmenbedingungen}
+
+	\noindent \input{docs/Rahmenbedingungen}
+	
+\section{Kontext und Überblick}
+
+	\noindent \input{docs/KontextUeberblick}
+	
+\section{Anforderungen}
+
+	\noindent \input{docs/Anforderungen}	
+	
+\section{Abnahmekriterien}
+
+	\noindent \input{docs/Abnahmekriterien}	
+				
+\section{Subsystemstruktur}
+
+	\noindent \input{docs/Systemstruktur}
+				
+\section{Glossar}
+
+	\noindent \input{docs/Glossar}	
+	
+\section{Literatur}
+
+	\noindent \input{docs/Literatur}
+
+
+\end{document}
