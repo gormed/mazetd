@@ -1,10 +1,53 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * MazeTD Project (c) 2012 by Hady Khalifa, Ahmed Arous and Hans Ferchland
+ * 
+ * MazeTD rights are by its owners/creators.
+ * The project was created for educational purposes and may be used under 
+ * the GNU Public license only.
+ * 
+ * If you modify it please let other people have part of it!
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * GNU Public License
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License 3 as published by
+ * the Free Software Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/.
+ * 
+ * Email us: 
+ * hans[dot]ferchland[at]gmx[dot]de
+ * 
+ * 
+ * Project: MazeTD Project
+ * File: MazeTDGame.java
+ * Type: mazetd.MazeTDGame
+ * 
+ * Documentation created: 13.05.2012 - 23:13:37 by Hans
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package mazetd;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeContext.Type;
+import com.jme3.util.BufferUtils;
 import gamestates.GamestateManager;
 import gamestates.lib.MainmenuState;
+import gamestates.lib.SingleplayerState;
 
 /**
  * Main application class of MazeTD. 
@@ -12,7 +55,7 @@ import gamestates.lib.MainmenuState;
  * Builds the jme game context, loads assetmanager, camera, 
  * scenegraph and many more.
  * @author Hans Ferchland
- * @version 0.1
+ * @version 0.12
  * @see SimpleApplication
  */
 public class MazeTDGame extends SimpleApplication {
@@ -44,13 +87,20 @@ public class MazeTDGame extends SimpleApplication {
      */
     public static void main(String[] args) {
         getInstance().initSettings();
-        
+
         getInstance().start();
     }
+    //==========================================================================
+    //===   Static Fields
+    //==========================================================================
+    public static final String INPUT_MAPPING_CAMERA_DEBUG = "MAZETDGAME_CameraDebug";
     //==========================================================================
     //===   Private Fields
     //==========================================================================
     private GamestateManager gamestateManager;
+    private IsoCameraControl isoCameraControl;
+    private GameDebugActionListener gameDebugActionListener = new GameDebugActionListener();
+    private boolean showFps = true;
     //==========================================================================
     //===   Package Fields
     //==========================================================================
@@ -64,15 +114,42 @@ public class MazeTDGame extends SimpleApplication {
     private void initGamestates() {
         gamestateManager = GamestateManager.getInstance();
         MainmenuState mainmenuState = new MainmenuState();
-        //gamestateManager.addState(mainmenuState);
+        SingleplayerState singleplayerState = new SingleplayerState();
+
+        gamestateManager.addState(singleplayerState);
         gamestateManager.initialize(mainmenuState);
         gamestateManager.start();
+    }
+
+    /**
+     * Initis the base-inputs for debugging
+     */
+    private void initInputs() {
+        if (inputManager != null) {
+
+            inputManager.clearMappings();
+            flyCam.registerWithInput(inputManager);
+            flyCam.setMoveSpeed(2.5f);
+
+            if (context.getType() == Type.Display) {
+                inputManager.addMapping(INPUT_MAPPING_EXIT, new KeyTrigger(KeyInput.KEY_ESCAPE));
+            }
+
+            inputManager.addMapping(INPUT_MAPPING_CAMERA_DEBUG, new KeyTrigger(KeyInput.KEY_F1));
+            inputManager.addMapping(INPUT_MAPPING_CAMERA_POS, new KeyTrigger(KeyInput.KEY_F2));
+            inputManager.addMapping(INPUT_MAPPING_HIDE_STATS, new KeyTrigger(KeyInput.KEY_F3));
+            inputManager.addMapping(INPUT_MAPPING_MEMORY, new KeyTrigger(KeyInput.KEY_F4));
+            inputManager.addListener(gameDebugActionListener,
+                    INPUT_MAPPING_CAMERA_DEBUG, INPUT_MAPPING_EXIT,
+                    INPUT_MAPPING_CAMERA_POS, INPUT_MAPPING_MEMORY, INPUT_MAPPING_HIDE_STATS);
+
+        }
     }
 
     @Override
     public void start() {
         super.start();
-        
+
     }
 
     @Override
@@ -80,11 +157,28 @@ public class MazeTDGame extends SimpleApplication {
         super.initialize();
         // initialize gamestate manager and adds states, finally start the states
         initGamestates();
-        
+
+        // init isometric camera
+        isoCameraControl = new IsoCameraControl(cam);
+        detachDebugCamera();
+
+        initInputs();
     }
+
+    /** Enables the debug camera */
+    private void attachDebugCamera() {
+        flyCam.setEnabled(true);
+        flyCam.setDragToRotate(true);
+    }
+
+    /** Disables the debug camera */
+    private void detachDebugCamera() {
+        isoCameraControl.reset();
+        flyCam.setEnabled(false);
+    }
+
     @Override
     public void simpleInitApp() {
-
     }
 
     @Override
@@ -98,6 +192,9 @@ public class MazeTDGame extends SimpleApplication {
         //TODO: add render code
     }
 
+    /**
+     * Initializes settings for the game, currently using settings from SolarWars
+     */
     public void initSettings() {
         if (settings == null) {
             settings = new AppSettings(true);
@@ -109,7 +206,7 @@ public class MazeTDGame extends SimpleApplication {
             settings.put("StencilBits", 0);
             settings.put("Samples", 4);
             settings.put("Fullscreen", false);
-            settings.put("Title", "SolarWars_");
+            settings.put("Title", "Maze TD");
             settings.put("Renderer", AppSettings.LWJGL_OPENGL2);
             settings.put("AudioRenderer", AppSettings.LWJGL_OPENAL);
             settings.put("DisableJoysticks", true);
@@ -117,6 +214,52 @@ public class MazeTDGame extends SimpleApplication {
             settings.put("VSync", false);
             settings.put("FrameRate", 100);
             //settings.put("SettingsDialogImage", "/Interface/solarwars_v2.png");
+        }
+    }
+
+    //==========================================================================
+    //===   Inner Classes
+    //==========================================================================
+    
+    /**
+     * The class GameActionListener listens to debug actions for the game.
+     * Exiting, display FPS, memory shots, enable debug camera 
+     * and camera position can be retrieved during runnig game.
+     * @author Hans Ferchland
+     * @version 0.12
+     */
+    private class GameDebugActionListener implements ActionListener {
+
+        public void onAction(String name, boolean value, float tpf) {
+            if (!value) {
+                return;
+            }
+
+            if (name.equals(INPUT_MAPPING_CAMERA_DEBUG)) {
+                if (flyCam.isEnabled()) {
+                    detachDebugCamera();
+                } else {
+                    attachDebugCamera();
+                }
+            } else if (name.equals(INPUT_MAPPING_EXIT)) {
+                stop();
+            } else if (name.equals(INPUT_MAPPING_CAMERA_POS)) {
+                if (cam != null) {
+                    Vector3f loc = cam.getLocation();
+                    Quaternion rot = cam.getRotation();
+                    System.out.println("Camera Position: ("
+                            + loc.x + ", " + loc.y + ", " + loc.z + ")");
+                    System.out.println("Camera Rotation: " + rot);
+                    System.out.println("Camera Direction: " + cam.getDirection());
+                }
+            } else if (name.equals(INPUT_MAPPING_MEMORY)) {
+                BufferUtils.printCurrentDirectMemory(null);
+            } else if (name.equals(INPUT_MAPPING_HIDE_STATS)) {
+                showFps = !showFps;
+                setDisplayFps(!showFps);
+                setDisplayStatView(!showFps);
+            }
+
         }
     }
 }

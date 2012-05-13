@@ -28,97 +28,41 @@
  * 
  * 
  * Project: MazeTD Project
- * File: Gamestate.java
- * Type: gamestates.Gamestate
+ * File: SingleplayerState.java
+ * Type: gamestates.lib.SingleplayerState
  * 
- * Documentation created: 13.05.2012 - 23:13:37 by Hans
+ * Documentation created: 13.05.2012 - 23:12:22 by Hans
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package gamestates;
+package gamestates.lib;
 
+import gamestates.Gamestate;
+import gamestates.GamestateManager;
 import mazetd.MazeTDGame;
 
 /**
- * The Class Gamestate as a base for all states of the game.
- * @author Hans Ferchland
- * @version 0.1
+ * The class SingleplayerState
+ * @author Hans
+ * @version
  */
-public abstract class Gamestate {
+public class SingleplayerState extends Gamestate {
 
-    /** The name. */
-    private String name;
-
-    /**
-     * Instantiates a new gamestate.
-     *
-     * @param name the name
-     */
-    public Gamestate(String name) {
-        this.name = name;
+    public SingleplayerState() {
+        super(GamestateManager.SINGLEPLAYER_STATE);
+    }
+    
+    @Override
+    public void update(float tpf) {
+        
     }
 
-    /**
-     * Gets the name.
-     *
-     * @return the name
-     */
-    public String getName() {
-        return name;
+    @Override
+    protected void loadContent(MazeTDGame game) {
+        
     }
 
-    /**
-     * Enter.
-     */
-    void enter() {
-        loadContent(MazeTDGame.getInstance());
+    @Override
+    protected void unloadContent() {
+        
     }
-
-    /**
-     * Leave.
-     */
-    void leave() {
-        unloadContent();
-    }
-
-    /**
-     * Pause.
-     */
-    public void pause() {
-    }
-
-    /**
-     * Resume.
-     */
-    public void resume() {
-    }
-
-    /**
-     * Reset.
-     */
-    public void reset() {
-    }
-
-    /**
-     * Terminate.
-     */
-    public void terminate() {
-    }
-
-    /**
-     * Updates the.
-     *
-     * @param tpf the tpf
-     */
-    public abstract void update(float tpf);
-
-    /**
-     * Load content.
-     *
-     * @param game the game
-     */
-    protected abstract void loadContent(MazeTDGame game);
-
-    /**
-     * Unload content.
-     */
-    protected abstract void unloadContent();
+    
 }

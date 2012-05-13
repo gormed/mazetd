@@ -28,97 +28,49 @@
  * 
  * 
  * Project: MazeTD Project
- * File: Gamestate.java
- * Type: gamestates.Gamestate
+ * File: EventManager.java
+ * Type: events.EventManager
  * 
- * Documentation created: 13.05.2012 - 23:13:37 by Hans
+ * Documentation created: 13.05.2012 - 23:22:39 by Hans
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package gamestates;
-
-import mazetd.MazeTDGame;
+package events;
 
 /**
- * The Class Gamestate as a base for all states of the game.
+ * The class EventManager for all events.
  * @author Hans Ferchland
  * @version 0.1
  */
-public abstract class Gamestate {
-
-    /** The name. */
-    private String name;
+public class EventManager {
+    //==========================================================================
+    //===   Singleton
+    //==========================================================================
 
     /**
-     * Instantiates a new gamestate.
-     *
-     * @param name the name
+     * The hidden constructor of the singleton.
      */
-    public Gamestate(String name) {
-        this.name = name;
+    private EventManager() {
     }
 
     /**
-     * Gets the name.
-     *
-     * @return the name
+     * Static method to retrieve the one and olny reference to the manager.
+     * @return the reference of the EventManager
      */
-    public String getName() {
-        return name;
+    public static EventManager getInstance() {
+        return EventManagerHolder.INSTANCE;
     }
 
     /**
-     * Enter.
+     * Holder class for the EventManager
      */
-    void enter() {
-        loadContent(MazeTDGame.getInstance());
+    private static class EventManagerHolder {
+
+        private static final EventManager INSTANCE = new EventManager();
     }
-
-    /**
-     * Leave.
-     */
-    void leave() {
-        unloadContent();
-    }
-
-    /**
-     * Pause.
-     */
-    public void pause() {
-    }
-
-    /**
-     * Resume.
-     */
-    public void resume() {
-    }
-
-    /**
-     * Reset.
-     */
-    public void reset() {
-    }
-
-    /**
-     * Terminate.
-     */
-    public void terminate() {
-    }
-
-    /**
-     * Updates the.
-     *
-     * @param tpf the tpf
-     */
-    public abstract void update(float tpf);
-
-    /**
-     * Load content.
-     *
-     * @param game the game
-     */
-    protected abstract void loadContent(MazeTDGame game);
-
-    /**
-     * Unload content.
-     */
-    protected abstract void unloadContent();
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
+    
+    //==========================================================================
+    //===   Methods
+    //==========================================================================
 }
