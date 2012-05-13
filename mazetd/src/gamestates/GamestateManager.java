@@ -1,0 +1,182 @@
+package gamestates;
+
+import java.util.HashMap;
+
+/**
+ * The Class GamestateManager.
+ * @author Hans Ferchland
+ * @version 0.1
+ */
+public class GamestateManager {
+
+    /** The Constant SINGLEPLAYER_STATE. */
+    public static final String SINGLEPLAYER_STATE = "Singleplayer";
+    /** The Constant MAINMENU_STATE. */
+    public static final String MAINMENU_STATE = "Mainmenu";
+    /** The Constant OPTIONS_STATE. */
+    public static final String OPTIONS_STATE = "Options";
+    /** The Constant TUTORIAL_STATE. */
+    public static final String TUTORIAL_STATE = "Tutorial";
+    /** The instance. */
+    private static GamestateManager instance;
+    /** The gamestates. */
+    private HashMap<String, Gamestate> gamestates;
+    /** The current state. */
+    private Gamestate currentState;
+    /** The next state. */
+    private Gamestate nextState;
+    /** The flag to lock the updateing of the current state */
+    private static volatile boolean lockUpdate = false;
+
+    /** Retrieves the current state of locking */
+    public static synchronized boolean isLocked() {
+        return lockUpdate;
+    }
+
+    /** Locks the current state from updating */
+    static synchronized void lock() {
+        lockUpdate = true;
+    }
+
+    /** Unlocks the current state from updating */
+    static synchronized void unlock() {
+        lockUpdate = false;
+    }
+
+    /**
+     * Instantiates a new gamestate manager.
+     */
+    private GamestateManager() {
+        gamestates = new HashMap<String, Gamestate>();
+    }
+
+    /**
+     * Gets the single instance of GamestateManager.
+     *
+     * @return single instance of GamestateManager
+     */
+    public static GamestateManager getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        return instance = new GamestateManager();
+    }
+
+    /**
+     * Initializes the.
+     *
+     * @param startState the start state
+     */
+    public void initialize(Gamestate startState) {
+        addState(startState);
+        currentState = startState;
+    }
+
+    /**
+     * Start.
+     */
+    public void start() {
+        currentState.enter();
+        System.out.println(currentState.getName() + "...entered!");
+    }
+
+    /**
+     * Enter state.
+     *
+     * @param nextState the next state
+     */
+    public synchronized void enterState(String nextState) {
+        lock();
+        if (gamestates.containsKey(nextState)) {
+            this.nextState = gamestates.get(nextState);
+
+            this.currentState.leave();
+            this.currentState = null;
+            this.nextState.enter();
+
+            this.currentState = this.nextState;
+            System.out.println("Gamestate: " + nextState + " entered!");
+        }
+        unlock();
+    }
+
+    /**
+     * Adds the state.
+     *
+     * @param g the g
+     */
+    public void addState(Gamestate g) {
+        gamestates.put(g.getName(), g);
+        System.out.println("Gamestate: " + g.getName() + " added!");
+    }
+
+    /**
+     * Removes the state.
+     *
+     * @param g the g
+     */
+    public void removeState(Gamestate g) {
+        gamestates.remove(g.getName());
+        System.out.println("Gamestate: " + g.getName() + " removed!");
+    }
+
+    /**
+     * Gets the gamestate.
+     *
+     * @param name the name
+     * @return the gamestate
+     */
+    public Gamestate getGamestate(String name) {
+        if (!gamestates.containsKey(name)) {
+            return null;
+        }
+        return gamestates.get(name);
+    }
+
+    /**
+     * Updates the.
+     *
+     * @param tpf the tpf
+     */
+    public void update(float tpf) {
+        if (currentState != null && !isLocked()) {
+            currentState.update(tpf);
+        }
+    }
+
+    /**
+     * Pause.
+     */
+    public void pause() {
+        if (currentState != null) {
+            currentState.pause();
+        }
+    }
+
+    /**
+     * Resume.
+     */
+    public void resume() {
+        if (currentState != null) {
+            currentState.resume();
+        }
+    }
+
+    /**
+     * Reset.
+     */
+    public void reset() {
+        if (currentState != null) {
+            currentState.reset();
+        }
+    }
+
+    /**
+     * Terminate.
+     */
+    public void terminate() {
+        if (currentState != null) {
+            currentState.terminate();
+        }
+    }
+}
