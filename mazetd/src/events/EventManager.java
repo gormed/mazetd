@@ -35,6 +35,12 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package events;
 
+import com.jme3.input.InputManager;
+import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.Trigger;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The class EventManager for all events.
  * @author Hans Ferchland
@@ -49,6 +55,8 @@ public class EventManager {
      * The hidden constructor of the singleton.
      */
     private EventManager() {
+        this.inputManager = mazetd.MazeTDGame.getInstance().getInputManager();
+        this.timerEventListener = new HashMap<TimerEventListener, Float>(25);
     }
 
     /**
@@ -67,10 +75,72 @@ public class EventManager {
         private static final EventManager INSTANCE = new EventManager();
     }
     //==========================================================================
+    //===   Static
+    //==========================================================================
+    /** The running eventid for all events */
+    private static int runningEventID = 0;
+
+    /**
+     * Gets the next eventID. This function increments the eventID by each call.
+     * There will never be a doubled eventid!
+     * @return the next free and unused eventID
+     */
+    static int getContiniousEventID() {
+        return runningEventID++;
+    }
+    //==========================================================================
     //===   Private Fields
     //==========================================================================
-    
+    //private HashMap<Integer, AbstractEvent> eventMap;
+    private HashMap<TimerEventListener, Float> timerEventListener;
+    private InputManager inputManager;
     //==========================================================================
     //===   Methods
     //==========================================================================
+
+    private void updateTimerEvents(float tpf) {
+        TimerEvent t = new TimerEvent(this, tpf);
+        for (Map.Entry<TimerEventListener, Float> entry : timerEventListener.entrySet()) {
+            // get us the times called and the listener itself
+            float time = entry.getValue();
+
+            // after that, raise the entry-value because 
+            // we went further
+            entry.setValue(time + tpf);
+            TimerEventListener l = entry.getKey();
+            // if the time has come we call it
+            if (time >= l.getPeriod()) {
+                l.onTimedEvent(t);
+                entry.setValue(0f);
+            }
+        }
+    }
+
+    public void update(float tpf) {
+        updateTimerEvents(tpf);
+    }
+
+    public void addTimerEventListener(TimerEventListener l) {
+        timerEventListener.put(l, 0f);
+    }
+
+    public void removeTimerEventListener(TimerEventListener l) {
+        timerEventListener.remove(l);
+    }
+
+    public void addKeyInputEvent(String mapping, KeyTrigger... keyTriggers) {
+        inputManager.addMapping(mapping, keyTriggers);
+    }
+
+    public void addMouseInputEvent(String mapping, Trigger... mouseTriggers) {
+        inputManager.addMapping(mapping, mouseTriggers);
+    }
+
+    public void addKeyInputListener(KeyInputListener inputListener, String... mappings) {
+        inputManager.addListener(inputListener, mappings);
+    }
+
+    public void addMouseInputListener(KeyInputListener inputListener, String... mappings) {
+        inputManager.addListener(inputListener, mappings);
+    }
 }
