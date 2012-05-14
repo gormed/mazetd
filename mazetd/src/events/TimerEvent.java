@@ -10,7 +10,7 @@ import java.util.EventObject;
  * The Class TimedEvent is an Event special for timed things.
  * <p>
  * Occurs if a timed-control is listening for a special time. It stores the
- * time it is occurred and the firing object, the application.
+ * time-gap when it is occurred and the firing object, the eventmanager.
  * </p>
  * 
  * @author Hans Ferchland

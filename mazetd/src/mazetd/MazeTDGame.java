@@ -35,6 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package mazetd;
 
+import collisions.ScreenRayCast3D;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -98,6 +99,7 @@ public class MazeTDGame extends SimpleApplication {
     //===   Private Fields
     //==========================================================================
     private GamestateManager gamestateManager;
+    private ScreenRayCast3D rayCast3D;
     private IsoCameraControl isoCameraControl;
     private GameDebugActionListener gameDebugActionListener = new GameDebugActionListener();
     private boolean showFps = true;
