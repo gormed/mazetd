@@ -2,15 +2,19 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package collisions;
+package collisions.raycasts;
 
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
+import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import events.EventManager;
 import events.Mappings;
 import events.MouseInputListener;
@@ -32,6 +36,9 @@ public class ScreenRayCast3D implements MouseInputListener {
     private ScreenRayCast3D() {
         clickable3D = new Node("Clickable3DNodes");
         game.getRootNode().attachChild(clickable3D);
+        inputManager = game.getInputManager();
+        inputManager.setCursorVisible(true);
+        cam = game.getCamera();
 
         EventManager.getInstance().addMouseInputEvent(
                 Mappings.RAYCAST_3D,
@@ -61,30 +68,40 @@ public class ScreenRayCast3D implements MouseInputListener {
     //===   Private Fields
     //==========================================================================
     private Node clickable3D;
-    private Collision3DNode lastHit = null;
+    private RayCast3DNode lastHit = null;
     private MazeTDGame game = MazeTDGame.getInstance();
+    private InputManager inputManager;
+    private Camera cam;
     //==========================================================================
     //===   Methods
     //==========================================================================
 
-    public Collision3DNode getLastHit() {
+    public RayCast3DNode getLastHit() {
         return lastHit;
     }
-    
+
     /**
      * Adds a node to the clickable 3d objects.
      * @param object that will be clickable
      */
-    public void addCollisonObject(Collision3DNode object) {
-        clickable3D.attachChild(object);
+    public void addCollisonObject(RayCast3DNode object) throws IllegalArgumentException {
+        if (object instanceof Spatial) {
+            clickable3D.attachChild((Spatial) object);
+        } else {
+            throw new IllegalArgumentException("RayCast3DNode has to be a jME3 Spatial to be raycasted!");
+        }
     }
 
     /**
      * Removes a specific node from the clickable 3d object.
      * @param object that wont be clickable anymore
      */
-    public void removeCollisonObject(Collision3DNode object) {
-        clickable3D.detachChild(object);
+    public void removeCollisonObject(RayCast3DNode object) throws IllegalArgumentException {
+        if (object instanceof Spatial) {
+            clickable3D.detachChild((Spatial) object);
+        } else {
+            throw new IllegalArgumentException("RayCast3DNode has to be a jME3 Spatial to be raycasted!");
+        }
     }
 
     @Override
@@ -93,7 +110,12 @@ public class ScreenRayCast3D implements MouseInputListener {
             // 1. Reset results list.
             CollisionResults results = new CollisionResults();
             // 2. Aim the ray from cam loc to cam direction.
-            Ray ray = new Ray(game.getCamera().getLocation(), game.getCamera().getDirection());
+            Vector2f click2d = inputManager.getCursorPosition();
+            Vector3f click3d = cam.getWorldCoordinates(
+                    new Vector2f(click2d.x, click2d.y), 0f).clone();
+            Vector3f dir = cam.getWorldCoordinates(
+                    new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+            Ray ray = new Ray(click3d, dir);
             // 3. Collect intersections between Ray and Shootables in results list.
             clickable3D.collideWith(ray, results);
             // 4. Print the results
@@ -110,10 +132,10 @@ public class ScreenRayCast3D implements MouseInputListener {
             if (results.size() > 0) {
                 // The closest collision point is what was truly hit:
                 CollisionResult closest = results.getClosestCollision();
-                Node n = closest.getGeometry().getParent();
-                if (n != null && n instanceof Collision3DNode) {
-                    Collision3DNode hit = (Collision3DNode) n;
-                    hit.onCollision3D(closest);
+                Spatial n = closest.getGeometry();
+                if (n != null && n instanceof RayCast3DNode) {
+                    RayCast3DNode hit = (RayCast3DNode) n;
+                    hit.onRayCast3D(closest);
                     lastHit = hit;
                 }
 //                // Let's interact - we mark the hit with a red dot.

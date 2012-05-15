@@ -35,14 +35,19 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gamestates.lib;
 
+import collisions.raycasts.RayCast3DNode;
+import collisions.raycasts.ScreenRayCast3D;
+import com.jme3.collision.CollisionResult;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Sphere;
+import entities.Map;
 import gamestates.Gamestate;
 import gamestates.GamestateManager;
 import mazetd.MazeTDGame;
@@ -55,10 +60,9 @@ import mazetd.MazeTDGame;
 public class MainmenuState extends Gamestate {
 
     private MazeTDGame game;
-    
     private AmbientLight ambientLight;
     private PointLight pointLight;
-    
+
     public MainmenuState() {
         super(GamestateManager.MAINMENU_STATE);
     }
@@ -70,7 +74,10 @@ public class MainmenuState extends Gamestate {
     @Override
     protected void loadContent(MazeTDGame game) {
         this.game = game;
-        // Test init
+        ////////////////////////////////////////////////////////////////
+        //                      TESTING CODE
+        ////////////////////////////////////////////////////////////////
+        // Test init blue cube
         Box b = new Box(Vector3f.ZERO, 1, 1, 1);
         Geometry geom = new Geometry("Box", b);
 
@@ -79,19 +86,35 @@ public class MainmenuState extends Gamestate {
         mat.setColor("Ambient", ColorRGBA.Blue);   // ... color of this object
         mat.setColor("Diffuse", ColorRGBA.Blue);   // ... color of light being reflected
         geom.setMaterial(mat);
+        
+        
+        Sphere s = new Sphere(10, 10, 1);
+        ClickableGeometry geom2 = new ClickableGeometry("Sphere", s);
+        geom2.setLocalTranslation(5, 0, 0);
+
+        Material mat2 = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        mat2.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
+        mat2.setColor("Ambient", ColorRGBA.Red);   // ... color of this object
+        mat2.setColor("Diffuse", ColorRGBA.Red);   // ... color of light being reflected
+        geom2.setMaterial(mat2);
 
         // add blue cube to scene
         game.getRootNode().attachChild(geom);
+        // add red sphere to clickable 3d objects
+        ScreenRayCast3D.getInstance().addCollisonObject(geom2);
         
+        Map m = new Map();
+        game.getRootNode().attachChild(m);
+
         // add two lights to scene
         ambientLight = new AmbientLight();
         ambientLight.setColor(ColorRGBA.Gray);
-        
+
         pointLight = new PointLight();
-        pointLight.setColor(new ColorRGBA(1, 0.5f, 0.5f, 1f));
-        pointLight.setRadius(20);
-        pointLight.setPosition(new Vector3f(1, 10, 0));
-        
+        pointLight.setColor(new ColorRGBA(1, 1, 1, 1f));
+        pointLight.setRadius(40);
+        pointLight.setPosition(new Vector3f(0, 10, 0));
+
         game.getRootNode().addLight(pointLight);
         game.getRootNode().addLight(ambientLight);
     }
@@ -102,5 +125,17 @@ public class MainmenuState extends Gamestate {
         game.getRootNode().detachAllChildren();
         game.getRootNode().removeLight(ambientLight);
         game.getRootNode().removeLight(pointLight);
+    }
+
+    class ClickableGeometry extends Geometry implements RayCast3DNode {
+
+        public ClickableGeometry(String name, Mesh mesh) {
+            super(name, mesh);
+        }
+
+        @Override
+        public void onRayCast3D(CollisionResult result) {
+            System.out.println("Hello Picking!");
+        }
     }
 }

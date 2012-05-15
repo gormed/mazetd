@@ -35,7 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package mazetd;
 
-import collisions.ScreenRayCast3D;
+import collisions.raycasts.ScreenRayCast3D;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -46,6 +46,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext.Type;
 import com.jme3.util.BufferUtils;
+import events.EventManager;
 import gamestates.GamestateManager;
 import gamestates.lib.MainmenuState;
 import gamestates.lib.SingleplayerState;
@@ -100,6 +101,7 @@ public class MazeTDGame extends SimpleApplication {
     //==========================================================================
     private GamestateManager gamestateManager;
     private ScreenRayCast3D rayCast3D;
+    private EventManager eventManager;
     private IsoCameraControl isoCameraControl;
     private GameDebugActionListener gameDebugActionListener = new GameDebugActionListener();
     private boolean showFps = true;
@@ -126,7 +128,7 @@ public class MazeTDGame extends SimpleApplication {
     /**
      * Initis the base-inputs for debugging
      */
-    private void initInputs() {
+    private void initDebugInputs() {
         if (inputManager != null) {
 
             inputManager.clearMappings();
@@ -156,15 +158,21 @@ public class MazeTDGame extends SimpleApplication {
 
     @Override
     public void initialize() {
+        // init Application
         super.initialize();
-        // initialize gamestate manager and adds states, finally start the states
-        initGamestates();
-
         // init isometric camera
         isoCameraControl = new IsoCameraControl(this);
         detachDebugCamera();
+        // init input for debugging and camera
+        initDebugInputs();
 
-        initInputs();
+        // initialize gamestate manager and adds states, finally start the states
+        initGamestates();
+        // EventManager init
+        eventManager = EventManager.getInstance();
+        // ScreenRayCast3D
+        rayCast3D = ScreenRayCast3D.getInstance();
+
     }
 
     /** Enables the debug camera */
@@ -224,7 +232,6 @@ public class MazeTDGame extends SimpleApplication {
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
-    
     /**
      * The class GameActionListener listens to debug actions for the game.
      * Exiting, display FPS, memory shots, enable debug camera 

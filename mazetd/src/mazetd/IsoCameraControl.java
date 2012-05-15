@@ -39,8 +39,6 @@ import com.bulletphysics.collision.broadphase.Dbvt.Node;
 import com.jme3.collision.MotionAllowedListener;
 import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.light.PointLight;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -52,11 +50,23 @@ import com.jme3.renderer.Camera;
  * @version 0.1 #2
  */
 public class IsoCameraControl implements ActionListener {
+    //==========================================================================
+    //===   Static Fields
+    //==========================================================================
 
     /** The Constant CAMERA_HEIGHT. */
-    public static float CAMERA_HEIGHT = 15;
+    private static float CAMERA_HEIGHT = 15;
     /** The Constant CAMERA_ANGLE. */
-    public static final float CAMERA_ANGLE = (float) Math.PI / 2.5f;
+    private static final float CAMERA_ANGLE = (float) Math.PI / 2.5f;
+    /** The Constant CAMERA_ACTIVE_ZONE_X for the activation of camera movement in x-dir. */
+    private static final int CAMERA_ACTIVE_ZONE_X = 50;
+    /** The Constant CAMERA_ACTIVE_ZONE_Y for the activation of camera movement in y-dir. */
+    private static final int CAMERA_ACTIVE_ZONE_Y = 50;
+    /** The Constant CAMERA_MOVE_SPEED for the speed the camera moves. */
+    private static final float CAMERA_MOVE_SPEED = 8f;
+    //==========================================================================
+    //===   Private/Protected Fields
+    //==========================================================================
     /** The cam. */
     protected Camera cam;
     /** The root node. */
@@ -81,9 +91,16 @@ public class IsoCameraControl implements ActionListener {
     protected Vector2f initialDragPos;
     /** The game reference. */
     protected MazeTDGame game;
-    
+    /** The reference of the input manager. */
     protected InputManager inputManager;
 
+    //==========================================================================
+    //===   Constructor & Methods
+    //==========================================================================
+    /**
+     * The contructor of the camera for isometric view.
+     * @param game the reference to the game-application
+     */
     public IsoCameraControl(MazeTDGame game) {
         this.cam = game.getCamera();
         this.game = game;
@@ -91,30 +108,54 @@ public class IsoCameraControl implements ActionListener {
         setupCamera();
     }
 
+    /**
+     * Method for camera setup.
+     */
     private void setupCamera() {
         reset();
     }
-    
+
+    /**
+     * Updates the camera each tick (100 times a sec in average).
+     * @param tpf the timegap in seconds since the last frame
+     */
     public void updateCamera(float tpf) {
         Vector2f mouse = inputManager.getCursorPosition();
-        if (mouse.x < 10) {
-            Vector3f loc = cam.getLocation();
-            loc.addLocal(new Vector3f(tpf, 0, 0));
-        } else if (mouse.x > cam.getWidth()-10) {
-            Vector3f loc = cam.getLocation();
-            loc.addLocal(new Vector3f(-tpf, 0, 0));
+
+        Vector3f loc = cam.getLocation();
+        float dist = 0;
+        boolean yCondition = (mouse.y > CAMERA_ACTIVE_ZONE_Y && mouse.y < cam.getHeight() - CAMERA_ACTIVE_ZONE_Y);
+
+
+        if (mouse.x < CAMERA_ACTIVE_ZONE_X && yCondition) {
+            dist = (CAMERA_ACTIVE_ZONE_X - mouse.x) / CAMERA_ACTIVE_ZONE_X;
+            loc.addLocal(new Vector3f(tpf * CAMERA_MOVE_SPEED * dist, 0, 0));
+        } else if (mouse.x > cam.getWidth() - CAMERA_ACTIVE_ZONE_X && yCondition) {
+            dist = -((cam.getWidth() - CAMERA_ACTIVE_ZONE_X) - mouse.x) / CAMERA_ACTIVE_ZONE_X;
+            loc.addLocal(new Vector3f(-tpf * CAMERA_MOVE_SPEED * dist, 0, 0));
+        } else {
+            return;
         }
-        
+        cam.setLocation(loc);
+
     }
 
+    /**
+     * Resets the camera to the initial position.
+     */
     public void reset() {
         float[] rot = {CAMERA_ANGLE, 0, 0};
         initialUpVec = cam.getUp().clone();
-        cam.setLocation(new Vector3f(0, CAMERA_HEIGHT, -CAMERA_HEIGHT/2.5f));
+        cam.setLocation(new Vector3f(0, CAMERA_HEIGHT, -CAMERA_HEIGHT / 2.5f));
         cam.setRotation(new Quaternion(rot));
     }
 
+    /**
+     * Till jet unused.
+     * @param name
+     * @param isPressed
+     * @param tpf 
+     */
     public void onAction(String name, boolean isPressed, float tpf) {
-       
     }
 }
