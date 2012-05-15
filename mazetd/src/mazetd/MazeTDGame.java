@@ -161,7 +161,7 @@ public class MazeTDGame extends SimpleApplication {
         initGamestates();
 
         // init isometric camera
-        isoCameraControl = new IsoCameraControl(cam);
+        isoCameraControl = new IsoCameraControl(this);
         detachDebugCamera();
 
         initInputs();
@@ -187,6 +187,8 @@ public class MazeTDGame extends SimpleApplication {
     public void simpleUpdate(float tpf) {
         // frequently updates the games current state
         gamestateManager.update(tpf);
+        // camera
+        isoCameraControl.updateCamera(tpf);
     }
 
     @Override

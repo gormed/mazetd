@@ -79,17 +79,32 @@ public class IsoCameraControl implements ActionListener {
     protected boolean isDragged;
     /** The initial drag pos. */
     protected Vector2f initialDragPos;
-    /** The input manager. */
+    /** The game reference. */
+    protected MazeTDGame game;
+    
     protected InputManager inputManager;
 
-    public IsoCameraControl(Camera cam) {
-        this.cam = cam;
-
+    public IsoCameraControl(MazeTDGame game) {
+        this.cam = game.getCamera();
+        this.game = game;
+        this.inputManager = game.getInputManager();
         setupCamera();
     }
 
     private void setupCamera() {
         reset();
+    }
+    
+    public void updateCamera(float tpf) {
+        Vector2f mouse = inputManager.getCursorPosition();
+        if (mouse.x < 10) {
+            Vector3f loc = cam.getLocation();
+            loc.addLocal(new Vector3f(tpf, 0, 0));
+        } else if (mouse.x > cam.getWidth()-10) {
+            Vector3f loc = cam.getLocation();
+            loc.addLocal(new Vector3f(-tpf, 0, 0));
+        }
+        
     }
 
     public void reset() {
@@ -100,5 +115,6 @@ public class IsoCameraControl implements ActionListener {
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {
+       
     }
 }
