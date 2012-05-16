@@ -104,7 +104,7 @@ public class MainmenuState extends Gamestate {
         ScreenRayCast3D.getInstance().addCollisonObject(geom2);
         
         Map m = new Map();
-        game.getRootNode().attachChild(m);
+        game.getRootNode().attachChild(m.getDecorativeMapElemetns());
 
         // add two lights to scene
         ambientLight = new AmbientLight();

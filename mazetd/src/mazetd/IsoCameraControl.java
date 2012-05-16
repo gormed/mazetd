@@ -120,6 +120,8 @@ public class IsoCameraControl implements ActionListener {
      * @param tpf the timegap in seconds since the last frame
      */
     public void updateCamera(float tpf) {
+        if (!enabled)
+            return;
         Vector2f mouse = inputManager.getCursorPosition();
 
         Vector3f loc = cam.getLocation();
@@ -148,6 +150,14 @@ public class IsoCameraControl implements ActionListener {
         initialUpVec = cam.getUp().clone();
         cam.setLocation(new Vector3f(0, CAMERA_HEIGHT, -CAMERA_HEIGHT / 2.5f));
         cam.setRotation(new Quaternion(rot));
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**

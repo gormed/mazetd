@@ -1,7 +1,38 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * MazeTD Project (c) 2012 by Hady Khalifa, Ahmed Arous and Hans Ferchland
+ * 
+ * MazeTD rights are by its owners/creators.
+ * The project was created for educational purposes and may be used under 
+ * the GNU Public license only.
+ * 
+ * If you modify it please let other people have part of it!
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * GNU Public License
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License 3 as published by
+ * the Free Software Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/.
+ * 
+ * Email us: 
+ * hans[dot]ferchland[at]gmx[dot]de
+ * 
+ * 
+ * Project: MazeTD Project
+ * File: ScreenRayCast3D.java
+ * Type: collisions.raycasts.ScreenRayCast3D
+ * 
+ * Documentation created: 14.05.2012 - 18:59:39 by Hans Ferchland
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package collisions.raycasts;
 
 import com.jme3.collision.CollisionResult;
@@ -68,7 +99,7 @@ public class ScreenRayCast3D implements MouseInputListener {
     //===   Private Fields
     //==========================================================================
     private Node clickable3D;
-    private RayCast3DNode lastHit = null;
+    private Spatial lastHit = null;
     private MazeTDGame game = MazeTDGame.getInstance();
     private InputManager inputManager;
     private Camera cam;
@@ -76,7 +107,11 @@ public class ScreenRayCast3D implements MouseInputListener {
     //===   Methods
     //==========================================================================
 
-    public RayCast3DNode getLastHit() {
+    /**
+     * Retrieve the last hit RayCast3DNode.
+     * @return the last hit RayCast3DNode
+     */
+    public Spatial getLastHit() {
         return lastHit;
     }
 
@@ -84,26 +119,29 @@ public class ScreenRayCast3D implements MouseInputListener {
      * Adds a node to the clickable 3d objects.
      * @param object that will be clickable
      */
-    public void addCollisonObject(RayCast3DNode object) throws IllegalArgumentException {
-        if (object instanceof Spatial) {
-            clickable3D.attachChild((Spatial) object);
-        } else {
-            throw new IllegalArgumentException("RayCast3DNode has to be a jME3 Spatial to be raycasted!");
-        }
+    public void addCollisonObject(Spatial object) {
+        clickable3D.attachChild(object);
     }
 
     /**
-     * Removes a specific node from the clickable 3d object.
+     * Removes a specific node from the clickable 3d objects.
      * @param object that wont be clickable anymore
      */
-    public void removeCollisonObject(RayCast3DNode object) throws IllegalArgumentException {
-        if (object instanceof Spatial) {
-            clickable3D.detachChild((Spatial) object);
-        } else {
-            throw new IllegalArgumentException("RayCast3DNode has to be a jME3 Spatial to be raycasted!");
-        }
+    public void removeCollisonObject(Spatial object) {
+
+        clickable3D.detachChild(object);
     }
 
+    /**
+     * This method is raised on a click on the left mouse button to 
+     * check 3d click events (ray casts).
+     * All Spatials that implement RayCast3DNode will be clickable and will
+     * execute the onRayCast3D() method on click.
+     * 
+     * @param name name of the mapping for the action
+     * @param isPressed if the button (or key) is pressed or released
+     * @param tpf the time-gap since the last update
+     */
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         if (!isPressed && name.equals(Mappings.RAYCAST_3D)) {
@@ -133,15 +171,28 @@ public class ScreenRayCast3D implements MouseInputListener {
                 // The closest collision point is what was truly hit:
                 CollisionResult closest = results.getClosestCollision();
                 Spatial n = closest.getGeometry();
-                if (n != null && n instanceof RayCast3DNode) {
-                    RayCast3DNode hit = (RayCast3DNode) n;
-                    hit.onRayCast3D(closest);
-                    lastHit = hit;
+                lastHit = n;
+                Spatial parent;
+
+                if (n != null) {
+                    if (n instanceof RayCast3DNode) {
+                        RayCast3DNode r = (RayCast3DNode) n;
+                        r.onRayCast3D(closest);
+                    }
+                    parent = n.getParent();
+                    while (parent != null) {
+                        if (parent instanceof RayCast3DNode) {
+                            RayCast3DNode r = (RayCast3DNode) parent;
+                            r.onRayCast3D(closest);
+                        }
+                        parent = parent.getParent();
+                    }
                 }
 //                // Let's interact - we mark the hit with a red dot.
 //                mark.setLocalTranslation(closest.getContactPoint());
 //                rootNode.attachChild(mark);
             } else {
+                lastHit = null;
 //                // No hits? Then remove the red mark.
 //                rootNode.detachChild(mark);
             }

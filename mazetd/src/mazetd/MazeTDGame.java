@@ -133,7 +133,7 @@ public class MazeTDGame extends SimpleApplication {
 
             inputManager.clearMappings();
             flyCam.registerWithInput(inputManager);
-            flyCam.setMoveSpeed(2.5f);
+            flyCam.setMoveSpeed(5f);
 
             if (context.getType() == Type.Display) {
                 inputManager.addMapping(INPUT_MAPPING_EXIT, new KeyTrigger(KeyInput.KEY_ESCAPE));
@@ -178,6 +178,7 @@ public class MazeTDGame extends SimpleApplication {
     /** Enables the debug camera */
     private void attachDebugCamera() {
         flyCam.setEnabled(true);
+        isoCameraControl.setEnabled(false);
         flyCam.setDragToRotate(true);
     }
 
@@ -185,6 +186,7 @@ public class MazeTDGame extends SimpleApplication {
     private void detachDebugCamera() {
         isoCameraControl.reset();
         flyCam.setEnabled(false);
+        isoCameraControl.setEnabled(true);
     }
 
     @Override

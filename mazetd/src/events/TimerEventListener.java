@@ -44,5 +44,5 @@ public interface TimerEventListener extends EventListener {
          * 
          * @return the period
          */
-        public long getPeriod();
+        public float getPeriod();
 }

@@ -28,25 +28,37 @@
  * 
  * 
  * Project: MazeTD Project
- * File: RayCast3DNode.java
- * Type: collisions.raycasts.RayCast3DNode
+ * File: ClickableGeometry.java
+ * Type: collisions.raycasts.ClickableGeometry
  * 
- * Documentation created: 14.05.2012 - 18:59:39 by Hans Ferchland
+ * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package collisions.raycasts;
 
-import com.jme3.collision.CollisionResult;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 
 /**
- * This interface is for Spatials that can be added into scenegraph for 3d clicking.
+ * The class ClickableGeometry.
  * @author Hans Ferchland
+ * @version
  */
-public interface RayCast3DNode {
-    /**
-     * This method is executed if the Spatial implementing this method is clicked.
-     * Add the given spatial to the ScreenRayCast3D as clickable!
-     * 
-     * @param result the clicking result, including 3d-point, normal and some more
-     */
-    public abstract void onRayCast3D(CollisionResult result);
+public abstract class ClickableGeometry extends Geometry implements RayCast3DNode {
+
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
+    //==========================================================================
+    //===   Methods & Constructor
+    //==========================================================================
+    public ClickableGeometry(String name) {
+        super(name);
+    }
+
+    public ClickableGeometry(String name, Mesh mesh) {
+        super(name, mesh);
+    }
+    //==========================================================================
+    //===   Inner Classes
+    //==========================================================================
 }
