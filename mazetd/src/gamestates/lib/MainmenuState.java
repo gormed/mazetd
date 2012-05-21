@@ -42,6 +42,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -86,8 +87,8 @@ public class MainmenuState extends Gamestate {
         mat.setColor("Ambient", ColorRGBA.Blue);   // ... color of this object
         mat.setColor("Diffuse", ColorRGBA.Blue);   // ... color of light being reflected
         geom.setMaterial(mat);
-        
-        
+
+
         Sphere s = new Sphere(10, 10, 1);
         ClickableGeometry geom2 = new ClickableGeometry("Sphere", s);
         geom2.setLocalTranslation(5, 0, 0);
@@ -102,7 +103,7 @@ public class MainmenuState extends Gamestate {
         game.getRootNode().attachChild(geom);
         // add red sphere to clickable 3d objects
         ScreenRayCast3D.getInstance().addCollisonObject(geom2);
-        
+
         Map m = new Map();
         game.getRootNode().attachChild(m.getDecorativeMapElemetns());
 
@@ -134,8 +135,17 @@ public class MainmenuState extends Gamestate {
         }
 
         @Override
-        public void onRayCast3D(CollisionResult result) {
+        public void onRayCastClick(Vector2f mouse, CollisionResult result) {
             System.out.println("Hello Picking!");
+        }
+
+        @Override
+        public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
+        }
+
+        @Override
+        public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
+            
         }
     }
 }

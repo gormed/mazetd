@@ -71,13 +71,19 @@ public class ScreenRayCast3D implements MouseInputListener {
         inputManager.setCursorVisible(true);
         cam = game.getCamera();
 
-        EventManager.getInstance().addMouseInputEvent(
+        EventManager.getInstance().addMouseButtonEvent(
                 Mappings.RAYCAST_3D,
                 new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 
+        EventManager.getInstance().addMouseButtonEvent(
+                Mappings.RAYCAST_3D_MOVE,
+                new MouseButtonTrigger(MouseInput.BUTTON_MIDDLE),
+                new MouseButtonTrigger(MouseInput.BUTTON_MIDDLE));
+
         EventManager.getInstance().addMouseInputListener(
                 this,
-                Mappings.RAYCAST_3D);
+                Mappings.RAYCAST_3D,
+                Mappings.RAYCAST_3D_MOVE);
     }
 
     /**
@@ -96,23 +102,37 @@ public class ScreenRayCast3D implements MouseInputListener {
         private static final ScreenRayCast3D INSTANCE = new ScreenRayCast3D();
     }
     //==========================================================================
+    //===   Static Fields
+    //==========================================================================
+    public static final float MOUSE_MOVEMENT_TOLERANCE = 0.001f;
+    //==========================================================================
     //===   Private Fields
     //==========================================================================
     private Node clickable3D;
-    private Spatial lastHit = null;
+    private RayCast3DNode lastClicked = null;
+    private RayCast3DNode lastHovered = null;
     private MazeTDGame game = MazeTDGame.getInstance();
     private InputManager inputManager;
     private Camera cam;
+    private Vector2f lastMousePosition = Vector2f.ZERO.clone();
+
     //==========================================================================
     //===   Methods
     //==========================================================================
+    /**
+     * Retrieve the last clicked RayCast3DNode.
+     * @return the last clicked RayCast3DNode
+     */
+    public RayCast3DNode getLastClicked() {
+        return lastClicked;
+    }
 
     /**
-     * Retrieve the last hit RayCast3DNode.
-     * @return the last hit RayCast3DNode
+     * Retrieve the last hovered RayCast3DNode.
+     * @return the last hovered RayCast3DNode
      */
-    public Spatial getLastHit() {
-        return lastHit;
+    public RayCast3DNode getLastHovered() {
+        return lastHovered;
     }
 
     /**
@@ -133,6 +153,111 @@ public class ScreenRayCast3D implements MouseInputListener {
     }
 
     /**
+     * Updates the mouse movement on screen for movement checks.
+     * @param tpf the gamp between two calls
+     */
+    public void update(float tpf) {
+        Vector2f mouse = inputManager.getCursorPosition();
+        boolean isInWindow =
+                mouse.x >= 0 && mouse.y >= 0
+                && mouse.x <= cam.getWidth() && mouse.y <= cam.getHeight();
+        if (isInWindow) {
+            checkMouseMovement(mouse, tpf);
+        }
+        lastMousePosition = mouse.clone();
+    }
+
+    /**
+     * Checks if the mouse moved over an object to call 
+     * its onRayCastMouseOver() method.
+     * @param mouse the mouse position
+     * @param tpf the gap between 2 two calls
+     */
+    public void checkMouseMovement(Vector2f mouse, float tpf) {
+        float diff = Math.abs(mouse.subtract(lastMousePosition).length());
+        //==========================================================================
+        //===   Mouse Moved
+        //==========================================================================
+
+        if (diff > MOUSE_MOVEMENT_TOLERANCE) {
+
+            // 1. Reset results list.
+            CollisionResults results = new CollisionResults();
+            // 2. Aim the ray from cam loc to cam direction.
+            Vector2f click2d = inputManager.getCursorPosition();
+            Vector3f click3d = cam.getWorldCoordinates(
+                    new Vector2f(click2d.x, click2d.y), 0f).clone();
+            Vector3f dir = cam.getWorldCoordinates(
+                    new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+            Ray ray = new Ray(click3d, dir);
+            // 3. Collect intersections between Ray and Shootables in results list.
+            clickable3D.collideWith(ray, results);
+            // 4. Print the results
+            System.out.println("----- 3D Collisions? " + results.size() + "-----");
+            for (int i = 0; i < results.size(); i++) {
+                // For each hit, we know distance, impact point, name of geometry.
+                float dist = results.getCollision(i).getDistance();
+                Vector3f pt = results.getCollision(i).getContactPoint();
+                String hit = results.getCollision(i).getGeometry().getName();
+                System.out.println("* 3D Collision #" + i);
+                System.out.println("  You shot " + hit + " at " + pt + ", " + dist + " wu away.");
+            }
+            // 5. Use the results (we mark the hit object)
+            if (results.size() > 0) {
+                // The closest collision point is what was truly hit:
+                CollisionResult closest = results.getClosestCollision();
+                Spatial n = closest.getGeometry();
+                Spatial parent;
+
+                if (n != null) {
+                    if (n instanceof RayCast3DNode) {
+                        decideLeftOrOver((RayCast3DNode) n, click2d, closest);
+                    }
+                    parent = n.getParent();
+                    while (parent != null) {
+                        if (parent instanceof RayCast3DNode) {
+                            decideLeftOrOver((RayCast3DNode) n, click2d, closest);
+                        }
+                        parent = parent.getParent();
+                    }
+                }
+//                // Let's interact - we mark the hit with a red dot.
+//                mark.setLocalTranslation(closest.getContactPoint());
+//                rootNode.attachChild(mark);
+            } else {
+                //lastHovered = null;
+//                // No hits? Then remove the red mark.
+//                rootNode.detachChild(mark);
+            }
+
+        }
+
+    }
+
+    /**
+     * Invokes a RayCast3DNodes onMouseOver method.
+     * @param r the hit RayCast3DNode
+     * @param click2d the screen pos
+     * @param closest the 3d hit params
+     */
+    private void invokeOnMouseOver(RayCast3DNode r, Vector2f click2d, CollisionResult closest) {
+        r.onRayCastMouseOver(click2d, closest);
+        lastHovered = r;
+    }
+
+    private void invokeOnMouseLeft(RayCast3DNode r, Vector2f click2d, CollisionResult closest) {
+        r.onRayCastMouseLeft(click2d, closest);
+    }
+
+    private void decideLeftOrOver(RayCast3DNode node, Vector2f click2d, CollisionResult closest) {
+
+        if (lastHovered != null && !node.equals(lastHovered)) {
+            invokeOnMouseLeft(lastHovered, click2d, closest);
+        }
+        invokeOnMouseOver(node, click2d, closest);
+    }
+
+    /**
      * This method is raised on a click on the left mouse button to 
      * check 3d click events (ray casts).
      * All Spatials that implement RayCast3DNode will be clickable and will
@@ -144,6 +269,12 @@ public class ScreenRayCast3D implements MouseInputListener {
      */
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
+
+
+        //==========================================================================
+        //===   Mouse Clicks
+        //==========================================================================
+
         if (!isPressed && name.equals(Mappings.RAYCAST_3D)) {
             // 1. Reset results list.
             CollisionResults results = new CollisionResults();
@@ -171,19 +302,16 @@ public class ScreenRayCast3D implements MouseInputListener {
                 // The closest collision point is what was truly hit:
                 CollisionResult closest = results.getClosestCollision();
                 Spatial n = closest.getGeometry();
-                lastHit = n;
                 Spatial parent;
 
                 if (n != null) {
                     if (n instanceof RayCast3DNode) {
-                        RayCast3DNode r = (RayCast3DNode) n;
-                        r.onRayCast3D(closest);
+                        invokeOnClick((RayCast3DNode) n, click2d, closest);
                     }
                     parent = n.getParent();
                     while (parent != null) {
                         if (parent instanceof RayCast3DNode) {
-                            RayCast3DNode r = (RayCast3DNode) parent;
-                            r.onRayCast3D(closest);
+                            invokeOnClick((RayCast3DNode) n, click2d, closest);
                         }
                         parent = parent.getParent();
                     }
@@ -192,10 +320,21 @@ public class ScreenRayCast3D implements MouseInputListener {
 //                mark.setLocalTranslation(closest.getContactPoint());
 //                rootNode.attachChild(mark);
             } else {
-                lastHit = null;
+                lastClicked = null;
 //                // No hits? Then remove the red mark.
 //                rootNode.detachChild(mark);
             }
         }
+    }
+
+    /**
+     * Invokes a RayCast3DNodes onClick method.
+     * @param r the hit RayCast3DNode
+     * @param click2d the screen pos
+     * @param closest the 3d hit params
+     */
+    private void invokeOnClick(RayCast3DNode r, Vector2f click2d, CollisionResult closest) {
+        r.onRayCastClick(click2d, closest);
+        lastClicked = r;
     }
 }

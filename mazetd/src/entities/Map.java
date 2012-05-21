@@ -39,11 +39,18 @@ import collisions.raycasts.ClickableGeometry;
 import collisions.raycasts.ScreenRayCast3D;
 import com.jme3.collision.CollisionResult;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
+import events.EventManager;
+import events.TimerEvent;
+import events.TimerEventListener;
 import mazetd.MazeTDGame;
 
 /**
@@ -57,7 +64,7 @@ public class Map extends Node {
     //==========================================================================
 
     /** default color of a square */
-    private static ColorRGBA SQUARE_COLOR = ColorRGBA.Green.clone();
+    private static ColorRGBA SQUARE_COLOR = new ColorRGBA(0, 1, 0, 0.1f);
     /** default size of a square */
     private static float SQUARE_SIZE = 0.9f;
     /** running id of the squares */
@@ -128,13 +135,19 @@ public class Map extends Node {
         // TODO: as parameter the array/list (or whatever) must be given, 
         // to generate the map.
 
-        for (int x = -5; x < 6; x++) {
-            for (int z = -5; z < 6; z++) {
+        Vector3f offset = new Vector3f(-totalWidth / 2, 0, -totalHeight / 2);
+
+        for (int x = 1; x < totalWidth - 1; x++) {
+            for (int z = 1; z < totalHeight - 1; z++) {
                 MapSquare m = new MapSquare();
+                Vector3f position = new Vector3f(x, 0, z);
+                position.addLocal(offset);
+
                 // do not touch the y-coord, go to the class MapSquare to change it!
-                m.setLocalTranslation(x, 0 ,z);
+                m.setLocalTranslation(position);
 
                 clickableMapElements.attachChild(m);
+                EventManager.getInstance().addTimerEventListener(m);
             }
         }
     }
@@ -154,13 +167,15 @@ public class Map extends Node {
      * Class for a map-square that represents a grid-square.
      * @author Hans Ferchland
      */
-    class MapSquare extends Node {
+    class MapSquare extends Node implements TimerEventListener {
         //==========================================================================
         //===   Private Fields
         //==========================================================================
 
         private Material material;
         private ClickableGeometry geometry;
+        private boolean hovered = false;
+        private ColorRGBA fadeColor = SQUARE_COLOR.clone();
         //==========================================================================
         //===   Methods & Constructor
         //==========================================================================
@@ -187,9 +202,20 @@ public class Map extends Node {
                  * Will be called if the square is clicked.
                  */
                 @Override
-                public void onRayCast3D(CollisionResult result) {
+                public void onRayCastClick(Vector2f mouse, CollisionResult result) {
                     // TODO: implement handling if a square is clicked
                     System.out.println(name + " clicked!");
+                }
+
+                @Override
+                public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
+                    System.out.println(name + " hovered!");
+                    hovered = true;
+                }
+
+                @Override
+                public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
+                    hovered = false;
                 }
             };
 
@@ -199,7 +225,9 @@ public class Map extends Node {
             material.setColor("Specular", ColorRGBA.White);
             material.setColor("Ambient", SQUARE_COLOR);   // ... color of this object
             material.setColor("Diffuse", SQUARE_COLOR);   // ... color of light being reflected
+            material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
             geometry.setMaterial(material);
+            geometry.setQueueBucket(Bucket.Translucent);
 
             float[] angles = {3 * (float) Math.PI / 2, 0, 0};
 
@@ -207,6 +235,26 @@ public class Map extends Node {
             geometry.setLocalTranslation(-SQUARE_SIZE / 2, -0.95f, SQUARE_SIZE / 2);
 
             this.attachChild(geometry);
+        }
+
+        @Override
+        public void onTimedEvent(TimerEvent t) {
+            if (hovered && fadeColor.a < 0.5f) {
+
+                fadeColor.a += 0.05f;
+                //fadeColor.clamp();
+
+            } else if (!hovered && fadeColor.a >= 0.1f) {
+                fadeColor.a -= 0.05f;
+            }
+            material.setColor("Ambient", fadeColor);   // ... color of this object
+            material.setColor("Diffuse", fadeColor);   // ... color of light being reflected
+
+        }
+
+        @Override
+        public float getPeriod() {
+            return 0.05f;
         }
     }
 }

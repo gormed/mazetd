@@ -37,6 +37,7 @@ package events;
 
 import com.jme3.input.InputManager;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import java.util.HashMap;
 import java.util.Map;
@@ -132,8 +133,12 @@ public class EventManager {
         inputManager.addMapping(mapping, keyTriggers);
     }
 
-    public void addMouseInputEvent(String mapping, MouseButtonTrigger... mouseTriggers) {
-        inputManager.addMapping(mapping, mouseTriggers);
+    public void addMouseButtonEvent(String mapping, MouseButtonTrigger... mouseButtonTriggers) {
+        inputManager.addMapping(mapping, mouseButtonTriggers);
+    }
+
+    public void addMouseMovementEvent(String mapping, MouseAxisTrigger... mouseAxisTriggers) {
+        inputManager.addMapping(mapping, mouseAxisTriggers);
     }
 
     public void addKeyInputListener(KeyInputListener inputListener, String... mappings) {

@@ -28,10 +28,10 @@
  * 
  * 
  * Project: MazeTD Project
- * File: RayCast3DNode.java
- * Type: collisions.raycasts.RayCast3DNode
+ * File: RayCast2DNode.java
+ * Type: collisions.raycasts.RayCast2DNode
  * 
- * Documentation created: 14.05.2012 - 18:59:39 by Hans Ferchland
+ * Documentation created: 21.05.2012 - 00:29:52 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package collisions.raycasts;
 
@@ -39,19 +39,15 @@ import com.jme3.collision.CollisionResult;
 import com.jme3.math.Vector2f;
 
 /**
- * This interface is for Spatials that can be added into scenegraph for 3d clicking.
+ * This interface is for Spatials that can be added into scenegraph 
+ * for 2d (GUI) clicking.
  * @author Hans Ferchland
  */
-public interface RayCast3DNode {
-    /**
-     * This method is executed if the Spatial implementing this method is clicked.
-     * Add the given spatial to the ScreenRayCast3D as clickable!
-     * 
-     * @param result the clicking result, including 3d-point, normal and some more
-     */
+public interface RayCast2DNode {
+
     public void onRayCastClick(Vector2f mouse, CollisionResult result);
-    
+
     public void onRayCastMouseOver(Vector2f mouse, CollisionResult result);
-    
+
     public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result);
 }

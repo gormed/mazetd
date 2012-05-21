@@ -199,6 +199,10 @@ public class MazeTDGame extends SimpleApplication {
         gamestateManager.update(tpf);
         // camera
         isoCameraControl.updateCamera(tpf);
+        // raycaster
+        rayCast3D.update(tpf);
+        // events
+        eventManager.update(tpf);
     }
 
     @Override
@@ -247,30 +251,37 @@ public class MazeTDGame extends SimpleApplication {
             if (!value) {
                 return;
             }
-
-            if (name.equals(INPUT_MAPPING_CAMERA_DEBUG)) {
-                if (flyCam.isEnabled()) {
-                    detachDebugCamera();
-                } else {
-                    attachDebugCamera();
-                }
-            } else if (name.equals(INPUT_MAPPING_EXIT)) {
-                stop();
-            } else if (name.equals(INPUT_MAPPING_CAMERA_POS)) {
-                if (cam != null) {
-                    Vector3f loc = cam.getLocation();
-                    Quaternion rot = cam.getRotation();
-                    System.out.println("Camera Position: ("
-                            + loc.x + ", " + loc.y + ", " + loc.z + ")");
-                    System.out.println("Camera Rotation: " + rot);
-                    System.out.println("Camera Direction: " + cam.getDirection());
-                }
-            } else if (name.equals(INPUT_MAPPING_MEMORY)) {
-                BufferUtils.printCurrentDirectMemory(null);
-            } else if (name.equals(INPUT_MAPPING_HIDE_STATS)) {
-                showFps = !showFps;
-                setDisplayFps(!showFps);
-                setDisplayStatView(!showFps);
+            switch (name) {
+                case INPUT_MAPPING_CAMERA_DEBUG:
+                    if (flyCam.isEnabled()) {
+                        detachDebugCamera();
+                    } else {
+                        attachDebugCamera();
+                    }
+                    break;
+                case INPUT_MAPPING_EXIT:
+                    stop();
+                    break;
+                case INPUT_MAPPING_CAMERA_POS:
+                    if (cam != null) {
+                        Vector3f loc = cam.getLocation();
+                        Quaternion rot = cam.getRotation();
+                        System.out.println("Camera Position: ("
+                                + loc.x + ", " + loc.y + ", " + loc.z + ")");
+                        System.out.println("Camera Rotation: " + rot);
+                        System.out.println("Camera Direction: " + cam.getDirection());
+                    }
+                    break;
+                case INPUT_MAPPING_MEMORY:
+                    BufferUtils.printCurrentDirectMemory(null);
+                    break;
+                case INPUT_MAPPING_HIDE_STATS:
+                    showFps = !showFps;
+                    setDisplayFps(!showFps);
+                    setDisplayStatView(!showFps);
+                    break;
+                default:
+                    return;
             }
 
         }

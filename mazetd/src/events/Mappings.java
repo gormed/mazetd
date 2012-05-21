@@ -10,4 +10,6 @@ package events;
  */
 public final class Mappings {
     public static String RAYCAST_3D = "Raycast_3D";
+    public static String RAYCAST_3D_MOVE = "Raycast_3D_Move";
+    
 }
