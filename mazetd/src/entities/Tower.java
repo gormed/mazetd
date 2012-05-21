@@ -35,25 +35,156 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities;
 
+import entities.geometry.ClickableGeometry;
+import com.jme3.collision.CollisionResult;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial.CullHint;
+import com.jme3.scene.shape.Cylinder;
+import com.jme3.scene.shape.Dome;
+import entities.base.AbstractEntity;
+import mazetd.MazeTDGame;
+
 /**
  * The class Tower.
- * @author Hady Khalifa
- * @version
+ * @author Hady Khalifa & Hans Ferchland
+ * @version 0.2
  */
-public class Tower {
+public class Tower extends AbstractEntity {
+    //==========================================================================
+    //===   Constants
+    //========================================================================== 
+
+    private static final int TOWER_SAMPLES = 20;
+    private static final float TOWER_HEIGHT = 1.2f;
+    private static final float TOWER_SIZE = 0.3f;
+    private static final float ROOF_SIZE = 0.4f;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    private ClickableGeometry roofGeometry;
+    private ClickableGeometry wallGeometry;
+    private Material roofMaterial;
+    private Material wallMaterial;
+    private Vector3f position;
 
-    
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-
-    private Tower(){
-        
+    public Tower(String name, Vector3f position) {
+        super(name);
+        this.position = position;
     }
+
+    @Override
+    public Node createGeometryNode(MazeTDGame game) {
+        super.createGeometryNode(game);
+
+        // materials
+        roofMaterial = new Material(
+                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        roofMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
+        roofMaterial.setColor("Specular", ColorRGBA.White);
+        roofMaterial.setColor("Ambient", ColorRGBA.Orange);   // ... color of this object
+        roofMaterial.setColor("Diffuse", ColorRGBA.Orange);   // ... color of light being reflected
+
+        wallMaterial = new Material(
+                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        wallMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
+        wallMaterial.setColor("Specular", ColorRGBA.White);
+        wallMaterial.setColor("Ambient", ColorRGBA.Gray);   // ... color of this object
+        wallMaterial.setColor("Diffuse", ColorRGBA.Gray);   // ... color of light being reflected
+
+        // geometry
+        float[] angles = {(float) Math.PI / 2, 0, 0};
+        // roof
+        Cylinder roof = new Cylinder(
+                TOWER_SAMPLES, 
+                TOWER_SAMPLES, 
+                ROOF_SIZE, 0, 
+                ROOF_SIZE, false, false);
+
+        roofGeometry = new TowerGeometry(
+                name + "_RoofGeometry", roof);
+        roofGeometry.setMaterial(roofMaterial);
+        //roofGeometry.setCullHint(CullHint.Never);
+        roofGeometry.setLocalTranslation(0, TOWER_HEIGHT + ROOF_SIZE / 2, 0);
+        roofGeometry.setLocalRotation(new Quaternion(angles));
+
+        // wall
+        Cylinder wall = new Cylinder(
+                TOWER_SAMPLES,
+                TOWER_SAMPLES,
+                TOWER_SIZE,
+                TOWER_HEIGHT,
+                true);
+        
+        
+        wallGeometry = new TowerGeometry(
+                name + "_WallGeometry", wall);
+        wallGeometry.setMaterial(wallMaterial);
+        //wallGeometry.setCullHint(CullHint.Never);
+        wallGeometry.setLocalTranslation(0, TOWER_HEIGHT / 2, 0);
+        wallGeometry.setLocalRotation(new Quaternion(angles));
+        
+        // hierarchy
+        geometryNode.attachChild(wallGeometry);
+        geometryNode.attachChild(roofGeometry);
+        // apply position to main node
+        geometryNode.setLocalTranslation(position);
+
+        return geometryNode;
+    }
+
+    /**
+     * Is called if geometry is clicked.
+     */
+    public void onClick() {
+    }
+
+    /**
+     * Is called if geometry is hovered.
+     */
+    public void onMouseOver() {
+    }
+
+    /**
+     * Is called if geometry is not hovered anymore.
+     */
+    public void onMouseLeft() {
+    }
+
+    @Override
+    protected void update(float tpf) {
+    }
+
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+    class TowerGeometry extends ClickableGeometry {
+
+        public TowerGeometry(String name, Mesh mesh) {
+            super(name, mesh);
+        }
+
+        @Override
+        public void onRayCastClick(Vector2f mouse, CollisionResult result) {
+            onClick();
+        }
+
+        @Override
+        public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
+            onMouseOver();
+        }
+
+        @Override
+        public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
+            onMouseLeft();
+        }
+    }
 }

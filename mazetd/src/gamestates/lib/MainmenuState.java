@@ -35,8 +35,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gamestates.lib;
 
-import collisions.raycasts.RayCast3DNode;
-import collisions.raycasts.ScreenRayCast3D;
+import events.RayCast3DNode;
+import events.ScreenRayCast3D;
 import com.jme3.collision.CollisionResult;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
@@ -49,6 +49,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import entities.Map;
+import entities.base.EntityManager;
 import gamestates.Gamestate;
 import gamestates.GamestateManager;
 import mazetd.MazeTDGame;
@@ -100,10 +101,15 @@ public class MainmenuState extends Gamestate {
         geom2.setMaterial(mat2);
 
         // add blue cube to scene
-        game.getRootNode().attachChild(geom);
+        
+        //game.getRootNode().attachChild(geom);
         // add red sphere to clickable 3d objects
-        ScreenRayCast3D.getInstance().addCollisonObject(geom2);
+        
+        //ScreenRayCast3D.getInstance().addCollisonObject(geom2);
 
+        EntityManager.getInstance().createTower(
+                "FirstTower", new Vector3f(0, 0, 0));
+        
         Map m = new Map();
         game.getRootNode().attachChild(m.getDecorativeMapElemetns());
 

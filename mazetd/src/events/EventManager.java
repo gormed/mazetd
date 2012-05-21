@@ -35,6 +35,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package events;
 
+import events.listener.KeyInputListener;
+import events.listener.TimerEventListener;
+import events.listener.MouseInputListener;
 import com.jme3.input.InputManager;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;

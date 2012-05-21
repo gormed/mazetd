@@ -35,8 +35,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities;
 
-import collisions.raycasts.ClickableGeometry;
-import collisions.raycasts.ScreenRayCast3D;
+import entities.geometry.ClickableGeometry;
+import events.ScreenRayCast3D;
 import com.jme3.collision.CollisionResult;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
@@ -50,7 +50,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 import events.EventManager;
 import events.TimerEvent;
-import events.TimerEventListener;
+import events.listener.TimerEventListener;
 import mazetd.MazeTDGame;
 
 /**
@@ -123,7 +123,7 @@ public class Map extends Node {
         float[] angles = {3 * (float) Math.PI / 2, 0, 0};
 
         groundPlane.setLocalRotation(new Quaternion(angles));
-        groundPlane.setLocalTranslation(-totalWidth / 2, -1, totalHeight / 2);
+        groundPlane.setLocalTranslation(-totalWidth / 2, 0, totalHeight / 2);
 
         decorativeMapElemetns.attachChild(groundPlane);
     }
@@ -232,7 +232,7 @@ public class Map extends Node {
             float[] angles = {3 * (float) Math.PI / 2, 0, 0};
 
             geometry.setLocalRotation(new Quaternion(angles));
-            geometry.setLocalTranslation(-SQUARE_SIZE / 2, -0.95f, SQUARE_SIZE / 2);
+            geometry.setLocalTranslation(-SQUARE_SIZE / 2, 0.05f, SQUARE_SIZE / 2);
 
             this.attachChild(geometry);
         }
