@@ -35,8 +35,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gamestates.lib;
 
-import events.RayCast3DNode;
-import events.ScreenRayCast3D;
+import events.raycast.RayCast3DNode;
+import events.raycast.ScreenRayCast3D;
 import com.jme3.collision.CollisionResult;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
@@ -52,6 +52,7 @@ import entities.Map;
 import entities.base.EntityManager;
 import gamestates.Gamestate;
 import gamestates.GamestateManager;
+import logic.Level;
 import mazetd.MazeTDGame;
 
 /**
@@ -107,20 +108,16 @@ public class MainmenuState extends Gamestate {
         
         //ScreenRayCast3D.getInstance().addCollisonObject(geom2);
 
-        EntityManager.getInstance().createTower(
-                "FirstTower", new Vector3f(0, 0, 0));
-        
-        Map m = new Map();
-        game.getRootNode().attachChild(m.getDecorativeMapElemetns());
+        Level.getInstance().initialize();
 
         // add two lights to scene
         ambientLight = new AmbientLight();
-        ambientLight.setColor(ColorRGBA.Gray);
+        ambientLight.setColor(ColorRGBA.DarkGray);
 
         pointLight = new PointLight();
-        pointLight.setColor(new ColorRGBA(1, 1, 1, 1f));
-        pointLight.setRadius(40);
-        pointLight.setPosition(new Vector3f(0, 10, 0));
+        pointLight.setColor(new ColorRGBA(1f, 1f, 1f, 1f));
+        pointLight.setRadius(60);
+        pointLight.setPosition(new Vector3f(0, 20, -10));
 
         game.getRootNode().addLight(pointLight);
         game.getRootNode().addLight(ambientLight);

@@ -42,12 +42,11 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Cylinder;
-import com.jme3.scene.shape.Dome;
-import entities.base.AbstractEntity;
+import entities.base.ClickableEntity;
 import mazetd.MazeTDGame;
 
 /**
@@ -55,7 +54,7 @@ import mazetd.MazeTDGame;
  * @author Hady Khalifa & Hans Ferchland
  * @version 0.2
  */
-public class Tower extends AbstractEntity {
+public class Tower extends ClickableEntity {
     //==========================================================================
     //===   Constants
     //========================================================================== 
@@ -67,8 +66,8 @@ public class Tower extends AbstractEntity {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private ClickableGeometry roofGeometry;
-    private ClickableGeometry wallGeometry;
+    private Geometry roofGeometry;
+    private Geometry wallGeometry;
     private Material roofMaterial;
     private Material wallMaterial;
     private Vector3f position;
@@ -109,7 +108,7 @@ public class Tower extends AbstractEntity {
                 ROOF_SIZE, 0, 
                 ROOF_SIZE, false, false);
 
-        roofGeometry = new TowerGeometry(
+        roofGeometry = new Geometry(
                 name + "_RoofGeometry", roof);
         roofGeometry.setMaterial(roofMaterial);
         //roofGeometry.setCullHint(CullHint.Never);
@@ -125,7 +124,7 @@ public class Tower extends AbstractEntity {
                 true);
         
         
-        wallGeometry = new TowerGeometry(
+        wallGeometry = new Geometry(
                 name + "_WallGeometry", wall);
         wallGeometry.setMaterial(wallMaterial);
         //wallGeometry.setCullHint(CullHint.Never);
@@ -133,58 +132,34 @@ public class Tower extends AbstractEntity {
         wallGeometry.setLocalRotation(new Quaternion(angles));
         
         // hierarchy
-        geometryNode.attachChild(wallGeometry);
-        geometryNode.attachChild(roofGeometry);
+        clickableGeometryNode.attachChild(wallGeometry);
+        clickableGeometryNode.attachChild(roofGeometry);
         // apply position to main node
-        geometryNode.setLocalTranslation(position);
+        clickableGeometryNode.setLocalTranslation(position);
 
-        return geometryNode;
-    }
-
-    /**
-     * Is called if geometry is clicked.
-     */
-    public void onClick() {
-    }
-
-    /**
-     * Is called if geometry is hovered.
-     */
-    public void onMouseOver() {
-    }
-
-    /**
-     * Is called if geometry is not hovered anymore.
-     */
-    public void onMouseLeft() {
+        return clickableGeometryNode;
     }
 
     @Override
     protected void update(float tpf) {
     }
 
+    @Override
+    public void onClick() {
+        System.out.println("You clicked tower: #" + getEntityId() + " - " + getName());
+    }
+
+    @Override
+    public void onMouseOver() {
+        
+    }
+
+    @Override
+    public void onMouseLeft() {
+        
+    }
+
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
-    class TowerGeometry extends ClickableGeometry {
-
-        public TowerGeometry(String name, Mesh mesh) {
-            super(name, mesh);
-        }
-
-        @Override
-        public void onRayCastClick(Vector2f mouse, CollisionResult result) {
-            onClick();
-        }
-
-        @Override
-        public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
-            onMouseOver();
-        }
-
-        @Override
-        public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
-            onMouseLeft();
-        }
-    }
 }

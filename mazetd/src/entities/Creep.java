@@ -57,6 +57,7 @@ public class Creep extends AbstractEntity {
     @Override
     protected void update(float tpf) {
     }
+
     //==========================================================================
     //===   Inner Classes
     //==========================================================================

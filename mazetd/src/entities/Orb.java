@@ -36,13 +36,14 @@
 package entities;
 
 import entities.base.AbstractEntity;
+import entities.base.ClickableEntity;
 
 /**
  * The class Orb.
  * @author Hans Ferchland
  * @version
  */
-public class Orb extends AbstractEntity {
+public class Orb extends ClickableEntity {
 
     //==========================================================================
     //===   Private Fields
@@ -58,7 +59,23 @@ public class Orb extends AbstractEntity {
     protected void update(float tpf) {
         
     }
+    
+    @Override
+    public void onClick() {
+            
+    }
+
+    @Override
+    public void onMouseOver() {
+        
+    }
+
+    @Override
+    public void onMouseLeft() {
+        
+    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+
 }

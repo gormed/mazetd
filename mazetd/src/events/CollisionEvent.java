@@ -28,38 +28,41 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: CollisionEvent.java
+ * Type: events.CollisionEvent
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 22.05.2012 - 23:56:25 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
+package events;
 
-import events.raycast.RayCast3DNode;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+import com.jme3.collision.Collidable;
 
 /**
- * The class ClickableGeometry.
+ * The class CollisionEvent.
  * @author Hans Ferchland
  * @version
  */
-public abstract class ClickableGeometry extends Geometry implements RayCast3DNode {
+public class CollisionEvent extends AbstractEvent {
 
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    private Collidable self;
+    private Collidable with;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-    public ClickableGeometry(String name) {
-        super(name);
+    public CollisionEvent(Object source, Collidable self, Collidable with) {
+        super(source);
+        this.self = self;
+        this.with = with;
     }
 
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
+    public Collidable getSelf() {
+        return self;
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
+
+    public Collidable getWith() {
+        return with;
+    }
 }

@@ -45,15 +45,15 @@ import mazetd.MazeTDGame;
  */
 public abstract class AbstractEntity {
     //==========================================================================
-    //===   private & protected Fields
+    //===   private, package & protected Fields
     //==========================================================================
 
     /** the unique id of the entity! */
-    private int id;
+    int id;
     /** the desired name of an entity, could be twice in the game. */
     protected String name;
     /** The Node for the geometry of this entity. */
-    protected Node geometryNode;
+    Node geometryNode;
 
     //==========================================================================
     //===   Methods & Constructor
@@ -77,17 +77,17 @@ public abstract class AbstractEntity {
         this.name = name;
         this.id = EntityManager.getContinousEntityID();
     }
-    
+
     /**
      * Creates the geometry node and returns it. Generally all geometry of an 
      * entity is placed unter this node! This node will be added to se SG.
      * @return the created main-geometry node
      */
     public Node createGeometryNode(MazeTDGame game) {
-        geometryNode = new Node( name + "s_GeometryNode");
+        geometryNode = new Node(name + "s_GeometryNode");
         return geometryNode;
     }
-    
+
     /**
      * Updates the entity every game-tick.
      * @param tpf the time between the last update call
@@ -101,7 +101,6 @@ public abstract class AbstractEntity {
     public Node getGeometryNode() {
         return geometryNode;
     }
-    
 
     /**
      * Gets the entity-id from this entity; this id is unique!
@@ -118,6 +117,8 @@ public abstract class AbstractEntity {
     public String getName() {
         return name;
     }
+
+
     //==========================================================================
     //===   Inner Classes
     //==========================================================================

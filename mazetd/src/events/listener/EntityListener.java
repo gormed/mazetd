@@ -28,26 +28,31 @@
  * 
  * 
  * Project: MazeTD Project
- * File: RayCast2DNode.java
- * Type: collisions.raycasts.RayCast2DNode
+ * File: EntityListener.java
+ * Type: events.listener.EntityListener
  * 
- * Documentation created: 21.05.2012 - 00:29:52 by Hans Ferchland
+ * Documentation created: 22.05.2012 - 21:52:23 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package events;
+package events.listener;
 
-import com.jme3.collision.CollisionResult;
-import com.jme3.math.Vector2f;
+import events.EntityEvent;
+import java.util.EventListener;
 
 /**
- * This interface is for Spatials that can be added into scenegraph 
- * for 2d (GUI) clicking.
+ * The interface EntityListener.
  * @author Hans Ferchland
+ * @version
  */
-public interface RayCast2DNode {
+public interface EntityListener extends EventListener {
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
 
-    public void onRayCastClick(Vector2f mouse, CollisionResult result);
-
-    public void onRayCastMouseOver(Vector2f mouse, CollisionResult result);
-
-    public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result);
+    //==========================================================================
+    //===   Methods & Constructor
+    //==========================================================================
+    public void onAction(EntityEvent entityEvent);
+    //==========================================================================
+    //===   Inner Classes
+    //==========================================================================
 }

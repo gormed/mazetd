@@ -36,7 +36,7 @@
 package entities;
 
 import entities.geometry.ClickableGeometry;
-import events.ScreenRayCast3D;
+import events.raycast.ScreenRayCast3D;
 import com.jme3.collision.CollisionResult;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
@@ -64,7 +64,7 @@ public class Map extends Node {
     //==========================================================================
 
     /** default color of a square */
-    private static ColorRGBA SQUARE_COLOR = new ColorRGBA(0, 1, 0, 0.1f);
+    private static ColorRGBA SQUARE_COLOR = new ColorRGBA(0, 1, 0, 0.0f);
     /** default size of a square */
     private static float SQUARE_SIZE = 0.9f;
     /** running id of the squares */
@@ -168,6 +168,7 @@ public class Map extends Node {
      * @author Hans Ferchland
      */
     class MapSquare extends Node implements TimerEventListener {
+        public static final float MAX_ALPHA_FADE = 0.4f;
         //==========================================================================
         //===   Private Fields
         //==========================================================================
@@ -239,13 +240,13 @@ public class Map extends Node {
 
         @Override
         public void onTimedEvent(TimerEvent t) {
-            if (hovered && fadeColor.a < 0.5f) {
+            if (hovered && fadeColor.a < MAX_ALPHA_FADE) {
 
                 fadeColor.a += 0.05f;
                 //fadeColor.clamp();
 
-            } else if (!hovered && fadeColor.a >= 0.1f) {
-                fadeColor.a -= 0.05f;
+            } else if (!hovered && fadeColor.a >= 0.0f) {
+                fadeColor.a -= 0.01f;
             }
             material.setColor("Ambient", fadeColor);   // ... color of this object
             material.setColor("Diffuse", fadeColor);   // ... color of light being reflected
@@ -254,7 +255,7 @@ public class Map extends Node {
 
         @Override
         public float getPeriod() {
-            return 0.05f;
+            return 0.02f;
         }
     }
 }

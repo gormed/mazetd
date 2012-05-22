@@ -28,38 +28,26 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: RayCast2DNode.java
+ * Type: collisions.raycasts.RayCast2DNode
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 21.05.2012 - 00:29:52 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
+package events.raycast;
 
-import events.raycast.RayCast3DNode;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+import com.jme3.collision.CollisionResult;
+import com.jme3.math.Vector2f;
 
 /**
- * The class ClickableGeometry.
+ * This interface is for Spatials that can be added into scenegraph 
+ * for 2d (GUI) clicking.
  * @author Hans Ferchland
- * @version
  */
-public abstract class ClickableGeometry extends Geometry implements RayCast3DNode {
+public interface RayCast2DNode {
 
-    //==========================================================================
-    //===   Private Fields
-    //==========================================================================
-    //==========================================================================
-    //===   Methods & Constructor
-    //==========================================================================
-    public ClickableGeometry(String name) {
-        super(name);
-    }
+    public void onRayCastClick(Vector2f mouse, CollisionResult result);
 
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
-    }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
+    public void onRayCastMouseOver(Vector2f mouse, CollisionResult result);
+
+    public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result);
 }

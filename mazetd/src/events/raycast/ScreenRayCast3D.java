@@ -33,7 +33,7 @@
  * 
  * Documentation created: 14.05.2012 - 18:59:39 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package events;
+package events.raycast;
 
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
@@ -104,7 +104,7 @@ public class ScreenRayCast3D implements MouseInputListener {
     //==========================================================================
     //===   Static Fields
     //==========================================================================
-    public static final float MOUSE_MOVEMENT_TOLERANCE = 0.001f;
+    public static final float MOUSE_MOVEMENT_TOLERANCE = 0.25f;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -211,12 +211,16 @@ public class ScreenRayCast3D implements MouseInputListener {
 
                 if (n != null) {
                     if (n instanceof RayCast3DNode) {
-                        decideLeftOrOver((RayCast3DNode) n, click2d, closest);
+                        decideLeftOrOver(n, click2d, closest);
                     }
                     parent = n.getParent();
                     while (parent != null) {
                         if (parent instanceof RayCast3DNode) {
-                            decideLeftOrOver((RayCast3DNode) n, click2d, closest);
+                            try {
+                                decideLeftOrOver(parent, click2d, closest);
+                            } catch (ClassCastException castException) {
+                                System.err.println(castException.getStackTrace());
+                            }
                         }
                         parent = parent.getParent();
                     }
@@ -245,16 +249,34 @@ public class ScreenRayCast3D implements MouseInputListener {
         lastHovered = r;
     }
 
+    /**
+     * Invokes a RayCast3DNodes onMouseLeft method.
+     * @param r the hit RayCast3DNode
+     * @param click2d the screen pos
+     * @param closest the 3d hit params
+     */
     private void invokeOnMouseLeft(RayCast3DNode r, Vector2f click2d, CollisionResult closest) {
         r.onRayCastMouseLeft(click2d, closest);
     }
 
-    private void decideLeftOrOver(RayCast3DNode node, Vector2f click2d, CollisionResult closest) {
-
-        if (lastHovered != null && !node.equals(lastHovered)) {
-            invokeOnMouseLeft(lastHovered, click2d, closest);
+    /**
+     * Desides if a node was left with mouse-pointer or entered.
+     * @param node
+     * @param click2d
+     * @param closest 
+     */
+    private void decideLeftOrOver(Spatial spatial, Vector2f click2d, CollisionResult closest) {
+        if (spatial instanceof RayCast3DNode) {
+            try {
+                RayCast3DNode node = (RayCast3DNode) spatial;
+                if (lastHovered != null && !node.equals(lastHovered)) {
+                    invokeOnMouseLeft(lastHovered, click2d, closest);
+                }
+                invokeOnMouseOver(node, click2d, closest);
+            } catch (ClassCastException castException) {
+                System.err.println(castException.getStackTrace());
+            }
         }
-        invokeOnMouseOver(node, click2d, closest);
     }
 
     /**
@@ -305,14 +327,10 @@ public class ScreenRayCast3D implements MouseInputListener {
                 Spatial parent;
 
                 if (n != null) {
-                    if (n instanceof RayCast3DNode) {
-                        invokeOnClick((RayCast3DNode) n, click2d, closest);
-                    }
+                    invokeOnClick(n, click2d, closest);
                     parent = n.getParent();
                     while (parent != null) {
-                        if (parent instanceof RayCast3DNode) {
-                            invokeOnClick((RayCast3DNode) n, click2d, closest);
-                        }
+                        invokeOnClick(parent, click2d, closest);
                         parent = parent.getParent();
                     }
                 }
@@ -333,8 +351,16 @@ public class ScreenRayCast3D implements MouseInputListener {
      * @param click2d the screen pos
      * @param closest the 3d hit params
      */
-    private void invokeOnClick(RayCast3DNode r, Vector2f click2d, CollisionResult closest) {
-        r.onRayCastClick(click2d, closest);
-        lastClicked = r;
+    private void invokeOnClick(Spatial spatial, Vector2f click2d, CollisionResult closest) {
+        if (spatial instanceof RayCast3DNode) {
+            try {
+                RayCast3DNode node = (RayCast3DNode) spatial;
+                node.onRayCastClick(click2d, closest);
+                lastClicked = node;
+
+            } catch (ClassCastException castException) {
+                System.err.println(castException.getStackTrace());
+            }
+        }
     }
 }

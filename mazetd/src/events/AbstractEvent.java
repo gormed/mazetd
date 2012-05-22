@@ -31,17 +31,27 @@
  * File: AbstractEvent.java
  * Type: events.AbstractEvent
  * 
- * Documentation created: 13.05.2012 - 23:22:39 by Hans
+ * Documentation created: 13.05.2012 - 23:22:39 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package events;
+
+import java.util.EventObject;
 
 /**
  * The class AbstractEvenet for all events in MazeTD.
  * @author Hans Ferchland
  */
-public abstract class AbstractEvent {
+public abstract class AbstractEvent extends EventObject {
     
     private int eventID = EventManager.getContiniousEventID();
+
+    public AbstractEvent(Object source) {
+        super(source);
+    }
     
-    public abstract void onAction(Object sender);
+    public int getEventID() {
+        return eventID;
+    }
+    
+    
 }

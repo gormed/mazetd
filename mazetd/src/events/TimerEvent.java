@@ -15,12 +15,10 @@ import java.util.EventObject;
  * 
  * @author Hans Ferchland
  */
-public class TimerEvent extends EventObject {
+public class TimerEvent extends AbstractEvent {
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
     /** The execution time. */
-    float executionTime = 0;
+    float timeGap = 0;
 
     /**
      * Instantiates a new timed event.
@@ -32,7 +30,7 @@ public class TimerEvent extends EventObject {
      */
     public TimerEvent(Object source, float time) {
         super(source);
-        executionTime = time;
+        timeGap = time;
     }
 
     /**
@@ -40,7 +38,7 @@ public class TimerEvent extends EventObject {
      * 
      * @return the execution time
      */
-    public float getExecutionTime() {
-        return executionTime;
+    public float getTimeGap() {
+        return timeGap;
     }
 }

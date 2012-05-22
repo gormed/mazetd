@@ -35,9 +35,10 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities.base;
 
-import events.ScreenRayCast3D;
+import events.raycast.ScreenRayCast3D;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import entities.Creep;
 import entities.Tower;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,11 +72,12 @@ public class EntityManager {
     private static class EntityManagerHolder {
 
         private static final EntityManager INSTANCE = new EntityManager();
-    }    
+    }
     //==========================================================================
     //===   Static Fields & Methods
     //==========================================================================
     private static int runningEntityID = 0;
+
     static int getContinousEntityID() {
         return runningEntityID++;
     }
@@ -88,6 +90,7 @@ public class EntityManager {
     //==========================================================================
     //===   Methods
     //==========================================================================
+
     /**
      * This method adds any given AbstractEntity to the EntityManagers hashmap, 
      * so it will be updated!
@@ -100,6 +103,7 @@ public class EntityManager {
     private AbstractEntity addEntity(AbstractEntity entity) {
         return entityHashMap.put(entity.getEntityId(), entity);
     }
+
     /**
      * This method will remove a given entity from the EntityManagers hashmap. 
      * It wont be updated anymore!
@@ -112,7 +116,7 @@ public class EntityManager {
     public AbstractEntity removeEntity(int id) {
         return entityHashMap.remove(id);
     }
-    
+
     /**
      * Updates all the entitys in game.
      * @param tpf the time between the last update call
@@ -122,15 +126,31 @@ public class EntityManager {
             e.getValue().update(tpf);
         }
     }
-    
+
+    /**
+     * Creates a tower on a given position.
+     * @param name the towers name
+     * @param position the towers position
+     * @return the tower just created
+     */
     public Tower createTower(String name, Vector3f position) {
         Tower t = new Tower(name, position);
-        
+
         addEntity(t);
         Node geometryNode = t.createGeometryNode(game);
-        rayCast3D.addCollisonObject(geometryNode);
-        
+        //rayCast3D.addCollisonObject(geometryNode);
+
         return t;
+    }
+
+    public Creep createCreep(String name, Vector3f position) {
+        Creep c = new Creep(name);
+        
+        addEntity(c);
+        Node geometryNode = c.createGeometryNode(game);
+        //rayCast3D.addCollisonObject(geometryNode);
+
+        return c;
     }
     //==========================================================================
     //===   Inner Classes
