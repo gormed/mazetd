@@ -28,38 +28,40 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: CollidableNode.java
+ * Type: entities.nodes.CollidableNode
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 23.05.2012 - 19:21:47 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
+package entities.nodes;
 
-import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+import entities.base.AbstractEntity;
+import entities.base.CollidableEntity;
 
 /**
- * The class ClickableGeometry.
+ * The class CollidableNode.
  * @author Hans Ferchland
  * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
-
+public class CollidableEntityNode extends EntityNode {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+
+    protected CollidableEntity entity;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-    public ClickableGeometry(String name) {
+
+    public CollidableEntityNode(String name) {
         super(name);
     }
 
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
+    public CollidableEntityNode(String name, CollidableEntity entity) {
+        super(entity, name);
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
+    
+    public CollidableEntity getEntity() {
+        return entity;
+    }
 }

@@ -28,38 +28,35 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: SimpleClickable.java
+ * Type: entities.base.SimpleClickable
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 23.05.2012 - 20:12:58 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
+package entities.base.low;
 
-import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+import entities.nodes.ClickableEntityNode;
 
 /**
- * The class ClickableGeometry.
+ * The inteface clickable for clickable entities.
  * @author Hans Ferchland
- * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
+public interface SimpleClickable {
 
-    //==========================================================================
-    //===   Private Fields
-    //==========================================================================
-    //==========================================================================
-    //===   Methods & Constructor
-    //==========================================================================
-    public ClickableGeometry(String name) {
-        super(name);
-    }
+    public ClickableEntityNode getClickableEntityNode();
 
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
-    }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
+    /**
+     * Is called if geometry is clicked.
+     */
+    public void onClick();
+
+    /**
+     * Is called if geometry is hovered.
+     */
+    public void onMouseOver();
+
+    /**
+     * Is called if geometry is not hovered anymore.
+     */
+    public void onMouseLeft();
 }

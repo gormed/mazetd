@@ -28,37 +28,30 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: EntityListener.java
+ * Type: events.listener.EntityListener
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 22.05.2012 - 21:52:23 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
+package eventsystem.listener;
 
-import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+import eventsystem.events.EntityEvent;
+import java.util.EventListener;
 
 /**
- * The class ClickableGeometry.
+ * The interface EntityListener.
  * @author Hans Ferchland
  * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
-
+public interface EntityListener extends EventListener {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-    public ClickableGeometry(String name) {
-        super(name);
-    }
-
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
-    }
+    public void onAction(EntityEvent entityEvent);
     //==========================================================================
     //===   Inner Classes
     //==========================================================================

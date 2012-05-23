@@ -40,15 +40,16 @@ import com.jme3.scene.Node;
 import entities.Map;
 import entities.Tower;
 import entities.base.EntityManager;
-import events.EntityEvent;
-import events.EntityEvent.EntityEventType;
-import events.EventManager;
-import events.listener.EntityListener;
-import events.raycast.ScreenRayCast3D;
+import eventsystem.events.EntityEvent;
+import eventsystem.events.EntityEvent.EntityEventType;
+import eventsystem.EventManager;
+import eventsystem.listener.EntityListener;
+import eventsystem.port.ScreenRayCast3D;
 import mazetd.MazeTDGame;
 
 /**
- *
+ * The class Level is the main context of the game. It manages all 
+ * enitiy creation and destruction.
  * @author Hans Ferchland
  */
 public class Level implements EntityListener {
@@ -80,20 +81,24 @@ public class Level implements EntityListener {
     //===   Private Fields
     //==========================================================================
     private MazeTDGame game = MazeTDGame.getInstance();
+    private boolean initialized = false;
     private EntityManager entityManager = EntityManager.getInstance();
     private EventManager eventManager = EventManager.getInstance();
     private ScreenRayCast3D rayCast3D = ScreenRayCast3D.getInstance();
     private Node mainLevelNode;
     private Node staticLevelElements;
     private Node dynamicLevelElements;
+    private Map map;
     //==========================================================================
     //===   Methods
     //==========================================================================
 
     /**
-     * initializes the level for the first time.
+     * Initializes the level for the first time or after destroyed.
      */
     public void initialize() {
+        if (isInitialized())
+            return;
         mainLevelNode = new Node("MainLevelNode");
         staticLevelElements = new Node("StaticLevelElements");
         dynamicLevelElements = new Node("DynamicLevelElements");
@@ -102,20 +107,54 @@ public class Level implements EntityListener {
 
         setupLevelContent();
         
-        
+        game.getRootNode().attachChild(mainLevelNode);
+        initialized = true;
     }
 
+    /**
+     * Setup the level for a new game.
+     */
     private void setupLevelContent() {
 
-
-        Map m = new Map();
-        game.getRootNode().attachChild(m.getDecorativeMapElemetns());
-
+        // Setup Grid and Map
+        map = new Map();
+        staticLevelElements.attachChild(map.getDecorativeMapElements());
+        // add tower (for test)
         Tower t = entityManager.createTower(
                 "FirstTower", new Vector3f(0, 0, 0));
         rayCast3D.addCollisonObject(t.getGeometryNode());
         
+        // add the level as a entity-listener
         eventManager.addEntityListener(this, t);
+    }
+    
+    /**
+     * Updates the level components.
+     * @param tpf 
+     */
+    public void update(float tpf) {
+        
+    }
+    
+    /**
+     * Destroys all level attributes so it will have to be initialized again.
+     */
+    public void destroy() {
+        staticLevelElements.detachAllChildren();
+        dynamicLevelElements.detachAllChildren();
+        mainLevelNode.detachAllChildren();
+        
+        game.getRootNode().detachChild(mainLevelNode);
+        initialized = false;
+    }
+    
+    /**
+     * Checks if the level is initiliazed already.
+     * @return true if initialize() was called, false if destroy() was called
+     * or initialize() was not called.
+     */
+    public boolean isInitialized() {
+        return initialized;
     }
 
     @Override

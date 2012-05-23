@@ -28,38 +28,70 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: ClickableNode.java
+ * Type: entities.nodes.ClickableNode
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 23.05.2012 - 19:21:34 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
+package entities.nodes;
 
+import com.jme3.collision.CollisionResult;
+import com.jme3.math.Vector2f;
+import entities.base.ClickableEntity;
+import eventsystem.EntityHandler;
+import eventsystem.events.EntityEvent.EntityEventType;
 import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 
 /**
- * The class ClickableGeometry.
+ * The class ClickableEntityNode for all the entitys geometry 
+ * that will be clickable.
  * @author Hans Ferchland
- * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
-
+public class ClickableEntityNode extends EntityNode implements Clickable3D {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+
+    protected ClickableEntity entity;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-    public ClickableGeometry(String name) {
-        super(name);
-    }
-
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
-    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+
+    /**
+     * Contructor of the node for the clickable geometry.
+     * @param name the name of the node
+     */
+    public ClickableEntityNode(String name, ClickableEntity entity) {
+        super(name);
+        this.entity = entity;
+    }
+
+    @Override
+    public void onRayCastClick(Vector2f mouse, CollisionResult result) {
+        entity.onClick();
+        EntityHandler.getInstance().invokeEntityAction(
+                EntityEventType.Click, entity, mouse, result);
+    }
+
+    @Override
+    public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
+        entity.onMouseOver();
+        EntityHandler.getInstance().invokeEntityAction(
+                EntityEventType.MouseOver, entity, mouse, result);
+    }
+
+    @Override
+    public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
+        entity.onMouseLeft();
+        EntityHandler.getInstance().invokeEntityAction(
+                EntityEventType.MouseLeft, entity, mouse, result);
+    }
+
+    @Override
+    public ClickableEntity getEntity() {
+        return entity;
+    }
 }

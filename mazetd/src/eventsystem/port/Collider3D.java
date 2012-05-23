@@ -28,37 +28,48 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: Collider3D.java
+ * Type: eventsystem.port.Collider3D
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 23.05.2012 - 21:47:57 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
-
-import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+package eventsystem.port;
 
 /**
- * The class ClickableGeometry.
+ *
  * @author Hans Ferchland
- * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
+public class Collider3D {
+    //==========================================================================
+    //===   Singleton
+    //==========================================================================
 
+    /**
+     * The hidden constructor of Collider3D.
+     */
+    private Collider3D() {
+    }
+
+    /**
+     * The static method to retrive the one and only instance of Collider3D.
+     */
+    public static Collider3D getInstance() {
+        return Collider3DHolder.INSTANCE;
+    }
+
+    /**
+     * The holder-class Collider3DHolder for the Collider3D.
+     */
+    private static class Collider3DHolder {
+
+        private static final Collider3D INSTANCE = new Collider3D();
+    }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
     //==========================================================================
-    //===   Methods & Constructor
+    //===   Methods
     //==========================================================================
-    public ClickableGeometry(String name) {
-        super(name);
-    }
-
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
-    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================

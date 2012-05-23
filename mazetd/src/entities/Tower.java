@@ -35,15 +35,11 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities;
 
-import entities.geometry.ClickableGeometry;
-import com.jme3.collision.CollisionResult;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
 import entities.base.ClickableEntity;
@@ -81,8 +77,8 @@ public class Tower extends ClickableEntity {
     }
 
     @Override
-    public Node createGeometryNode(MazeTDGame game) {
-        super.createGeometryNode(game);
+    public Node createNode(MazeTDGame game) {
+        super.createNode(game);
 
         // materials
         roofMaterial = new Material(
@@ -132,12 +128,12 @@ public class Tower extends ClickableEntity {
         wallGeometry.setLocalRotation(new Quaternion(angles));
         
         // hierarchy
-        clickableGeometryNode.attachChild(wallGeometry);
-        clickableGeometryNode.attachChild(roofGeometry);
+        clickableEntityNode.attachChild(wallGeometry);
+        clickableEntityNode.attachChild(roofGeometry);
         // apply position to main node
-        clickableGeometryNode.setLocalTranslation(position);
+        clickableEntityNode.setLocalTranslation(position);
 
-        return clickableGeometryNode;
+        return clickableEntityNode;
     }
 
     @Override

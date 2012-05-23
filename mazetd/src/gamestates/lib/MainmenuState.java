@@ -35,8 +35,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gamestates.lib;
 
-import events.raycast.RayCast3DNode;
-import events.raycast.ScreenRayCast3D;
 import com.jme3.collision.CollisionResult;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
@@ -45,11 +43,9 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
-import entities.Map;
-import entities.base.EntityManager;
+import entities.geometry.ClickableGeometry;
 import gamestates.Gamestate;
 import gamestates.GamestateManager;
 import logic.Level;
@@ -77,6 +73,10 @@ public class MainmenuState extends Gamestate {
     @Override
     protected void loadContent(MazeTDGame game) {
         this.game = game;
+        test();
+    }
+
+    private void test() {
         ////////////////////////////////////////////////////////////////
         //                      TESTING CODE
         ////////////////////////////////////////////////////////////////
@@ -92,7 +92,20 @@ public class MainmenuState extends Gamestate {
 
 
         Sphere s = new Sphere(10, 10, 1);
-        ClickableGeometry geom2 = new ClickableGeometry("Sphere", s);
+        ClickableGeometry geom2 = new ClickableGeometry("Sphere", s) {
+
+            @Override
+            public void onRayCastClick(Vector2f mouse, CollisionResult result) {
+            }
+
+            @Override
+            public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
+            }
+
+            @Override
+            public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
+            }
+        };
         geom2.setLocalTranslation(5, 0, 0);
 
         Material mat2 = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
@@ -102,10 +115,10 @@ public class MainmenuState extends Gamestate {
         geom2.setMaterial(mat2);
 
         // add blue cube to scene
-        
+
         //game.getRootNode().attachChild(geom);
         // add red sphere to clickable 3d objects
-        
+
         //ScreenRayCast3D.getInstance().addCollisonObject(geom2);
 
         Level.getInstance().initialize();
@@ -129,26 +142,5 @@ public class MainmenuState extends Gamestate {
         game.getRootNode().detachAllChildren();
         game.getRootNode().removeLight(ambientLight);
         game.getRootNode().removeLight(pointLight);
-    }
-
-    class ClickableGeometry extends Geometry implements RayCast3DNode {
-
-        public ClickableGeometry(String name, Mesh mesh) {
-            super(name, mesh);
-        }
-
-        @Override
-        public void onRayCastClick(Vector2f mouse, CollisionResult result) {
-            System.out.println("Hello Picking!");
-        }
-
-        @Override
-        public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
-        }
-
-        @Override
-        public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
-            
-        }
     }
 }

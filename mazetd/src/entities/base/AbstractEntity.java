@@ -83,7 +83,7 @@ public abstract class AbstractEntity {
      * entity is placed unter this node! This node will be added to se SG.
      * @return the created main-geometry node
      */
-    public Node createGeometryNode(MazeTDGame game) {
+    public Node createNode(MazeTDGame game) {
         geometryNode = new Node(name + "s_GeometryNode");
         return geometryNode;
     }

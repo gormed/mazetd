@@ -28,38 +28,57 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: CollidableEntity.java
+ * Type: entities.base.CollidableEntity
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 23.05.2012 - 16:45:05 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
+package entities.base;
 
-import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+import com.jme3.collision.CollisionResults;
+import entities.base.low.SimpleCollidable;
+import com.bulletphysics.collision.broadphase.Dbvt.Node;
+import entities.nodes.ClickableEntityNode;
+import entities.nodes.CollidableEntityNode;
+import mazetd.MazeTDGame;
 
 /**
- * The class ClickableGeometry.
+ * The class CollidableEntity.
  * @author Hans Ferchland
  * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
+public abstract class CollidableEntity extends AbstractEntity implements SimpleCollidable {
 
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    protected CollidableEntityNode collidableEntityNode;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-    public ClickableGeometry(String name) {
+
+    public CollidableEntity(String name) {
         super(name);
     }
 
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
+    @Override
+    protected abstract void update(float tpf);
+
+    @Override
+    public CollidableEntityNode createNode(MazeTDGame game) {
+
+        collidableEntityNode =
+                new CollidableEntityNode(name + "s_GeometryNode", this);
+        super.createNode(game).attachChild(collidableEntityNode);
+
+        return collidableEntityNode;
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
+
+    @Override
+    public CollidableEntityNode getCollidableEntityNode() {
+        return collidableEntityNode;
+    }
+
+    @Override
+    public abstract void onCollision(CollisionResults collisionResults);
 }

@@ -35,7 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities.base;
 
-import events.raycast.ScreenRayCast3D;
+import eventsystem.port.ScreenRayCast3D;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entities.Creep;
@@ -137,7 +137,7 @@ public class EntityManager {
         Tower t = new Tower(name, position);
 
         addEntity(t);
-        Node geometryNode = t.createGeometryNode(game);
+        Node geometryNode = t.createNode(game);
         //rayCast3D.addCollisonObject(geometryNode);
 
         return t;
@@ -147,7 +147,7 @@ public class EntityManager {
         Creep c = new Creep(name);
         
         addEntity(c);
-        Node geometryNode = c.createGeometryNode(game);
+        Node geometryNode = c.createNode(game);
         //rayCast3D.addCollisonObject(geometryNode);
 
         return c;

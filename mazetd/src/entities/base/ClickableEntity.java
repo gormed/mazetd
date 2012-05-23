@@ -35,12 +35,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities.base;
 
-import com.jme3.collision.CollisionResult;
-import com.jme3.math.Vector2f;
+import entities.base.low.SimpleClickable;
 import com.jme3.scene.Node;
-import events.EntityEvent.EntityEventType;
-import events.EventManager;
-import events.raycast.RayCast3DNode;
+import entities.nodes.ClickableEntityNode;
 import mazetd.MazeTDGame;
 
 /**
@@ -48,12 +45,12 @@ import mazetd.MazeTDGame;
  * @author Hans Ferchland
  * @version 
  */
-public abstract class ClickableEntity extends AbstractEntity {
+public abstract class ClickableEntity extends AbstractEntity implements SimpleClickable {
 
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    protected ClickableEntityNode clickableGeometryNode;
+    protected ClickableEntityNode clickableEntityNode;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -63,76 +60,35 @@ public abstract class ClickableEntity extends AbstractEntity {
     }
 
     @Override
-    public Node createGeometryNode(MazeTDGame game) {
-        clickableGeometryNode = 
+    public Node createNode(MazeTDGame game) {
+        
+        clickableEntityNode =
                 new ClickableEntityNode(name + "s_GeometryNode", this);
-        return clickableGeometryNode;
+        super.createNode(game).attachChild(clickableEntityNode);
+        
+        return clickableEntityNode;
     }
 
     @Override
-    public ClickableEntityNode getGeometryNode() {
-        return clickableGeometryNode;
+    public ClickableEntityNode getClickableEntityNode() {
+        return clickableEntityNode;
     }
 
     /**
      * Is called if geometry is clicked.
      */
+    @Override
     public abstract void onClick();
 
     /**
      * Is called if geometry is hovered.
      */
+    @Override
     public abstract void onMouseOver();
 
     /**
      * Is called if geometry is not hovered anymore.
      */
+    @Override
     public abstract void onMouseLeft();
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
-
-    /**
-     * The class ClickableEntityNode for all the entitys geometry 
-     * that will be clickable.
-     * @author Hans Ferchland
-     */
-    public class ClickableEntityNode extends Node implements RayCast3DNode {
-
-        private ClickableEntity entity;
-        
-        /**
-         * Contructor of the node for the clickable geometry.
-         * @param name the name of the node
-         */
-        public ClickableEntityNode(String name, ClickableEntity entity) {
-            super(name);
-            this.entity = entity;
-        }
-
-        @Override
-        public void onRayCastClick(Vector2f mouse, CollisionResult result) {
-            onClick();
-            EventManager.getInstance().invokeEntityAction(
-                    EntityEventType.Click, entity, mouse, result);
-        }
-
-        @Override
-        public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
-            onMouseOver();
-            EventManager.getInstance().invokeEntityAction(
-                    EntityEventType.MouseOver, entity, mouse, result);
-        }
-
-        @Override
-        public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
-            onMouseLeft();
-            EventManager.getInstance().invokeEntityAction(
-                    EntityEventType.MouseLeft, entity, mouse, result);
-        }
-
-        public ClickableEntity getEntity() {
-            return entity;
-        }
-    }
 }

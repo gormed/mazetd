@@ -28,38 +28,45 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: EntityNode.java
+ * Type: entities.nodes.EntityNode
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 23.05.2012 - 19:24:16 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
+package entities.nodes;
 
-import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
+import entities.base.AbstractEntity;
 
 /**
- * The class ClickableGeometry.
+ * The class EntityNode.
  * @author Hans Ferchland
  * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
-
+public class EntityNode extends Node {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+
+    protected AbstractEntity entity;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-    public ClickableGeometry(String name) {
+
+    public EntityNode(String name) {
         super(name);
     }
 
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
+    public EntityNode(AbstractEntity entity) {
+        this.entity = entity;
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
+
+    public EntityNode(AbstractEntity entity, String name) {
+        super(name);
+        this.entity = entity;
+    }
+
+    public AbstractEntity getEntity() {
+        return entity;
+    }
 }

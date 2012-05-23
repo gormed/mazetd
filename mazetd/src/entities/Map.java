@@ -36,7 +36,7 @@
 package entities;
 
 import entities.geometry.ClickableGeometry;
-import events.raycast.ScreenRayCast3D;
+import eventsystem.port.ScreenRayCast3D;
 import com.jme3.collision.CollisionResult;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
@@ -48,9 +48,9 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
-import events.EventManager;
-import events.TimerEvent;
-import events.listener.TimerEventListener;
+import eventsystem.EventManager;
+import eventsystem.events.TimerEvent;
+import eventsystem.listener.TimerEventListener;
 import mazetd.MazeTDGame;
 
 /**
@@ -156,7 +156,7 @@ public class Map extends Node {
      * Gets the node with all decorative elements.
      * @return the node
      */
-    public Node getDecorativeMapElemetns() {
+    public Node getDecorativeMapElements() {
         return decorativeMapElemetns;
     }
 

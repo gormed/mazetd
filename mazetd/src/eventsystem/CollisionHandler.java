@@ -28,37 +28,48 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: CollisionHandler.java
+ * Type: eventsystem.CollisionHandler
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 23.05.2012 - 21:04:33 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
-
-import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+package eventsystem;
 
 /**
- * The class ClickableGeometry.
+ * The class CollisionHandler.
  * @author Hans Ferchland
- * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
+public class CollisionHandler {
+    //==========================================================================
+    //===   Singleton
+    //==========================================================================
 
+    /**
+     * The hidden constructor of CollisionHandler.
+     */
+    private CollisionHandler() {
+    }
+
+    /**
+     * The static method to retrive the one and only instance of CollisionHandler.
+     */
+    public static CollisionHandler getInstance() {
+        return CollisionHandlerHolder.INSTANCE;
+    }
+
+    /**
+     * The holder-class CollisionHandlerHolder for the CollisionHandler.
+     */
+    private static class CollisionHandlerHolder {
+
+        private static final CollisionHandler INSTANCE = new CollisionHandler();
+    }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
     //==========================================================================
-    //===   Methods & Constructor
+    //===   Methods
     //==========================================================================
-    public ClickableGeometry(String name) {
-        super(name);
-    }
-
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
-    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================

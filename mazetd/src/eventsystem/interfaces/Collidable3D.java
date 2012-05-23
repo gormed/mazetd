@@ -28,38 +28,17 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: Collidable3D.java
+ * Type: eventsystem.interfaces.Collidable3D
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 23.05.2012 - 20:53:42 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
-
-import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+package eventsystem.interfaces;
 
 /**
- * The class ClickableGeometry.
+ *
  * @author Hans Ferchland
- * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
-
-    //==========================================================================
-    //===   Private Fields
-    //==========================================================================
-    //==========================================================================
-    //===   Methods & Constructor
-    //==========================================================================
-    public ClickableGeometry(String name) {
-        super(name);
-    }
-
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
-    }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
+public interface Collidable3D {
+    
 }

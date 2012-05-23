@@ -28,36 +28,74 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: EntityEvent.java
+ * Type: events.EntityEvent
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 22.05.2012 - 21:46:30 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
+package eventsystem.events;
 
-import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+import com.jme3.collision.CollisionResult;
+import com.jme3.math.Vector2f;
+import entities.base.AbstractEntity;
 
 /**
- * The class ClickableGeometry.
+ * The class EntityEvent for all events of an entity.
  * @author Hans Ferchland
  * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
+public class EntityEvent extends AbstractEvent {
 
+    public enum EntityEventType {
+
+        Click,
+        MouseOver,
+        MouseLeft
+    }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    private AbstractEntity entity;
+    private EntityEventType eventType;
+    private Vector2f mouse;
+    private CollisionResult result;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-    public ClickableGeometry(String name) {
-        super(name);
+
+    public EntityEvent(Object source, AbstractEntity entity, EntityEventType eventType) {
+        super(source);
+        this.entity = entity;
+        this.eventType = eventType;
     }
 
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
+    public EntityEvent(
+            Object source,
+            AbstractEntity entity,
+            EntityEventType eventType,
+            Vector2f mouse,
+            CollisionResult result) {
+        super(source);
+        this.entity = entity;
+        this.eventType = eventType;
+        this.mouse = mouse;
+        this.result = result;
+    }
+
+    public AbstractEntity getEntity() {
+        return entity;
+    }
+
+    public EntityEventType getEventType() {
+        return eventType;
+    }
+
+    public Vector2f getMouse() {
+        return mouse;
+    }
+
+    public CollisionResult getResult() {
+        return result;
     }
     //==========================================================================
     //===   Inner Classes

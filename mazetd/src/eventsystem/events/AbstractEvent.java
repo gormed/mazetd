@@ -28,38 +28,56 @@
  * 
  * 
  * Project: MazeTD Project
- * File: ClickableGeometry.java
- * Type: collisions.raycasts.ClickableGeometry
+ * File: AbstractEvent.java
+ * Type: events.AbstractEvent
  * 
- * Documentation created: 16.05.2012 - 17:34:22 by Hans Ferchland
+ * Documentation created: 13.05.2012 - 23:22:39 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package entities.geometry;
+package eventsystem.events;
 
-import eventsystem.interfaces.Clickable3D;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+import eventsystem.EventManager;
+import java.util.EventObject;
 
 /**
- * The class ClickableGeometry.
+ * The class AbstractEvenet for all events in MazeTD.
  * @author Hans Ferchland
- * @version
  */
-public abstract class ClickableGeometry extends Geometry implements Clickable3D {
+public abstract class AbstractEvent extends EventObject {
+    //==========================================================================
+    //===   Static
+    //==========================================================================
 
+    /** The running eventid for all events */
+    private static int runningEventID = 0;
+
+    /**
+     * Gets the next eventID. This function increments the eventID by each call.
+     * There will never be a doubled eventid!
+     * @return the next free and unused eventID
+     */
+    static int getContiniousEventID() {
+        return runningEventID++;
+    }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    private int eventID = getContiniousEventID();
     //==========================================================================
-    //===   Methods & Constructor
+    //===   Constructor & Methods
     //==========================================================================
-    public ClickableGeometry(String name) {
-        super(name);
+    /**
+     * Creates an event.
+     * @param source the firing object.
+     */
+    public AbstractEvent(Object source) {
+        super(source);
     }
 
-    public ClickableGeometry(String name, Mesh mesh) {
-        super(name, mesh);
+    /**
+     * Returns the event-id of the event.
+     * @return the events id
+     */
+    public int getEventID() {
+        return eventID;
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }

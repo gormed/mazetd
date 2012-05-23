@@ -35,7 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package mazetd;
 
-import events.raycast.ScreenRayCast3D;
+import eventsystem.port.ScreenRayCast3D;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -46,7 +46,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext.Type;
 import com.jme3.util.BufferUtils;
-import events.EventManager;
+import eventsystem.EventManager;
 import gamestates.GamestateManager;
 import gamestates.lib.MainmenuState;
 import gamestates.lib.SingleplayerState;
