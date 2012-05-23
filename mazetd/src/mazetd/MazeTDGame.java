@@ -50,6 +50,11 @@ import eventsystem.EventManager;
 import gamestates.GamestateManager;
 import gamestates.lib.MainmenuState;
 import gamestates.lib.SingleplayerState;
+import de.lessvoid.nifty.Nifty;
+import com.jme3.niftygui.NiftyJmeDisplay;
+import gui.elements.MainmenuScreen;
+
+
 
 /**
  * Main application class of MazeTD. 
@@ -123,6 +128,18 @@ public class MazeTDGame extends SimpleApplication {
         gamestateManager.addState(singleplayerState);
         gamestateManager.initialize(mainmenuState);
         gamestateManager.start();
+        
+        /*NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(
+        assetManager, inputManager, audioRenderer, guiViewPort);
+        // Create a new NiftyGUI object 
+        Nifty nifty = niftyDisplay.getNifty();
+        // Read your XML and initialize your custom ScreenController 
+        nifty.fromXml("Interface/screen.xml", "start", new MainmenuScreen("start"));
+        // nifty.fromXml("Interface/helloworld.xml", "start", new MySettingsScreen(data));
+        // attach the Nifty display to the gui view port as a processor
+        guiViewPort.addProcessor(niftyDisplay);
+        // disable the fly cam
+        flyCam.setDragToRotate(true);*/
     }
 
     /**
@@ -137,8 +154,8 @@ public class MazeTDGame extends SimpleApplication {
 
             if (context.getType() == Type.Display) {
                 inputManager.addMapping(INPUT_MAPPING_EXIT, new KeyTrigger(KeyInput.KEY_ESCAPE));
-            }
-
+            } 
+            
             inputManager.addMapping(INPUT_MAPPING_CAMERA_DEBUG, new KeyTrigger(KeyInput.KEY_F1));
             inputManager.addMapping(INPUT_MAPPING_CAMERA_POS, new KeyTrigger(KeyInput.KEY_F2));
             inputManager.addMapping(INPUT_MAPPING_HIDE_STATS, new KeyTrigger(KeyInput.KEY_F3));
@@ -146,7 +163,9 @@ public class MazeTDGame extends SimpleApplication {
             inputManager.addListener(gameDebugActionListener,
                     INPUT_MAPPING_CAMERA_DEBUG, INPUT_MAPPING_EXIT,
                     INPUT_MAPPING_CAMERA_POS, INPUT_MAPPING_MEMORY, INPUT_MAPPING_HIDE_STATS);
-
+            
+            inputManager.addMapping("Disable GUI", new KeyTrigger(KeyInput.KEY_F5));
+            inputManager.addListener(gameDebugActionListener, new String[]{"Disable GUI"});
         }
     }
 
@@ -246,7 +265,6 @@ public class MazeTDGame extends SimpleApplication {
      * @version 0.12
      */
     private class GameDebugActionListener implements ActionListener {
-
         public void onAction(String name, boolean value, float tpf) {
             if (!value) {
                 return;
@@ -280,10 +298,15 @@ public class MazeTDGame extends SimpleApplication {
                     setDisplayFps(!showFps);
                     setDisplayStatView(!showFps);
                     break;
+                    case "Disable GUI":
+                    break;
                 default:
                     return;
             }
+            
+    
+      } 
 
         }
     }
-}
+
