@@ -54,8 +54,6 @@ import de.lessvoid.nifty.Nifty;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import gui.elements.MainmenuScreen;
 
-
-
 /**
  * Main application class of MazeTD. 
  * 
@@ -128,13 +126,17 @@ public class MazeTDGame extends SimpleApplication {
         gamestateManager.addState(singleplayerState);
         gamestateManager.initialize(mainmenuState);
         gamestateManager.start();
-        
+
+        //flyCam.setDragToRotate(true);
+    }
+
+    private void initGUI() {
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(
-        assetManager, inputManager, audioRenderer, guiViewPort); 
+                assetManager, inputManager, audioRenderer, guiViewPort);
         Nifty nifty = niftyDisplay.getNifty();
         nifty.fromXml("Interface/screen.xml", "start", new MainmenuScreen("start"));
         guiViewPort.addProcessor(niftyDisplay);
-        flyCam.setDragToRotate(true);
+
     }
 
     /**
@@ -149,8 +151,8 @@ public class MazeTDGame extends SimpleApplication {
 
             if (context.getType() == Type.Display) {
                 inputManager.addMapping(INPUT_MAPPING_EXIT, new KeyTrigger(KeyInput.KEY_ESCAPE));
-            } 
-            
+            }
+
             inputManager.addMapping(INPUT_MAPPING_CAMERA_DEBUG, new KeyTrigger(KeyInput.KEY_F1));
             inputManager.addMapping(INPUT_MAPPING_CAMERA_POS, new KeyTrigger(KeyInput.KEY_F2));
             inputManager.addMapping(INPUT_MAPPING_HIDE_STATS, new KeyTrigger(KeyInput.KEY_F3));
@@ -158,8 +160,8 @@ public class MazeTDGame extends SimpleApplication {
             inputManager.addListener(gameDebugActionListener,
                     INPUT_MAPPING_CAMERA_DEBUG, INPUT_MAPPING_EXIT,
                     INPUT_MAPPING_CAMERA_POS, INPUT_MAPPING_MEMORY, INPUT_MAPPING_HIDE_STATS);
-            
-        
+
+
         }
     }
 
@@ -181,6 +183,8 @@ public class MazeTDGame extends SimpleApplication {
 
         // initialize gamestate manager and adds states, finally start the states
         initGamestates();
+        
+        initGUI();
         // EventManager init
         eventManager = EventManager.getInstance();
         // ScreenRayCast3D
@@ -259,6 +263,7 @@ public class MazeTDGame extends SimpleApplication {
      * @version 0.12
      */
     private class GameDebugActionListener implements ActionListener {
+
         public void onAction(String name, boolean value, float tpf) {
             if (!value) {
                 return;
@@ -292,13 +297,11 @@ public class MazeTDGame extends SimpleApplication {
                     setDisplayFps(!showFps);
                     setDisplayStatView(!showFps);
                     break;
-                    default:
+                default:
                     return;
             }
-            
-    
-      } 
+
 
         }
     }
-
+}
