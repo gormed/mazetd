@@ -35,11 +35,15 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic.pathfinding;
 
+import logic.Grid;
+
 /**
  *
  * @author Hady Khalifa
  */
 public class Pathfinder {
+    
+    private Grid grid = Grid.getInstance();
     
     private Pathfinder() {
         init();
@@ -55,10 +59,16 @@ public class Pathfinder {
     }
     
         private void init() {
+            
+            
             /*
              * todo
              * 
              */
     }
+        
+        public void generateMainPath(){
+            //Pathfindingalgorithmus viel Spass HAdy
+        }
     
 }

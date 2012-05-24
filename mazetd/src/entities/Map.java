@@ -51,6 +51,8 @@ import com.jme3.scene.shape.Quad;
 import eventsystem.EventManager;
 import eventsystem.events.TimerEvent;
 import eventsystem.listener.TimerEventListener;
+import logic.Grid;
+import logic.Grid.FieldInfo;
 import mazetd.MazeTDGame;
 
 /**
@@ -87,14 +89,15 @@ public class Map extends Node {
     private float totalHeight;
     private float totalWidth;
     private MazeTDGame game = MazeTDGame.getInstance();
+    private Grid grid = Grid.getInstance();
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
 
     public Map() {
         super("MainMap");
-        totalHeight = 20;
-        totalWidth = 20;
+        totalHeight = grid.getTotalHeight();
+        totalWidth = grid.getTotalWidth();
         decorativeMapElemetns = new Node("DorativeMapElemetns");
         clickableMapElements = new Node("ClickableMapElements");
 
@@ -109,7 +112,7 @@ public class Map extends Node {
      * Creates the ground-plane of the map/level.
      */
     private void createGround() {
-        Quad q = new Quad(totalHeight, totalWidth);
+        Quad q = new Quad(totalWidth,totalHeight);
         groundPlane = new Geometry("GroundPlane", q);
 
         groundMaterial = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
@@ -123,7 +126,7 @@ public class Map extends Node {
         float[] angles = {3 * (float) Math.PI / 2, 0, 0};
 
         groundPlane.setLocalRotation(new Quaternion(angles));
-        groundPlane.setLocalTranslation(-totalWidth / 2, 0, totalHeight / 2);
+        groundPlane.setLocalTranslation(-totalWidth / 2 - SQUARE_SIZE/2, 0, totalHeight / 2 -SQUARE_SIZE/2);
 
         decorativeMapElemetns.attachChild(groundPlane);
     }
@@ -137,9 +140,10 @@ public class Map extends Node {
 
         Vector3f offset = new Vector3f(-totalWidth / 2, 0, -totalHeight / 2);
 
-        for (int x = 1; x < totalWidth - 1; x++) {
-            for (int z = 1; z < totalHeight - 1; z++) {
-                MapSquare m = new MapSquare();
+        for (int x = 0; x < totalWidth; x++) {
+            for (int z = 0; z < totalHeight; z++) {              
+                MapSquare m = new MapSquare(grid.getFieldInfo((((int)totalWidth-1)-x),z));
+                m.getFieldInfo().setMapSquare(m);
                 Vector3f position = new Vector3f(x, 0, z);
                 position.addLocal(offset);
 
@@ -167,7 +171,7 @@ public class Map extends Node {
      * Class for a map-square that represents a grid-square.
      * @author Hans Ferchland
      */
-    class MapSquare extends Node implements TimerEventListener {
+    public class MapSquare extends Node implements TimerEventListener {
         public static final float MAX_ALPHA_FADE = 0.4f;
         //==========================================================================
         //===   Private Fields
@@ -177,6 +181,7 @@ public class Map extends Node {
         private ClickableGeometry geometry;
         private boolean hovered = false;
         private ColorRGBA fadeColor = SQUARE_COLOR.clone();
+        private FieldInfo field;
         //==========================================================================
         //===   Methods & Constructor
         //==========================================================================
@@ -184,9 +189,10 @@ public class Map extends Node {
         /**
          * Contructor for a map square, name and mesh will be generated automaticly.
          */
-        public MapSquare() {
+        public MapSquare(FieldInfo field) {
             super("MapSquare_" + getContinousSquareID());
             createGeometry();
+            this.field = field;
         }
 
         public ClickableGeometry getGeometry() {
@@ -206,6 +212,7 @@ public class Map extends Node {
                 public void onRayCastClick(Vector2f mouse, CollisionResult result) {
                     // TODO: implement handling if a square is clicked
                     System.out.println(name + " clicked!");
+                    System.out.println(field.toString());
                 }
 
                 @Override
@@ -256,6 +263,10 @@ public class Map extends Node {
         @Override
         public float getPeriod() {
             return 0.02f;
+        }
+
+        private FieldInfo getFieldInfo() {
+           return field;
         }
     }
 }

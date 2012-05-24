@@ -35,6 +35,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
+import entities.Map.MapSquare;
+
 /**
  *
  * Class Grid
@@ -48,12 +50,16 @@ public class Grid {
      * private data fields
      */
     private FieldInfo[][] grid;
+    private int totalHeight;
+    private int totalWidth;
 
     /**
      * Constructor
      */
     private Grid() {
-        init(21, 21);
+        totalHeight = 41;
+        totalWidth = 81;
+        init(totalWidth, totalHeight);
     }
 
     /**
@@ -82,43 +88,73 @@ public class Grid {
      */
     private void init(int width, int height) {
         grid = new FieldInfo[width][height];
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                grid[x][y] = new FieldInfo(x, y, 0);
+        //Startfield
+        grid[0][height / 2] = new FieldInfo(0, height / 2, 0);
+        //GoalField
+        grid[width - 1][height / 2] = new FieldInfo(width - 1, height / 2, 10);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                grid[x][y] = new FieldInfo(x, y, (10 + (Math.abs(x - (width - 1)) * 10) + (Math.abs(y - (height / 2)) * 10)));
             }
         }
+
     }
+
+    public int getTotalWidth() {
+        return totalWidth;
+    }
+
+    public int getTotalHeight() {
+        return totalHeight;
+    }
+
     /**
      * 
      * @param xCoord
      * @param yCoord
      * @return 
      */
-    FieldInfo getFieldInfo(int xCoord, int yCoord){
+    public FieldInfo getFieldInfo(int xCoord, int yCoord) {
         return grid[xCoord][yCoord];
-    } 
-    
+    }
+
     /**
      * 
      * @param xCoord
      * @param yCoord
      * @param value 
      */
-    void setTowerValue(int xCoord, int yCoord, int value){
-        grid[xCoord][yCoord].setTowerValue(value);
+    void setTower(int xCoord, int yCoord) {
+        grid[xCoord][yCoord].incrementWeight(10000);
+        grid[xCoord + 1][yCoord].incrementWeight(10000);
+        grid[xCoord][yCoord + 1].incrementWeight(10000);
+        grid[xCoord + 1][yCoord + 1].incrementWeight(10000);
+    }
+
+    /**
+     * 
+     * @param xCoord
+     * @param yCoord 
+     */
+    void removeTower(int xCoord, int yCoord) {
+        grid[xCoord][yCoord].decrementWeight(10000);
+        grid[xCoord + 1][yCoord].decrementWeight(10000);
+        grid[xCoord][yCoord + 1].decrementWeight(10000);
+        grid[xCoord + 1][yCoord + 1].decrementWeight(10000);
     }
 
     /**
      * innerClass FieldInfo
      */
-    private class FieldInfo {
+    public class FieldInfo {
 
         /**
          * private Data Fields
          */
-        int xCoord;
-        int yCoord;
-        int towerValue;
+        private int xCoord;
+        private int yCoord;
+        private int weight;
+        private MapSquare square;
 
         /**
          * FieldInfo Constructor
@@ -127,10 +163,10 @@ public class Grid {
          * @param yCoord - used for ID
          * @param towerValue 0: no tower on the field; 1: tower on the field
          */
-        private FieldInfo(int xCoord, int yCoord, int towerValue) {
+        private FieldInfo(int xCoord, int yCoord, int weight) {
             this.xCoord = xCoord;
             this.yCoord = yCoord;
-            this.towerValue = towerValue;
+            this.weight = weight;
 
         }
 
@@ -139,10 +175,24 @@ public class Grid {
          * 
          * @param value 
          */
-        private void setTowerValue(int value) {
-         this.towerValue = value;
+        private void incrementWeight(int weight) {
+            this.weight += weight;
+        }
+
+        private void decrementWeight(int weight) {
+            this.weight -= weight;
+        }
+
+        @Override
+        public String toString() {
+            super.toString();
+            String output = "Field(" + xCoord + ", " + yCoord + ") - weight: " + weight;
+            return output;
+
         }
         
-        
+        public void setMapSquare(MapSquare m){
+            this.square = m;
+        }
     }
 }
