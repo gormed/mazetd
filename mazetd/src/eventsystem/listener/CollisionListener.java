@@ -28,20 +28,21 @@
  * 
  * 
  * Project: MazeTD Project
- * File: Collidable3D.java
- * Type: eventsystem.interfaces.Collidable3D
+ * File: CollisionListener.java
+ * Type: eventsystem.listener.CollisionListener
  * 
- * Documentation created: 23.05.2012 - 20:53:42 by Hans Ferchland
+ * Documentation created: 23.05.2012 - 19:21:47 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package eventsystem.interfaces;
+package eventsystem.listener;
 
-import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
+import eventsystem.interfaces.Collidable3D;
+import java.util.EventListener;
 
 /**
- *
+ * The interface CollisionListener.
  * @author Hans Ferchland
  */
-public interface Collidable3D extends Collidable {
-    public void onCollision3D(CollisionResults collisionResults);
+public interface CollisionListener extends EventListener{
+    public void onCollision(Collidable3D who, CollisionResults collisionResults);
 }

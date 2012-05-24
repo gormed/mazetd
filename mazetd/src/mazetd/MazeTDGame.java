@@ -160,8 +160,6 @@ public class MazeTDGame extends SimpleApplication {
             inputManager.addListener(gameDebugActionListener,
                     INPUT_MAPPING_CAMERA_DEBUG, INPUT_MAPPING_EXIT,
                     INPUT_MAPPING_CAMERA_POS, INPUT_MAPPING_MEMORY, INPUT_MAPPING_HIDE_STATS);
-
-
         }
     }
 

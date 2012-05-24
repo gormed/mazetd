@@ -35,15 +35,16 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities.nodes;
 
-import entities.base.AbstractEntity;
+import com.jme3.collision.CollisionResults;
 import entities.base.CollidableEntity;
+import eventsystem.interfaces.Collidable3D;
 
 /**
  * The class CollidableNode.
  * @author Hans Ferchland
  * @version
  */
-public class CollidableEntityNode extends EntityNode {
+public class CollidableEntityNode extends EntityNode implements Collidable3D {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -63,5 +64,10 @@ public class CollidableEntityNode extends EntityNode {
     
     public CollidableEntity getEntity() {
         return entity;
+    }
+
+    @Override
+    public void onCollision3D(CollisionResults collisionResults) {
+        entity.onCollision(collisionResults);
     }
 }

@@ -105,7 +105,7 @@ public class Map extends Node {
         createSquares();
 
         this.attachChild(decorativeMapElemetns);
-        ScreenRayCast3D.getInstance().addCollisonObject(clickableMapElements);
+        ScreenRayCast3D.getInstance().addClickableObject(clickableMapElements);
     }
 
     /**

@@ -122,7 +122,7 @@ public class Level implements EntityListener {
         // add tower (for test)
         Tower t = entityManager.createTower(
                 "FirstTower", new Vector3f(0, 0, 0));
-        rayCast3D.addCollisonObject(t.getGeometryNode());
+        rayCast3D.addClickableObject(t.getGeometryNode());
         
         // add the level as a entity-listener
         eventManager.addEntityListener(this, t);

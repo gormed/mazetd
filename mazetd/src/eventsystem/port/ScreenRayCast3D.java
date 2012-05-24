@@ -140,7 +140,7 @@ public class ScreenRayCast3D implements MouseInputListener {
      * Adds a node to the clickable 3d objects.
      * @param object that will be clickable
      */
-    public void addCollisonObject(Spatial object) {
+    public void addClickableObject(Spatial object) {
         clickable3D.attachChild(object);
     }
 
@@ -148,7 +148,7 @@ public class ScreenRayCast3D implements MouseInputListener {
      * Removes a specific node from the clickable 3d objects.
      * @param object that wont be clickable anymore
      */
-    public void removeCollisonObject(Spatial object) {
+    public void removeClickableObject(Spatial object) {
 
         clickable3D.detachChild(object);
     }

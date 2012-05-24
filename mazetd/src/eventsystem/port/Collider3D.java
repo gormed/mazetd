@@ -35,6 +35,13 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package eventsystem.port;
 
+import com.jme3.collision.Collidable;
+import com.jme3.collision.CollisionResult;
+import com.jme3.collision.CollisionResults;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import eventsystem.interfaces.Collidable3D;
+
 /**
  *
  * @author Hans Ferchland
@@ -67,10 +74,70 @@ public class Collider3D {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    private Node collisionNode;
+    private CollisionResults collisionResults;
+    private Collidable3D currentCollidable;
+    
     //==========================================================================
     //===   Methods
     //==========================================================================
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
+
+    /**
+     * Adds a node to the collisionalbe 3d objects.
+     * @param object that will be clickable
+     */
+    public void addCollisonObject(Spatial object) {
+        collisionNode.attachChild(object);
+    }
+
+    /**
+     * Removes a specific node from the collisionalbe 3d objects.
+     * @param object that wont be clickable anymore
+     */
+    public void removeCollisonObject(Spatial object) {
+
+        collisionNode.detachChild(object);
+    }
+    
+    public void objectCollides(Collidable3D collidable) {
+        currentCollidable = collidable;
+        
+        collisionResults = new CollisionResults();
+        currentCollidable.collideWith(collisionNode, collisionResults);
+        
+        if (collisionResults.size() <= 0)
+            return;
+        collidable.onCollision3D(collisionResults);
+    }
+    
+//    private void searchForCollidable3D(Spatial spatial, CollisionResult collisionResult) {
+//        if (spatial != null) {
+//            Spatial parent;
+//            invokeCollision(spatial);
+//            parent = spatial.getParent();
+//            while (parent != null) {
+//                invokeCollision(parent);
+//                parent = parent.getParent();
+//            }
+//        }
+//    }
+//    
+//    private void invokeCollision(Spatial spatial) {
+//        if (spatial instanceof Collidable3D) {
+//            Collidable3D c = (Collidable3D) spatial;
+//            c.onCollision3D(collisionResults);
+//        }
+//    }
+
+    public CollisionResults getCurrentCollisionResults() {
+        return collisionResults;
+    }
+
+    public Collidable3D getCurrentCollidable() {
+        return currentCollidable;
+    }
+    
+    public void update(float tpf) {
+        
+    }
 }

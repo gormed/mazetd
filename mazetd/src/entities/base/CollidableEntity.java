@@ -37,8 +37,6 @@ package entities.base;
 
 import com.jme3.collision.CollisionResults;
 import entities.base.low.SimpleCollidable;
-import com.bulletphysics.collision.broadphase.Dbvt.Node;
-import entities.nodes.ClickableEntityNode;
 import entities.nodes.CollidableEntityNode;
 import mazetd.MazeTDGame;
 

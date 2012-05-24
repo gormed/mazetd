@@ -35,6 +35,11 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package eventsystem;
 
+import eventsystem.interfaces.Collidable3D;
+import eventsystem.listener.CollisionListener;
+import java.util.HashMap;
+import java.util.HashSet;
+
 /**
  * The class CollisionHandler.
  * @author Hans Ferchland
@@ -67,9 +72,29 @@ public class CollisionHandler {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    private HashMap<Collidable3D, HashSet<CollisionListener>> collisionListeners;
     //==========================================================================
     //===   Methods
     //==========================================================================
+
+    public void addCollisionListener(
+            CollisionListener listener, Collidable3D... collidable3Ds) {
+        HashSet<CollisionListener> listeners;
+        for (Collidable3D c : collidable3Ds) {
+            if (!collisionListeners.containsKey(c)) {
+                listeners = new HashSet<CollisionListener>();
+                listeners.add(listener);
+                collisionListeners.put(c, listeners);
+            } else {
+                listeners = collisionListeners.get(c);
+                listeners.add(listener);
+            }
+        }
+    }
+
+    public void removeCollisionListener(
+            CollisionListener listener) {
+    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
