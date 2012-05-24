@@ -8,6 +8,8 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import mazetd.MazeTDGame;
+import gamestates.GamestateManager;
+import gamestates.lib.SingleplayerState;
  
 public class MainmenuScreen extends AbstractAppState implements ScreenController {
  
@@ -15,11 +17,16 @@ public class MainmenuScreen extends AbstractAppState implements ScreenController
   private Screen screen;
   private SimpleApplication app;
   private MazeTDGame game;
- 
+  private SingleplayerState singleplayerState;
+  private GamestateManager gamestateManager;
+
+  
   /** custom methods */ 
   public void startGame(String nextScreen) {
-  nifty.gotoScreen(nextScreen);  // switch to another screen
-  // start the game and do some more stuff...
+  nifty.gotoScreen(nextScreen);  
+        gamestateManager = GamestateManager.getInstance();
+        gamestateManager.enterState("Singleplayer");
+  
   }
  
   public void quitGame() {
