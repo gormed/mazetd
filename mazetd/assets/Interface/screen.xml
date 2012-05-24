@@ -38,7 +38,7 @@
     </layer>
   </screen>
   
-  <screen id="hud" controller="gui.elements.HudScreen">
+  <screen id="hud" controller="gui.elements.MainmenuScreen">
     <layer id="foreground" backgroundColor="#0000" childLayout="vertical">
           <panel id="panel_top" height="5%" width="100%" align="left" childLayout="horizontal"
            backgroundColor="#f008">  
@@ -59,10 +59,10 @@
           </panel>
           <panel id="panel_top_5" height="100%" width="20%" align="center" childLayout="center"
            backgroundColor="#f008">
-                <control name="button" label="Disable NiftyGui" id="QuitButton" align="center" valign="center" 
-            visibleToMouse="true" > 
-                <interact onClick="disableGui()"/>
-            </control>
+               <control name="button" label="Gui mach Futsch!" id="StartButton" align="center" valign="center" 
+               visibleToMouse="true" > 
+               <interact onClick="disableGui()"/>
+          </control>
           </panel>
           </panel>
           <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center"

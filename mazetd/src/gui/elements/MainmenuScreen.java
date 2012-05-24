@@ -23,10 +23,14 @@ public class MainmenuScreen extends AbstractAppState implements ScreenController
   }
  
   public void quitGame() {
-    this.game=game.getInstance();
+    this.game=MazeTDGame.getInstance();
     game.stop(); 
   }
  
+  public void disableGui() {
+  nifty.exit(); 
+  }
+  
   public MainmenuScreen(String data) { 
     /** Your custom constructor, can accept arguments */ 
   } 

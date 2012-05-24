@@ -129,17 +129,12 @@ public class MazeTDGame extends SimpleApplication {
         gamestateManager.initialize(mainmenuState);
         gamestateManager.start();
         
-        /*NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(
-        assetManager, inputManager, audioRenderer, guiViewPort);
-        // Create a new NiftyGUI object 
+        NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(
+        assetManager, inputManager, audioRenderer, guiViewPort); 
         Nifty nifty = niftyDisplay.getNifty();
-        // Read your XML and initialize your custom ScreenController 
         nifty.fromXml("Interface/screen.xml", "start", new MainmenuScreen("start"));
-        // nifty.fromXml("Interface/helloworld.xml", "start", new MySettingsScreen(data));
-        // attach the Nifty display to the gui view port as a processor
         guiViewPort.addProcessor(niftyDisplay);
-        // disable the fly cam
-        flyCam.setDragToRotate(true);*/
+        flyCam.setDragToRotate(true);
     }
 
     /**
@@ -164,8 +159,7 @@ public class MazeTDGame extends SimpleApplication {
                     INPUT_MAPPING_CAMERA_DEBUG, INPUT_MAPPING_EXIT,
                     INPUT_MAPPING_CAMERA_POS, INPUT_MAPPING_MEMORY, INPUT_MAPPING_HIDE_STATS);
             
-            inputManager.addMapping("Disable GUI", new KeyTrigger(KeyInput.KEY_F5));
-            inputManager.addListener(gameDebugActionListener, new String[]{"Disable GUI"});
+        
         }
     }
 
@@ -298,9 +292,7 @@ public class MazeTDGame extends SimpleApplication {
                     setDisplayFps(!showFps);
                     setDisplayStatView(!showFps);
                     break;
-                    case "Disable GUI":
-                    break;
-                default:
+                    default:
                     return;
             }
             
