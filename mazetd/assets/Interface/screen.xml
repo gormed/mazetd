@@ -56,7 +56,7 @@
           <panel id="panel_top_4" height="100%" width="20%" align="center" childLayout="center">  
           </panel>
           <panel id="panel_top_5" height="100%" width="20%" align="center" childLayout="center">
-               <control name="button" label="Gui mach Futsch!" id="StartButton" align="center" valign="bottom" 
+               <control name="button" label="Gui mach Futsch!" id="GuiButton" align="right" valign="bottom" 
                visibleToMouse="true" > 
                <interact onClick="disableGui()"/>
           </control>
