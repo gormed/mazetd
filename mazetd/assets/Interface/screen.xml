@@ -9,81 +9,81 @@
     Description:
         Purpose of the document follows.
 -->
- 
- <useControls filename="nifty-default-controls.xml" />
- <useStyles filename="nifty-default-styles.xml" />
+<useControls filename="nifty-default-controls.xml" />
+<useStyles filename="nifty-default-styles.xml" />
  
  <screen id="start" controller="gui.elements.MainmenuScreen">
-    <layer id="background" backgroundColor="#000f">
+     <layer id="background" backgroundColor="#000f">
+         
+     </layer>
+     <layer id="foreground" backgroundColor="#0000" childLayout="vertical">
+         <panel id="panel_top" height="10%" width="100%" align="center" childLayout="center"
+         backgroundColor="#f008">
+             <text text="MazeTD" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
+         </panel>
+         <panel id="panel_bottom_1" height="45%" width="100%" align="center" childLayout="center">
+         </panel>
+         <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
+             <control name="button" label="Start" id="StartButton" align="center" valign="center" 
+             visibleToMouse="true" > 
+             <interact onClick="startGame(hud)"/>
+             </control>
+         </panel>
+         <panel id="panel_bottom_3" height="5%" width="100%" align="center" childLayout="center">
+             <control name="button" label="Exit MazeTD" id="QuitButton" align="center" valign="center" 
+             visibleToMouse="true" > 
+             <interact onClick="quitGame()"/>
+             </control>
+         </panel>
     </layer>
-    <layer id="foreground" backgroundColor="#0000" childLayout="vertical">
-        <panel id="panel_top" height="10%" width="100%" align="center" childLayout="center"
-         backgroundColor="#f008">  
-            <text text="MazeTD" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
-        </panel>
-        <panel id="panel_bottom_1" height="45%" width="100%" align="center" childLayout="center">
-        </panel>
-        <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
-            <control name="button" label="Start" id="StartButton" align="center" valign="center" 
-          visibleToMouse="true" > 
-            <interact onClick="startGame(hud)"/>
-          </control>
-       </panel>
-       <panel id="panel_bottom_3" height="5%" width="100%" align="center" childLayout="center">
-            <control name="button" label="Exit MazeTD" id="QuitButton" align="center" valign="center" 
-            visibleToMouse="true" > 
-                <interact onClick="quitGame()"/>
-            </control>
-       </panel>
-    </layer>
-  </screen>
-  
-  <screen id="hud" controller="gui.elements.MainmenuScreen">
-       <layer id="background" childLayout="center">
+</screen>
+
+
+<screen id="hud" controller="gui.elements.MainmenuScreen">
+    <layer id="background" childLayout="center">
         <image filename="Interface/hud-frame.png" imageMode="resize:40,490,110,170,40,560,40,270,40,560,40,40" width="100%" height="100%"/>
     </layer>
     <layer id="foreground" childLayout="vertical">
-          <panel id="panel_top" height="4%" width="100%" align="left" childLayout="horizontal">  
-           <panel id="panel_top_1" height="100%" width="20%" align="center" childLayout="center"> 
-           <text text="Gold:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
-          </panel>
-          <panel id="panel_top_2" height="100%" width="20%" align="center" childLayout="center">  
-           <text text="Time:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
-          </panel>
-          <panel id="panel_top_3" height="100%" width="20%" align="center" childLayout="center"> 
-           <text text="Wave:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
-          </panel>
-          <panel id="panel_top_4" height="100%" width="20%" align="center" childLayout="center">  
-          </panel>
-          <panel id="panel_top_5" height="100%" width="20%" align="center" childLayout="center">
-               <control name="button" label="Gui mach Futsch!" id="GuiButton" align="right" valign="bottom" 
-               visibleToMouse="true" > 
-               <interact onClick="disableGui()"/>
-          </control>
-          </panel>
-          </panel>
-          <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="false">  
-           <panel id="panel_mid_right"  backgroundImage="Interface/Shopbackground.png" height="75%" width="15%" align="right" valign="center" childLayout="center" >  
-           </panel>
-           </panel>
-           <panel id="panel_bottom" height="25%" width="100%" align="left" childLayout="horizontal">   
-           <panel id="panel_bottom_1" height="100%" width="25%" align="center" childLayout="center"> 
-          </panel>
-          <panel id="panel_bottom_2" height="100%" width="50%" align="center" childLayout="center">  
-           <text text="Kontextmenu" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
-          </panel>
-          <panel id="panel_bottom_3" height="100%" width="25%" align="center" childLayout="center"> 
-           <control name="button" label="Shop" id="StartButton" align="right" valign="bottom" 
-           visibleToMouse="true" > 
-           <interact onClick="testMarketplace(panel_mid, hud)"/>
-          </control>
-           </panel>
-           </panel>
-     
+        <panel id="panel_top" height="4%" width="100%" align="left" childLayout="horizontal">  
+            <panel id="panel_top_1" height="100%" width="20%" align="center" childLayout="center"> 
+                <text text="Gold:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
+            </panel>
+            <panel id="panel_top_2" height="100%" width="20%" align="center" childLayout="center">  
+                <text text="Time:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
+            </panel>
+            <panel id="panel_top_3" height="100%" width="20%" align="center" childLayout="center"> 
+                <text text="Wave:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
+            </panel>
+            <panel id="panel_top_4" height="100%" width="20%" align="center" childLayout="center">  
+            </panel>
+            <panel id="panel_top_5" height="100%" width="20%" align="center" childLayout="center">
+                <control name="button" label="Gui mach Futsch!" id="GuiButton" align="right" valign="bottom" 
+                visibleToMouse="true" > 
+                <interact onClick="disableGui()"/>
+                </control>
+            </panel>
+        </panel>
+        <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="false">  
+            <panel id="panel_mid_right"  backgroundImage="Interface/Shopbackground.png" height="75%" width="15%" align="right" valign="center" childLayout="center" >  
+            </panel>
+        </panel>
+        <panel id="panel_bottom" height="25%" width="100%" align="left" childLayout="horizontal">   
+            <panel id="panel_bottom_1" height="100%" width="25%" align="center" childLayout="center"> 
+            </panel>
+        <panel id="panel_bottom_2" height="100%" width="50%" align="center" childLayout="center">  
+            <text text="Kontextmenu" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
+        </panel>
+        <panel id="panel_bottom_3" height="100%" width="25%" align="center" childLayout="center"> 
+            <control name="button" label="Shop" id="StartButton" align="right" valign="bottom" 
+            visibleToMouse="true" > 
+            <interact onClick="testMarketplace(panel_mid, hud)"/>
+            </control>
+        </panel>
+        </panel>
     </layer>  
  </screen>
  
-   <screen id="pause" controller="gui.elements.PausedScreen">
+ <screen id="pause" controller="gui.elements.PausedScreen">
     <layer id="background" backgroundColor="#000f">
     </layer>
     <layer id="foreground" backgroundColor="#0000" childLayout="vertical">
@@ -98,7 +98,7 @@
             </control>
         </panel>
         <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
-           <control name="button" label="Leave Game" id="LeaveButton" align="center" valign="center" 
+            <control name="button" label="Leave Game" id="LeaveButton" align="center" valign="center" 
             visibleToMouse="true" > 
                 <interact onClick="Leave()"/>
             </control>
@@ -112,12 +112,6 @@
     </layer>
   </screen>
   
-  <popup id="niftyPopupMenu" childLayout="absolute-inside"
-       controller="ControllerOfYourChoice" width="10%">
-  <interact onClick="closePopup()" onSecondaryClick="closePopup()" onTertiaryClick="closePopup()" />
-  <control id="#menu" name="niftyMenu" />
-</popup>
- 
 </nifty>
 
 
