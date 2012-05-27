@@ -10,6 +10,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import mazetd.MazeTDGame;
 import gamestates.GamestateManager;
 import gamestates.lib.SingleplayerState;
+import de.lessvoid.nifty.elements.Element;
  
 public class MainmenuScreen extends AbstractAppState implements ScreenController {
  
@@ -19,6 +20,7 @@ public class MainmenuScreen extends AbstractAppState implements ScreenController
   private MazeTDGame game;
   private SingleplayerState singleplayerState;
   private GamestateManager gamestateManager;
+  private Element asd;
 
   
   /** custom methods */ 
@@ -37,6 +39,12 @@ public class MainmenuScreen extends AbstractAppState implements ScreenController
   public void disableGui() {
   nifty.exit(); 
   }
+  
+  public void testMarketplace(String element, String ScreenID){
+        Element niftyElement = nifty.getScreen(ScreenID).findElementByName(element);
+        if(niftyElement.isVisible()) niftyElement.hide();
+        else niftyElement.show();
+    }
   
   public MainmenuScreen(String data) { 
     /** Your custom constructor, can accept arguments */ 

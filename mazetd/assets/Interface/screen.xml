@@ -39,40 +39,45 @@
   </screen>
   
   <screen id="hud" controller="gui.elements.MainmenuScreen">
-    <layer id="foreground" backgroundColor="#0000" childLayout="vertical">
-          <panel id="panel_top" height="5%" width="100%" align="left" childLayout="horizontal"
-           backgroundColor="#f008">  
-           <panel id="panel_top_1" height="100%" width="20%" align="center" childLayout="center"
-           backgroundColor="#f008"> 
+       <layer id="background" childLayout="center">
+        <image filename="Interface/hud-frame.png" imageMode="resize:40,490,110,170,40,560,40,270,40,560,40,40" width="100%" height="100%"/>
+    </layer>
+    <layer id="foreground" childLayout="vertical">
+          <panel id="panel_top" height="4%" width="100%" align="left" childLayout="horizontal">  
+           <panel id="panel_top_1" height="100%" width="20%" align="center" childLayout="center"> 
            <text text="Gold:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
           </panel>
-          <panel id="panel_top_2" height="100%" width="20%" align="center" childLayout="center"
-           backgroundColor="#f008">  
+          <panel id="panel_top_2" height="100%" width="20%" align="center" childLayout="center">  
            <text text="Time:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
           </panel>
-          <panel id="panel_top_3" height="100%" width="20%" align="center" childLayout="center"
-           backgroundColor="#f008"> 
+          <panel id="panel_top_3" height="100%" width="20%" align="center" childLayout="center"> 
            <text text="Wave:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
           </panel>
-          <panel id="panel_top_4" height="100%" width="20%" align="center" childLayout="center"
-           backgroundColor="#f008">  
+          <panel id="panel_top_4" height="100%" width="20%" align="center" childLayout="center">  
           </panel>
-          <panel id="panel_top_5" height="100%" width="20%" align="center" childLayout="center"
-           backgroundColor="#f008">
-               <control name="button" label="Gui mach Futsch!" id="StartButton" align="center" valign="center" 
+          <panel id="panel_top_5" height="100%" width="20%" align="center" childLayout="center">
+               <control name="button" label="Gui mach Futsch!" id="StartButton" align="center" valign="bottom" 
                visibleToMouse="true" > 
                <interact onClick="disableGui()"/>
           </control>
           </panel>
           </panel>
-          <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center"
-             backgroundColor="#00f8">  
-           <panel id="panel_mid_right" height="100%" width="15%" align="right" childLayout="center"
-             backgroundColor="#88f8">  
+          <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="false">  
+           <panel id="panel_mid_right"  backgroundImage="Interface/Shopbackground.png" height="75%" width="15%" align="right" valign="center" childLayout="center" >  
            </panel>
            </panel>
-           <panel id="panel_bottom" height="25%" width="100%" align="left" childLayout="center"
-             backgroundColor="#f008">  
+           <panel id="panel_bottom" height="25%" width="100%" align="left" childLayout="horizontal">   
+           <panel id="panel_bottom_1" height="100%" width="25%" align="center" childLayout="center"> 
+          </panel>
+          <panel id="panel_bottom_2" height="100%" width="50%" align="center" childLayout="center">  
+           <text text="Kontextmenu" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
+          </panel>
+          <panel id="panel_bottom_3" height="100%" width="25%" align="center" childLayout="center"> 
+           <control name="button" label="Shop" id="StartButton" align="right" valign="bottom" 
+           visibleToMouse="true" > 
+           <interact onClick="testMarketplace(panel_mid, hud)"/>
+          </control>
+           </panel>
            </panel>
      
     </layer>  
@@ -106,6 +111,12 @@
        </panel>
     </layer>
   </screen>
+  
+  <popup id="niftyPopupMenu" childLayout="absolute-inside"
+       controller="ControllerOfYourChoice" width="10%">
+  <interact onClick="closePopup()" onSecondaryClick="closePopup()" onTertiaryClick="closePopup()" />
+  <control id="#menu" name="niftyMenu" />
+</popup>
  
 </nifty>
 
