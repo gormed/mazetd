@@ -235,7 +235,7 @@ public class Map extends Node {
             material.setColor("Diffuse", SQUARE_COLOR);   // ... color of light being reflected
             material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
             geometry.setMaterial(material);
-            geometry.setQueueBucket(Bucket.Translucent);
+            geometry.setQueueBucket(Bucket.Transparent);
 
             float[] angles = {3 * (float) Math.PI / 2, 0, 0};
 

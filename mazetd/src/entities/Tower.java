@@ -39,6 +39,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
@@ -56,9 +57,9 @@ public class Tower extends ClickableEntity {
     //========================================================================== 
 
     private static final int TOWER_SAMPLES = 20;
-    private static final float TOWER_HEIGHT = 1.2f;
-    private static final float TOWER_SIZE = 0.3f;
-    private static final float ROOF_SIZE = 0.4f;
+    private static final float TOWER_HEIGHT = 1.4f;
+    private static final float TOWER_SIZE = 0.5f;
+    private static final float ROOF_SIZE = 0.6f;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -80,7 +81,7 @@ public class Tower extends ClickableEntity {
     public Node createNode(MazeTDGame game) {
         super.createNode(game);
 
-        // materials
+        // Materials
         roofMaterial = new Material(
                 game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         roofMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
@@ -95,9 +96,9 @@ public class Tower extends ClickableEntity {
         wallMaterial.setColor("Ambient", ColorRGBA.Gray);   // ... color of this object
         wallMaterial.setColor("Diffuse", ColorRGBA.Gray);   // ... color of light being reflected
 
-        // geometry
+        // Geometry
         float[] angles = {(float) Math.PI / 2, 0, 0};
-        // roof
+        // Roof
         Cylinder roof = new Cylinder(
                 TOWER_SAMPLES, 
                 TOWER_SAMPLES, 
@@ -107,11 +108,12 @@ public class Tower extends ClickableEntity {
         roofGeometry = new Geometry(
                 name + "_RoofGeometry", roof);
         roofGeometry.setMaterial(roofMaterial);
-        //roofGeometry.setCullHint(CullHint.Never);
         roofGeometry.setLocalTranslation(0, TOWER_HEIGHT + ROOF_SIZE / 2, 0);
         roofGeometry.setLocalRotation(new Quaternion(angles));
-
-        // wall
+        //roofGeometry.setQueueBucket(Bucket.Translucent);
+        
+        
+        // Wall
         Cylinder wall = new Cylinder(
                 TOWER_SAMPLES,
                 TOWER_SAMPLES,
@@ -123,11 +125,11 @@ public class Tower extends ClickableEntity {
         wallGeometry = new Geometry(
                 name + "_WallGeometry", wall);
         wallGeometry.setMaterial(wallMaterial);
-        //wallGeometry.setCullHint(CullHint.Never);
         wallGeometry.setLocalTranslation(0, TOWER_HEIGHT / 2, 0);
         wallGeometry.setLocalRotation(new Quaternion(angles));
+        //wallGeometry.setQueueBucket(Bucket.Translucent);
         
-        // hierarchy
+        // Hierarchy
         clickableEntityNode.attachChild(wallGeometry);
         clickableEntityNode.attachChild(roofGeometry);
         // apply position to main node

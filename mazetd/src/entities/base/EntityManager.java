@@ -35,10 +35,12 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities.base;
 
+import com.jme3.math.ColorRGBA;
 import eventsystem.port.ScreenRayCast3D;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entities.Creep;
+import entities.Orb;
 import entities.Tower;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,6 +87,9 @@ public class EntityManager {
     //===   Private Fields
     //==========================================================================
     private HashMap<Integer, AbstractEntity> entityHashMap = new HashMap<Integer, AbstractEntity>();
+    private HashMap<Integer, Tower> towerHashMap = new HashMap<Integer, Tower>();
+    private HashMap<Integer, Creep> creepHashMap = new HashMap<Integer, Creep>();
+    private HashMap<Integer, Orb> orbHashMap = new HashMap<Integer, Orb>();
     private MazeTDGame game = MazeTDGame.getInstance();
     private ScreenRayCast3D rayCast3D = ScreenRayCast3D.getInstance();
     //==========================================================================
@@ -137,20 +142,45 @@ public class EntityManager {
         Tower t = new Tower(name, position);
 
         addEntity(t);
+        towerHashMap.put(t.getEntityId(), t);
         Node geometryNode = t.createNode(game);
-        //rayCast3D.addCollisonObject(geometryNode);
+        rayCast3D.addClickableObject(geometryNode);
 
         return t;
     }
 
+    /**
+     * Creates a creep on a given position.
+     * @param name the creeps name
+     * @param position the creeps position
+     * @return the creep just created
+     */
     public Creep createCreep(String name, Vector3f position) {
         Creep c = new Creep(name);
-        
+
         addEntity(c);
+        creepHashMap.put(c.getEntityId(), c);
         Node geometryNode = c.createNode(game);
         //rayCast3D.addCollisonObject(geometryNode);
 
         return c;
+    }
+
+    /**
+     * Creates an orb on a given position.
+     * @param name the orbs name
+     * @param position the orbs position
+     * @return the orb just created
+     */
+    public Orb createOrb(String name, Vector3f position, ColorRGBA color) {
+        Orb o = new Orb(name, position, color);
+
+        addEntity(o);
+        orbHashMap.put(o.getEntityId(), o);
+        Node geometryNode = o.createNode(game);
+        rayCast3D.addClickableObject(geometryNode);
+
+        return o;
     }
     //==========================================================================
     //===   Inner Classes

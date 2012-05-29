@@ -35,10 +35,15 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package eventsystem;
 
+import com.jme3.collision.CollisionResults;
+import eventsystem.events.CollisionEvent;
 import eventsystem.interfaces.Collidable3D;
 import eventsystem.listener.CollisionListener;
+import eventsystem.port.Collider3D;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The class CollisionHandler.
@@ -72,7 +77,8 @@ public class CollisionHandler {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private HashMap<Collidable3D, HashSet<CollisionListener>> collisionListeners;
+    private HashMap<Collidable3D, HashSet<CollisionListener>> collisionListeners = new HashMap<Collidable3D, HashSet<CollisionListener>>();
+    private Collider3D collider3D = Collider3D.getInstance();
     //==========================================================================
     //===   Methods
     //==========================================================================
@@ -94,6 +100,26 @@ public class CollisionHandler {
 
     public void removeCollisionListener(
             CollisionListener listener) {
+    }
+
+    public void update(float tpf) {
+        for (Map.Entry<Collidable3D, HashSet<CollisionListener>> e : collisionListeners.entrySet()) {
+            invokeCollisionEvent(e.getKey(), e.getValue());
+        }
+    }
+
+    private void invokeCollisionEvent(Collidable3D collidable, HashSet<CollisionListener> collisionListeners) {
+        CollisionResults r;
+        collider3D.objectCollides(collidable);
+        r = collider3D.getCurrentCollisionResults();
+        
+        collidable.onCollision3D(r);
+        
+        CollisionEvent e = new CollisionEvent(collidable, r);
+        
+        for (CollisionListener cl : collisionListeners) {
+            cl.onCollision(e);
+        }
     }
     //==========================================================================
     //===   Inner Classes

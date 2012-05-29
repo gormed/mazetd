@@ -36,6 +36,7 @@
 package eventsystem.events;
 
 import com.jme3.collision.Collidable;
+import com.jme3.collision.CollisionResults;
 
 /**
  * The class CollisionEvent.
@@ -48,12 +49,12 @@ public class CollisionEvent extends AbstractEvent {
     //===   Private Fields
     //==========================================================================
     private Collidable self;
-    private Collidable with;
+    private CollisionResults with;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-    public CollisionEvent(Object source, Collidable self, Collidable with) {
-        super(source);
+    public CollisionEvent(Collidable self, CollisionResults with) {
+        super(self);
         this.self = self;
         this.with = with;
     }
@@ -62,7 +63,7 @@ public class CollisionEvent extends AbstractEvent {
         return self;
     }
 
-    public Collidable getWith() {
+    public CollisionResults getWith() {
         return with;
     }
 }

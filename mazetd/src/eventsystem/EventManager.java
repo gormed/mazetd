@@ -89,7 +89,7 @@ public class EventManager {
     private TimerHandler timerHandler = TimerHandler.getInstance();
     private InputHandler inputHandler = InputHandler.getInstance();
     private EntityHandler enitiyHandler = EntityHandler.getInstance();
-    private InputManager inputManager;
+    private CollisionHandler collisionHandler = CollisionHandler.getInstance();
     //==========================================================================
     //===   Methods
     //==========================================================================
@@ -100,6 +100,7 @@ public class EventManager {
      */
     public void update(float tpf) {
         timerHandler.update(tpf);
+        collisionHandler.update(tpf);
     }
 
     /**
@@ -189,5 +190,14 @@ public class EventManager {
     public void addEntityListener(EntityListener entityListener, AbstractEntity... entitys) {
 
         enitiyHandler.addEntityListener(entityListener, entitys);
+    }
+    
+    /**
+     * Adds a EntityListener any entity-event.
+     * @param entityListener the listener
+     */
+    public void removeEntityListener(EntityListener entityListener, AbstractEntity... entitys) {
+
+        enitiyHandler.removeEntityListener(entityListener);
     }
 }

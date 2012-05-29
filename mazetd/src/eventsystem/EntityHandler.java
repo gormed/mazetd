@@ -38,11 +38,12 @@ package eventsystem;
 import com.jme3.collision.CollisionResult;
 import com.jme3.math.Vector2f;
 import entities.base.AbstractEntity;
-import entities.base.ClickableEntity;
 import eventsystem.events.EntityEvent;
 import eventsystem.listener.EntityListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * The class EntityHandler
@@ -86,7 +87,7 @@ public class EntityHandler {
      * Adds a EntityListener for any given set of AbstractEntity.
      * @param entityListener the listener
      */
-    public void addEntityListener(EntityListener entityListener, AbstractEntity... entitys) {
+    void addEntityListener(EntityListener entityListener, AbstractEntity... entitys) {
 
         for (AbstractEntity e : entitys) {
             HashSet<EntityListener> listeners;
@@ -100,10 +101,26 @@ public class EntityHandler {
             }
         }
     }
+
+    void removeEntityListener(EntityListener listener) {
+        EntityListener remove = null;
+        for (Map.Entry<AbstractEntity, HashSet<EntityListener>> entry : entityListeners.entrySet()) {
+            for (EntityListener entityListener : entry.getValue()) {
+                if (entityListener.equals(listener)) {
+                    remove = entityListener;
+                    break;
+                }
+            }
+            if (remove != null) {
+                entry.getValue().remove(remove);
+                remove = null;
+            }
+        }
+    }
+
     //==========================================================================
     //===   Invocation Methods
     //==========================================================================
-
     /**
      * Invokes a given entity-event for a given entity. 
      * <p>

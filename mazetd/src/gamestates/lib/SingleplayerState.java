@@ -61,6 +61,7 @@ public class SingleplayerState extends Gamestate {
     private MazeTDGame game;
     private AmbientLight ambientLight;
     private PointLight pointLight;
+    private Level level;
 
     public SingleplayerState() {
         super(GamestateManager.SINGLEPLAYER_STATE);
@@ -68,11 +69,13 @@ public class SingleplayerState extends Gamestate {
 
     @Override
     public void update(float tpf) {
+        level.update(tpf);
     }
 
     @Override
     protected void loadContent(MazeTDGame game) {
         this.game = game;
+        this.level = Level.getInstance();
         test();
     }
 
@@ -121,7 +124,7 @@ public class SingleplayerState extends Gamestate {
 
         //ScreenRayCast3D.getInstance().addCollisonObject(geom2);
 
-        Level.getInstance().initialize();
+        level.initialize();
 
         // add two lights to scene
         ambientLight = new AmbientLight();

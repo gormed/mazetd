@@ -52,6 +52,8 @@ import gamestates.lib.MainmenuState;
 import gamestates.lib.SingleplayerState;
 import de.lessvoid.nifty.Nifty;
 import com.jme3.niftygui.NiftyJmeDisplay;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.BloomFilter;
 import gui.elements.MainmenuScreen;
 
 /**
@@ -64,9 +66,11 @@ import gui.elements.MainmenuScreen;
  * @see SimpleApplication
  */
 public class MazeTDGame extends SimpleApplication {
+    
     //==========================================================================
     //===   Singleton and Main-method
     //==========================================================================
+    
 
     /** The single reference to the game*/
     private static MazeTDGame instance;
@@ -99,6 +103,8 @@ public class MazeTDGame extends SimpleApplication {
     //===   Static Fields
     //==========================================================================
     public static final String INPUT_MAPPING_CAMERA_DEBUG = "MAZETDGAME_CameraDebug";
+    public static final float BLOOM_INTENSITY = 1.0f;
+    public static final int BLOOM_SAMPLING_FACTOR = 2;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -108,6 +114,10 @@ public class MazeTDGame extends SimpleApplication {
     private IsoCameraControl isoCameraControl;
     private GameDebugActionListener gameDebugActionListener = new GameDebugActionListener();
     private boolean showFps = true;
+    /** The post processor. */
+    private FilterPostProcessor postProcessor;
+    private BloomFilter bloomFilter =
+            new BloomFilter(BloomFilter.GlowMode.Objects);
     //==========================================================================
     //===   Package Fields
     //==========================================================================
@@ -130,6 +140,9 @@ public class MazeTDGame extends SimpleApplication {
         //flyCam.setDragToRotate(true);
     }
 
+    /**
+     * initializes the gui.
+     */
     private void initGUI() {
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(
                 assetManager, inputManager, audioRenderer, guiViewPort);
@@ -137,6 +150,18 @@ public class MazeTDGame extends SimpleApplication {
         nifty.fromXml("Interface/screen.xml", "start", new MainmenuScreen("start"));
         guiViewPort.addProcessor(niftyDisplay);
 
+    }
+
+    /**
+     * Initializes postprocessor and adds filters.
+     */
+    private void initPostProcessors() {
+        postProcessor = new FilterPostProcessor(assetManager);
+        bloomFilter.setDownSamplingFactor(BLOOM_SAMPLING_FACTOR);
+        bloomFilter.setBloomIntensity(BLOOM_INTENSITY);
+        bloomFilter.setBlurScale(1f);
+        postProcessor.addFilter(bloomFilter);
+        viewPort.addProcessor(postProcessor);
     }
 
     /**
@@ -150,7 +175,7 @@ public class MazeTDGame extends SimpleApplication {
             flyCam.setMoveSpeed(5f);
 
             if (context.getType() == Type.Display) {
-                inputManager.addMapping(INPUT_MAPPING_EXIT, new KeyTrigger(KeyInput.KEY_ESCAPE));
+                //inputManager.addMapping(INPUT_MAPPING_EXIT, new KeyTrigger(KeyInput.KEY_ESCAPE));
             }
 
             inputManager.addMapping(INPUT_MAPPING_CAMERA_DEBUG, new KeyTrigger(KeyInput.KEY_F1));
@@ -176,12 +201,14 @@ public class MazeTDGame extends SimpleApplication {
         // init isometric camera
         isoCameraControl = new IsoCameraControl(this);
         detachDebugCamera();
+        
+        //init the Post-Processors
+        initPostProcessors();
         // init input for debugging and camera
         initDebugInputs();
-
         // initialize gamestate manager and adds states, finally start the states
         initGamestates();
-        
+        // init games gui
         initGUI();
         // EventManager init
         eventManager = EventManager.getInstance();
@@ -262,44 +289,39 @@ public class MazeTDGame extends SimpleApplication {
      */
     private class GameDebugActionListener implements ActionListener {
 
+        @Override
         public void onAction(String name, boolean value, float tpf) {
             if (!value) {
                 return;
             }
-            switch (name) {
-                case INPUT_MAPPING_CAMERA_DEBUG:
-                    if (flyCam.isEnabled()) {
-                        detachDebugCamera();
-                    } else {
-                        attachDebugCamera();
-                    }
-                    break;
-                case INPUT_MAPPING_EXIT:
-                    stop();
-                    break;
-                case INPUT_MAPPING_CAMERA_POS:
-                    if (cam != null) {
-                        Vector3f loc = cam.getLocation();
-                        Quaternion rot = cam.getRotation();
-                        System.out.println("Camera Position: ("
-                                + loc.x + ", " + loc.y + ", " + loc.z + ")");
-                        System.out.println("Camera Rotation: " + rot);
-                        System.out.println("Camera Direction: " + cam.getDirection());
-                    }
-                    break;
-                case INPUT_MAPPING_MEMORY:
-                    BufferUtils.printCurrentDirectMemory(null);
-                    break;
-                case INPUT_MAPPING_HIDE_STATS:
-                    showFps = !showFps;
-                    setDisplayFps(!showFps);
-                    setDisplayStatView(!showFps);
-                    break;
-                default:
-                    return;
+            if (name.equals(INPUT_MAPPING_CAMERA_DEBUG)) {
+                if (flyCam.isEnabled()) {
+                    detachDebugCamera();
+                } else {
+                    attachDebugCamera();
+                }
+
+            } else if (name.equals(INPUT_MAPPING_EXIT)) {
+                stop();
+
+            } else if (name.equals(INPUT_MAPPING_CAMERA_POS)) {
+                if (cam != null) {
+                    Vector3f loc = cam.getLocation();
+                    Quaternion rot = cam.getRotation();
+                    System.out.println("Camera Position: ("
+                            + loc.x + ", " + loc.y + ", " + loc.z + ")");
+                    System.out.println("Camera Rotation: " + rot);
+                    System.out.println("Camera Direction: " + cam.getDirection());
+                }
+
+            } else if (name.equals(INPUT_MAPPING_MEMORY)) {
+                BufferUtils.printCurrentDirectMemory(null);
+
+            } else if (name.equals(INPUT_MAPPING_HIDE_STATS)) {
+                showFps = !showFps;
+                setDisplayFps(!showFps);
+                setDisplayStatView(!showFps);
             }
-
-
         }
     }
 }

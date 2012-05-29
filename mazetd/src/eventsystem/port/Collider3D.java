@@ -35,8 +35,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package eventsystem.port;
 
-import com.jme3.collision.Collidable;
-import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -135,9 +133,5 @@ public class Collider3D {
 
     public Collidable3D getCurrentCollidable() {
         return currentCollidable;
-    }
-    
-    public void update(float tpf) {
-        
     }
 }

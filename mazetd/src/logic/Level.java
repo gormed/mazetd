@@ -35,9 +35,11 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entities.Map;
+import entities.Orb;
 import entities.Tower;
 import entities.base.EntityManager;
 import eventsystem.events.EntityEvent;
@@ -118,12 +120,12 @@ public class Level implements EntityListener {
 
         // Setup Grid and Map
         map = new Map();
-        staticLevelElements.attachChild(map.getDecorativeMapElements());
+        staticLevelElements.attachChild(map);
         // add tower (for test)
         Tower t = entityManager.createTower(
                 "FirstTower", new Vector3f(0, 0, 0));
-        rayCast3D.addClickableObject(t.getGeometryNode());
         
+        Orb o = entityManager.createOrb("FirstOrb", new Vector3f(2, 0, 1), ColorRGBA.Blue);
         // add the level as a entity-listener
         eventManager.addEntityListener(this, t);
     }
@@ -133,7 +135,7 @@ public class Level implements EntityListener {
      * @param tpf 
      */
     public void update(float tpf) {
-        
+        entityManager.update(tpf);
     }
     
     /**

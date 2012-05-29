@@ -35,8 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package eventsystem.listener;
 
-import com.jme3.collision.CollisionResults;
-import eventsystem.interfaces.Collidable3D;
+import eventsystem.events.CollisionEvent;
 import java.util.EventListener;
 
 /**
@@ -44,5 +43,5 @@ import java.util.EventListener;
  * @author Hans Ferchland
  */
 public interface CollisionListener extends EventListener{
-    public void onCollision(Collidable3D who, CollisionResults collisionResults);
+    public void onCollision(CollisionEvent e);
 }
