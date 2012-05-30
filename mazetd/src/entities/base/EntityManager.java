@@ -147,7 +147,7 @@ public class EntityManager {
         towerHashMap.put(t.getEntityId(), t);
         Node geometryNode = t.createNode(game);
         rayCast3D.addClickableObject(geometryNode);
-
+        
         return t;
     }
 

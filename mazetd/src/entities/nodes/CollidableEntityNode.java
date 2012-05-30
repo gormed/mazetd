@@ -35,6 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities.nodes;
 
+import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
 import entities.base.CollidableEntity;
 import eventsystem.interfaces.Collidable3D;
@@ -69,5 +70,14 @@ public class CollidableEntityNode extends EntityNode implements Collidable3D {
     @Override
     public void onCollision3D(CollisionResults collisionResults) {
         entity.onCollision(collisionResults);
+    }
+
+    @Override
+    public int collideWith(Collidable other, CollisionResults results) {
+        CollidableEntityNode collidableEntityNode = entity.getCollidableEntityNode();
+        if (collidableEntityNode != null)
+            return entity.getCollidableEntityNode().collideWith(other, results);
+        else
+            return 0;
     }
 }

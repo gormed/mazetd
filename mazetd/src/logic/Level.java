@@ -127,6 +127,7 @@ public class Level implements EntityListener {
         // add tower (for test)
         Tower t = entityManager.createTower(
                 "FirstTower", new Vector3f(0, 0, 0));
+        staticLevelElements.attachChild(t.getRangeCollisionNode());
         
         Orb o = entityManager.createOrb(
                 "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);

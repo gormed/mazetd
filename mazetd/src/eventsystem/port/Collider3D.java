@@ -35,6 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package eventsystem.port;
 
+import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -76,7 +77,7 @@ public class Collider3D {
     //==========================================================================
     private Node collisionNode = new Node("Collision3DNode");
     private CollisionResults collisionResults;
-    private Collidable3D currentCollidable;
+    private Collidable currentCollidable;
     private MazeTDGame game = MazeTDGame.getInstance();
     //==========================================================================
     //===   Methods
@@ -98,16 +99,30 @@ public class Collider3D {
 
         collisionNode.detachChild(object);
     }
-    
-    public void objectCollides(Collidable3D collidable) {
+
+    public CollisionResults objectCollides(Collidable collidable) {
         currentCollidable = collidable;
-        
+
         collisionResults = new CollisionResults();
         currentCollidable.collideWith(collisionNode, collisionResults);
-        
-        if (collisionResults.size() <= 0)
-            return;
-        collidable.onCollision3D(collisionResults);
+
+        if (collidable instanceof Collidable3D) {
+            ((Collidable3D) collidable).onCollision3D(collisionResults);
+        }
+
+        if (collisionResults.size() > 0) {
+            return collisionResults;
+        } else {
+            return null;
+        }
+    }
+
+    public CollisionResults getCurrentCollisionResults() {
+        return collisionResults;
+    }
+
+    public Collidable getCurrentCollidable() {
+        return currentCollidable;
     }
     
 //    private void searchForCollidable3D(Spatial spatial, CollisionResult collisionResult) {
@@ -128,12 +143,4 @@ public class Collider3D {
 //            c.onCollision3D(collisionResults);
 //        }
 //    }
-
-    public CollisionResults getCurrentCollisionResults() {
-        return collisionResults;
-    }
-
-    public Collidable3D getCurrentCollidable() {
-        return currentCollidable;
-    }
 }

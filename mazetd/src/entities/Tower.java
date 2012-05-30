@@ -35,26 +35,36 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities;
 
+import com.jme3.collision.Collidable;
+import com.jme3.collision.CollisionResults;
+import com.jme3.collision.UnsupportedCollisionException;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
 import entities.base.ClickableEntity;
+import eventsystem.interfaces.Collidable3D;
+import eventsystem.port.Collider3D;
 import mazetd.MazeTDGame;
 
 /**
  * The class Tower.
  * @author Hady Khalifa & Hans Ferchland
- * @version 0.2
+ * @version 0.3
  */
 public class Tower extends ClickableEntity {
     //==========================================================================
     //===   Constants
     //========================================================================== 
 
+    public static final int TOWER_BASE_RANGE = 5;
+    public static final int TOWER_HP = 500;
+    private static final float RANGE_CYLINDER_HEIGHT = 1.5f;
     private static final int TOWER_SAMPLES = 20;
     private static final float TOWER_HEIGHT = 1.4f;
     private static final float TOWER_SIZE = 0.5f;
@@ -63,14 +73,19 @@ public class Tower extends ClickableEntity {
     //===   Private Fields
     //==========================================================================
     private Geometry roofGeometry;
+    private int towerRange = TOWER_BASE_RANGE;
     private Geometry wallGeometry;
     private Material roofMaterial;
     private Material wallMaterial;
     private Vector3f position;
-
+    private Creep target;
+    private float healthPoints = TOWER_HP;
+    private CollisionRangeNode attackRangeCollisionNode;
+    private Geometry collisionCylinder;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
+
     public Tower(String name, Vector3f position) {
         super(name);
         this.position = position;
@@ -99,9 +114,9 @@ public class Tower extends ClickableEntity {
         float[] angles = {(float) Math.PI / 2, 0, 0};
         // Roof
         Cylinder roof = new Cylinder(
-                TOWER_SAMPLES, 
-                TOWER_SAMPLES, 
-                ROOF_SIZE, 0, 
+                TOWER_SAMPLES,
+                TOWER_SAMPLES,
+                ROOF_SIZE, 0,
                 ROOF_SIZE, false, false);
 
         roofGeometry = new Geometry(
@@ -110,8 +125,8 @@ public class Tower extends ClickableEntity {
         roofGeometry.setLocalTranslation(0, TOWER_HEIGHT + ROOF_SIZE / 2, 0);
         roofGeometry.setLocalRotation(new Quaternion(angles));
         //roofGeometry.setQueueBucket(Bucket.Translucent);
-        
-        
+
+
         // Wall
         Cylinder wall = new Cylinder(
                 TOWER_SAMPLES,
@@ -119,26 +134,32 @@ public class Tower extends ClickableEntity {
                 TOWER_SIZE,
                 TOWER_HEIGHT,
                 true);
-        
-        
+
+
         wallGeometry = new Geometry(
                 name + "_WallGeometry", wall);
         wallGeometry.setMaterial(wallMaterial);
         wallGeometry.setLocalTranslation(0, TOWER_HEIGHT / 2, 0);
         wallGeometry.setLocalRotation(new Quaternion(angles));
         //wallGeometry.setQueueBucket(Bucket.Translucent);
-        
+
         // Hierarchy
         clickableEntityNode.attachChild(wallGeometry);
         clickableEntityNode.attachChild(roofGeometry);
         // apply position to main node
         clickableEntityNode.setLocalTranslation(position);
 
+        // create collision for tower attacking range
+        createCollision(game);
+
         return clickableEntityNode;
     }
 
     @Override
     protected void update(float tpf) {
+        // TODO: fix collision
+//        CollisionResults collisionResults = 
+//                Collider3D.getInstance().objectCollides(collisionCylinder);
     }
 
     @Override
@@ -148,15 +169,61 @@ public class Tower extends ClickableEntity {
 
     @Override
     public void onMouseOver() {
-        
     }
 
     @Override
     public void onMouseLeft() {
+    }
+
+    private void createCollision(MazeTDGame game) {
+
+        Cylinder c = new Cylinder(
+                TOWER_SAMPLES,
+                TOWER_SAMPLES,
+                towerRange,
+                RANGE_CYLINDER_HEIGHT,
+                true);
+
+        Material m = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        m.setColor("Color", new ColorRGBA(1, 0, 0, 0.1f));
+        m.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+
+        float[] angles = {(float) Math.PI / 2, 0, 0};
+
+        collisionCylinder = new Geometry("CollisionCylinderGeometry", c);
+        collisionCylinder.setMaterial(m);
+        collisionCylinder.setLocalTranslation(0, 1.2f, 0);
+        collisionCylinder.setLocalRotation(new Quaternion(angles));
+        collisionCylinder.setQueueBucket(Bucket.Transparent);
+
+        attackRangeCollisionNode = 
+                new CollisionRangeNode("AttackCollisionCylinderNode");
+        attackRangeCollisionNode.setLocalTranslation(position);
         
     }
 
+    public Node getRangeCollisionNode() {
+        return attackRangeCollisionNode;
+    }
+
+    public void setTarget(Creep target) {
+        this.target = target;
+    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+
+    private class CollisionRangeNode extends Node {
+
+
+        
+        public CollisionRangeNode(String name) {
+            super(name);
+        }
+
+        @Override
+        public int collideWith(Collidable other, CollisionResults results) throws UnsupportedCollisionException {
+            return collisionCylinder.collideWith(other, results);
+        }
+    }
 }

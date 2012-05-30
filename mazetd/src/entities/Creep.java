@@ -62,12 +62,12 @@ public class Creep extends CollidableEntity {
     //==========================================================================
 
     public static final float CREEP_BASE_SPEED = 1.1f;
-    public static final float CREEP_GROUND_RADIUS = 0.25f;
-    public static final float CREEP_HEIGHT = 0.5f;
+    private static final float CREEP_GROUND_RADIUS = 0.25f;
+    private static final float CREEP_HEIGHT = 0.5f;
     public static final int CREEP_MAX_HP = 100;
-    public static final float CREEP_MIN_DISTANCE = 0.1f;
-    public static final int CREEP_SAMPLES = 10;
-    public static final float CREEP_TOP_RADIUS = 0.1f;
+    private static final float CREEP_MIN_DISTANCE = 0.1f;
+    private static final int CREEP_SAMPLES = 10;
+    private static final float CREEP_TOP_RADIUS = 0.1f;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -108,7 +108,7 @@ public class Creep extends CollidableEntity {
             Vector3f dir = target.subtract(position);
             float distance = dir.length();
             dir.normalizeLocal();
-            dir.multLocal(speed*tpf);
+            dir.multLocal(speed * tpf);
 
             if (distance < CREEP_MIN_DISTANCE) {
                 position = target;
@@ -170,9 +170,9 @@ public class Creep extends CollidableEntity {
 
     /**
      * Damages a creep by <code>amount</code> points.
-     * @param amount the amount of damage
+     * @param amount the amount of receiveDamaged
      */
-    public void damage(float amount) {
+    public void receiveDamaged(float amount) {
         this.healthPoints -= amount;
         if (isDead()) {
             deacying = true;

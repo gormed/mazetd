@@ -198,7 +198,7 @@ public class Orb extends ClickableEntity {
 
             Sphere s = new Sphere(ORB_SAMPLES, ORB_SAMPLES, ORB_SIZE);
 
-            geometry = new Geometry("red_element_orb_geometry", s);
+            geometry = new Geometry("element_orb_geometry", s);
             geometry.setMaterial(material);
             geometry.setLocalTranslation(0, HEIGHT_OVER_GROUND, 0);
             geometry.setQueueBucket(Bucket.Transparent);
