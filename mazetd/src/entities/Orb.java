@@ -53,61 +53,75 @@ import mazetd.MazeTDGame;
  */
 public class Orb extends ClickableEntity {
     //==========================================================================
-    //===   Constants
+    //===   Enums
     //==========================================================================
 
-    public static final float HEIGHT_OVER_GROUND = 0.4f;
+    public enum ElementType {
+
+        RED,
+        BLUE,
+        GREEN,
+        YELLOW,
+        WHITE
+    }
+    //==========================================================================
+    //===   Constants
+    //==========================================================================
+    private static final float HEIGHT_OVER_GROUND = 0.4f;
     private static final int ORB_SAMPLES = 10;
     private static final float ORB_SIZE = 0.125f;
+    private static MazeTDGame game = MazeTDGame.getInstance();
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private Geometry orbGeometry;
-    private Material orbMaterial;
     private Vector3f position;
-    private ColorRGBA color;
+    private ElementType type;
     private Element element;
     private float height = 0.4f;
+
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-
-    public Orb(String name, Vector3f position, ColorRGBA color) {
+    public Orb(String name, Vector3f position, ElementType type) {
         super(name);
         this.position = position;
-        this.color = color;
+        this.type = type;
     }
 
     @Override
     public Node createNode(MazeTDGame game) {
         super.createNode(game);
 
-        // orbs Material        
-        orbMaterial = new Material(
-                game.getAssetManager(),
-                "Common/MatDefs/Misc/Unshaded.j3md");
-        orbMaterial.setColor("Color", color.add(new ColorRGBA(0.2f, 0.2f, -0.1f, 0)));
-        orbMaterial.setColor("GlowColor", color);
-        orbMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-
-        Sphere s = new Sphere(ORB_SAMPLES, ORB_SAMPLES, ORB_SIZE);
-
-        orbGeometry = new Geometry("orb_" + name, s);
-        orbGeometry.setMaterial(orbMaterial);
-        orbGeometry.setLocalTranslation(0, HEIGHT_OVER_GROUND, 0);
-        orbGeometry.setQueueBucket(Bucket.Transparent);
+        this.element = createElement();
 
         clickableEntityNode.setLocalTranslation(position);
-        clickableEntityNode.attachChild(orbGeometry);
+        clickableEntityNode.attachChild(element.geometry);
 
         return clickableEntityNode;
+    }
+
+    private Element createElement() {
+        switch (type) {
+            case BLUE:
+                return Element.getBlueElement();
+            case RED:
+                return Element.getRedElement();
+            case GREEN:
+                return Element.getGreenElement();
+            case YELLOW:
+                return Element.getYellowElement();
+            case WHITE:
+                return Element.getWhiteElement();
+            default:
+                return Element.getBlueElement();
+        }
     }
 
     @Override
     protected void update(float tpf) {
         height += tpf;
         float y = 0.1f * (float) Math.sin(1.5f * height);
-        orbGeometry.setLocalTranslation(0, HEIGHT_OVER_GROUND + y, 0);
+        element.geometry.setLocalTranslation(0, HEIGHT_OVER_GROUND + y, 0);
     }
 
     @Override
@@ -125,9 +139,69 @@ public class Orb extends ClickableEntity {
     //===   Inner Classes
     //==========================================================================
 
-    private abstract class Element {
+    private static class Element {
 
-        public Element() {
+        public static Element getRedElement() {
+            Element e = new Element();
+            e.color = ColorRGBA.Red.clone();
+            e.createBaseElement();
+
+            return e;
+        }
+
+        public static Element getBlueElement() {
+            Element e = new Element();
+            e.color = ColorRGBA.Blue.clone();
+            e.createBaseElement();
+
+            return e;
+        }
+
+        public static Element getGreenElement() {
+            Element e = new Element();
+            e.color = ColorRGBA.Green.clone();
+            e.createBaseElement();
+
+            return e;
+        }
+
+        public static Element getYellowElement() {
+            Element e = new Element();
+            e.color = ColorRGBA.Yellow.clone();
+            e.createBaseElement();
+
+            return e;
+        }
+
+        public static Element getWhiteElement() {
+            Element e = new Element();
+            e.color = ColorRGBA.White.clone();
+            e.createBaseElement();
+
+            return e;
+        }
+        private ColorRGBA color;
+        private Geometry geometry;
+        private Material material;
+
+        private Element() {
+        }
+
+        private void createBaseElement() {
+            // orbs Material        
+            material = new Material(
+                    game.getAssetManager(),
+                    "Common/MatDefs/Misc/Unshaded.j3md");
+            material.setColor("Color", color);
+            material.setColor("GlowColor", color);
+            material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+
+            Sphere s = new Sphere(ORB_SAMPLES, ORB_SAMPLES, ORB_SIZE);
+
+            geometry = new Geometry("red_element_orb_geometry", s);
+            geometry.setMaterial(material);
+            geometry.setLocalTranslation(0, HEIGHT_OVER_GROUND, 0);
+            geometry.setQueueBucket(Bucket.Transparent);
         }
     }
 }

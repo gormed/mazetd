@@ -39,6 +39,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import eventsystem.interfaces.Collidable3D;
+import mazetd.MazeTDGame;
 
 /**
  *
@@ -53,6 +54,7 @@ public class Collider3D {
      * The hidden constructor of Collider3D.
      */
     private Collider3D() {
+        game.getRootNode().attachChild(collisionNode);
     }
 
     /**
@@ -72,10 +74,10 @@ public class Collider3D {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private Node collisionNode;
+    private Node collisionNode = new Node("Collision3DNode");
     private CollisionResults collisionResults;
     private Collidable3D currentCollidable;
-    
+    private MazeTDGame game = MazeTDGame.getInstance();
     //==========================================================================
     //===   Methods
     //==========================================================================

@@ -35,29 +35,216 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities;
 
-import entities.base.AbstractEntity;
+import com.jme3.collision.CollisionResults;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.shape.Cylinder;
+import entities.base.CollidableEntity;
+import entities.effects.OrbEffect;
+import entities.nodes.CollidableEntityNode;
+import java.util.HashSet;
+import mazetd.MazeTDGame;
 
 /**
- * The class Creep.
+ * The class Creep discribes the creep entity.
+ * A creep can walk to a given position, can be hit by a projectile, can have 
+ * orb effects on it and can destroy a tower.
  * @author Hans Ferchland
- * @version
+ * @version 0.1f
  */
-public class Creep extends AbstractEntity {
+public class Creep extends CollidableEntity {
+    //==========================================================================
+    //===   Constants
+    //==========================================================================
 
+    public static final float CREEP_BASE_SPEED = 1.1f;
+    public static final float CREEP_GROUND_RADIUS = 0.25f;
+    public static final float CREEP_HEIGHT = 0.5f;
+    public static final int CREEP_MAX_HP = 100;
+    public static final float CREEP_MIN_DISTANCE = 0.1f;
+    public static final int CREEP_SAMPLES = 10;
+    public static final float CREEP_TOP_RADIUS = 0.1f;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    private Geometry geometry;
+    private Material material;
+    private float healthPoints = CREEP_MAX_HP;
+    private float maxHealthPoints = CREEP_MAX_HP;
+    private boolean deacying = false;
+    private Tower attacker;
+    private HashSet<OrbEffect> orbEffects = new HashSet<OrbEffect>();
+    private Vector3f position;
+    private Vector3f target;
+    private float speed = CREEP_BASE_SPEED;
+    private boolean moving = false;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-    public Creep(String name) {
+
+    /**
+     * The constructor of the entity with a given name, hp and position.
+     * @param name the desired name of the creep
+     * @param position the position on the map
+     * @param healthPoints the HP of the creep
+     */
+    public Creep(String name, Vector3f position, float healthPoints, float maxHealthPoints) {
         super(name);
+        this.maxHealthPoints = maxHealthPoints;
+        this.healthPoints = healthPoints;
+        this.position = position;
     }
 
     @Override
     protected void update(float tpf) {
+        // if moving do this part
+        if (moving) {
+            position = collidableEntityNode.getLocalTranslation();
+
+            Vector3f dir = target.subtract(position);
+            float distance = dir.length();
+            dir.normalizeLocal();
+            dir.multLocal(speed*tpf);
+
+            if (distance < CREEP_MIN_DISTANCE) {
+                position = target;
+                // moving ended because the creep is at the target
+                moving = false;
+            } else {
+                position.addLocal(dir);
+            }
+            collidableEntityNode.setLocalTranslation(position);
+        }
     }
 
+    @Override
+    public void onCollision(CollisionResults collisionResults) {
+    }
+
+    @Override
+    public CollidableEntityNode createNode(MazeTDGame game) {
+        super.createNode(game);
+
+        // Material
+        material = new Material(
+                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        material.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
+        material.setColor("Specular", ColorRGBA.White);
+        material.setColor("Ambient", ColorRGBA.Black);   // ... color of this object
+        material.setColor("Diffuse", ColorRGBA.Gray);   // ... color of light being reflected
+
+        // Geometry
+        float[] angles = {(float) Math.PI / 2, 0, 0};
+
+        Cylinder c = new Cylinder(
+                CREEP_SAMPLES,
+                CREEP_SAMPLES,
+                CREEP_GROUND_RADIUS,
+                CREEP_TOP_RADIUS,
+                CREEP_HEIGHT,
+                true, false);
+
+        geometry = new Geometry("Creep_Geometry_" + name, c);
+        geometry.setMaterial(material);
+        geometry.setLocalTranslation(0, CREEP_HEIGHT * 0.5f, 0);
+        geometry.setLocalRotation(new Quaternion(angles));
+
+        collidableEntityNode.attachChild(geometry);
+        collidableEntityNode.setLocalTranslation(position);
+
+        return collidableEntityNode;
+    }
+
+    /**
+     * Sets the moving-target of the creep.
+     * @param target the desired position on the map
+     */
+    public void moveTo(Vector2f target) {
+        this.target = new Vector3f(target.x, 0, target.y);
+        moving = true;
+    }
+
+    /**
+     * Damages a creep by <code>amount</code> points.
+     * @param amount the amount of damage
+     */
+    public void damage(float amount) {
+        this.healthPoints -= amount;
+        if (isDead()) {
+            deacying = true;
+        }
+    }
+
+    /**
+     * Checks if the creep is dead
+     * @return true if below or at 0 HP, false otherwise
+     */
+    public boolean isDead() {
+        return healthPoints <= 0;
+    }
+
+    /**
+     * Gets the current tower which is attacking the creep.
+     * @return the attacking tower or null if not under attack
+     */
+    public Tower getAttacker() {
+        return attacker;
+    }
+
+    /**
+     * Applys a tower to attack this creep.
+     * @param attacker the tower currently attacking this creep
+     */
+    public void setAttacker(Tower attacker) {
+        this.attacker = attacker;
+    }
+
+    /**
+     * Checks if a creep is dead/decaying.
+     * @return true if dead, false otherwise
+     */
+    public boolean isDecaying() {
+        return deacying;
+    }
+
+    /**
+     * Returns the current HP of this creep.
+     * @return the current HP
+     */
+    public float getHealthPoints() {
+        return healthPoints;
+    }
+
+    /**
+     * Gets the effects this creep is suffering.
+     * @return the set of effects the creep is suffering, null if list is empty.
+     */
+    public HashSet<OrbEffect> getOrbEffects() {
+        if (orbEffects.isEmpty()) {
+            return null;
+        }
+        return orbEffects;
+    }
+
+    /**
+     * Adds an effect to the creep.
+     * @param effect the effect to add
+     */
+    public void addOrbEffect(OrbEffect effect) {
+        orbEffects.add(effect);
+    }
+
+    /**
+     * Removes an effect from the creep.
+     * @param effect the effect to remove
+     */
+    public void removeOrbEffect(OrbEffect effect) {
+        orbEffects.remove(effect);
+    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================

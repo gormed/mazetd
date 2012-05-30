@@ -35,9 +35,10 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
-import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import entities.Creep;
 import entities.Map;
 import entities.Orb;
 import entities.Tower;
@@ -125,7 +126,11 @@ public class Level implements EntityListener {
         Tower t = entityManager.createTower(
                 "FirstTower", new Vector3f(0, 0, 0));
         
-        Orb o = entityManager.createOrb("FirstOrb", new Vector3f(2, 0, 1), ColorRGBA.Blue);
+        Orb o = entityManager.createOrb(
+                "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);
+        
+        Creep c = entityManager.createCreep("FirstCreep", new Vector3f(3, 0, -2), 100, 100);
+        c.moveTo(new Vector2f(-5, 8));
         // add the level as a entity-listener
         eventManager.addEntityListener(this, t);
     }

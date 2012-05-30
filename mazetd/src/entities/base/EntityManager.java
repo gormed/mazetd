@@ -42,6 +42,7 @@ import com.jme3.scene.Node;
 import entities.Creep;
 import entities.Orb;
 import entities.Tower;
+import eventsystem.port.Collider3D;
 import java.util.HashMap;
 import java.util.Map;
 import mazetd.MazeTDGame;
@@ -92,6 +93,7 @@ public class EntityManager {
     private HashMap<Integer, Orb> orbHashMap = new HashMap<Integer, Orb>();
     private MazeTDGame game = MazeTDGame.getInstance();
     private ScreenRayCast3D rayCast3D = ScreenRayCast3D.getInstance();
+    private Collider3D collider3D = Collider3D.getInstance();
     //==========================================================================
     //===   Methods
     //==========================================================================
@@ -155,13 +157,13 @@ public class EntityManager {
      * @param position the creeps position
      * @return the creep just created
      */
-    public Creep createCreep(String name, Vector3f position) {
-        Creep c = new Creep(name);
+    public Creep createCreep(String name, Vector3f position, float healthPoints, float maxHealthPoints) {
+        Creep c = new Creep(name, position, healthPoints, maxHealthPoints);
 
         addEntity(c);
         creepHashMap.put(c.getEntityId(), c);
         Node geometryNode = c.createNode(game);
-        //rayCast3D.addCollisonObject(geometryNode);
+        collider3D.addCollisonObject(geometryNode);
 
         return c;
     }
@@ -172,8 +174,8 @@ public class EntityManager {
      * @param position the orbs position
      * @return the orb just created
      */
-    public Orb createOrb(String name, Vector3f position, ColorRGBA color) {
-        Orb o = new Orb(name, position, color);
+    public Orb createOrb(String name, Vector3f position, Orb.ElementType elementType) {
+        Orb o = new Orb(name, position, elementType);
 
         addEntity(o);
         orbHashMap.put(o.getEntityId(), o);
