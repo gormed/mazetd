@@ -48,6 +48,7 @@ import eventsystem.events.EntityEvent.EntityEventType;
 import eventsystem.EventManager;
 import eventsystem.listener.EntityListener;
 import eventsystem.port.ScreenRayCast3D;
+import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
 /**
@@ -121,6 +122,7 @@ public class Level implements EntityListener {
 
         // Setup Grid and Map
         map = new Map();
+        Grid grid = Grid.getInstance();
         staticLevelElements.attachChild(map);
         // add tower (for test)
         Tower t = entityManager.createTower(

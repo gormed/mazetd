@@ -49,7 +49,8 @@ public class Grid {
     /**
      * private data fields
      */
-    private FieldInfo[][] grid;
+    private static FieldInfo[][] grid;
+    private static FieldInfo startField, endField;
     private int totalHeight;
     private int totalWidth;
 
@@ -58,8 +59,8 @@ public class Grid {
      */
     private Grid() {
         totalHeight = 21;
-        totalWidth = 41;
-        init(totalWidth, totalHeight);
+        totalWidth = 21;
+        initGrid(totalWidth, totalHeight);
     }
 
     /**
@@ -86,18 +87,22 @@ public class Grid {
      * @param width - the width of the field
      * @param height - the height of the field
      */
-    private void init(int width, int height) {
+    private void initGrid(int width, int height) {
         grid = new FieldInfo[width][height];
-        //Startfield
-        grid[0][height / 2] = new FieldInfo(0, height / 2, 0);
+
         //GoalField
-        grid[width - 1][height / 2] = new FieldInfo(width - 1, height / 2, 10);
+        //grid[width - 1][height / 2] = new FieldInfo(width - 1, height / 2, 10);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                grid[x][y] = new FieldInfo(x, y, (10 + (Math.abs(x - (width - 1)) * 10) + (Math.abs(y - (height / 2)) * 10)));
+                grid[x][y] = new FieldInfo(x, y, (10 + (Math.abs(x - (width - 1)) * 10) + (Math.abs(y - (height / 2)) * 10)));           
             }
         }
-
+        //Startfield
+        grid[0][height / 2].setWeight(0);
+        
+        //Test Tower
+        setTower(2, 10);
+        setTower(12, 11);
     }
 
     public int getTotalWidth() {
@@ -121,8 +126,7 @@ public class Grid {
     /**
      * 
      * @param xCoord
-     * @param yCoord
-     * @param value 
+     * @param yCoord 
      */
     void setTower(int xCoord, int yCoord) {
         grid[xCoord][yCoord].incrementWeight(10000);
@@ -155,19 +159,26 @@ public class Grid {
         private int yCoord;
         private int weight;
         private MapSquare square;
+        private FieldInfo parent;
 
         /**
          * FieldInfo Constructor
          * 
          * @param xCoord - used for ID
          * @param yCoord - used for ID
-         * @param towerValue 0: no tower on the field; 1: tower on the field
+         * @param towerID - null: no tower on the field
          */
         private FieldInfo(int xCoord, int yCoord, int weight) {
             this.xCoord = xCoord;
             this.yCoord = yCoord;
             this.weight = weight;
+            this.parent = null;
 
+
+        }
+
+        public void setParent(FieldInfo field) {
+            this.parent = field;
         }
 
         /**
@@ -190,9 +201,34 @@ public class Grid {
             return output;
 
         }
-        
-        public void setMapSquare(MapSquare m){
+
+        public void setMapSquare(MapSquare m) {
             this.square = m;
         }
+
+        public void setWeight(int weight) {
+            this.weight = weight;
+        }
+
+        public int getWeight() {
+            return weight;
+        }
+
+        public int getXCoord() {
+            return xCoord;
+        }
+
+        public int getYCoord() {
+            return yCoord;
+        }
+
+        public FieldInfo getParent() {
+            return parent;
+        }
+
+        public MapSquare getSquare() {
+            return square;
+        }
+        
     }
 }
