@@ -145,6 +145,7 @@ public class Level {
      */
     public void update(float tpf) {
         entityManager.update(tpf);
+        
     }
 
     /**

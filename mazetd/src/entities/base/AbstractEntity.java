@@ -53,7 +53,7 @@ public abstract class AbstractEntity {
     /** the desired name of an entity, could be twice in the game. */
     protected String name;
     /** The Node for the geometry of this entity. */
-    Node geometryNode;
+    protected Node geometryNode;
 
     //==========================================================================
     //===   Methods & Constructor

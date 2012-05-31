@@ -108,7 +108,7 @@ public class EntityManager {
      *         (A <tt>null</tt> return can also indicate that the map
      *         previously associated <tt>null</tt> with <tt>key</tt>.)
      */
-    private AbstractEntity addEntity(AbstractEntity entity) {
+    public AbstractEntity addEntity(AbstractEntity entity) {
         return entityHashMap.put(entity.getEntityId(), entity);
     }
 
@@ -122,6 +122,9 @@ public class EntityManager {
      *         previously associated <tt>null</tt> with <tt>key</tt>.)
      */
     public AbstractEntity removeEntity(int id) {
+        creepHashMap.remove(id);
+        orbHashMap.remove(id);
+        towerHashMap.remove(id);
         return entityHashMap.remove(id);
     }
 
@@ -130,7 +133,8 @@ public class EntityManager {
      * @param tpf the time between the last update call
      */
     public void update(float tpf) {
-        for (Map.Entry<Integer, AbstractEntity> e : entityHashMap.entrySet()) {
+        HashMap<Integer, AbstractEntity> clone = new HashMap<Integer, AbstractEntity>(entityHashMap);
+        for (Map.Entry<Integer, AbstractEntity> e : clone.entrySet()) {
             e.getValue().update(tpf);
         }
     }

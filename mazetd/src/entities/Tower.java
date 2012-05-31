@@ -41,18 +41,16 @@ import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Sphere;
 import entities.base.AbstractEntity;
 import entities.base.ClickableEntity;
+import entities.base.EntityManager;
 import entities.nodes.CollidableEntityNode;
-import eventsystem.interfaces.Collidable3D;
 import eventsystem.port.Collider3D;
 import logic.Level;
 import mazetd.MazeTDGame;
@@ -68,14 +66,15 @@ public class Tower extends ClickableEntity {
     //===   Constants
     //========================================================================== 
     public static final float TOWER_BASE_DAMAGE_INTERVAL = 1.0f;
-    public static final int TOWER_BASE_DAMAGE = 5;
-    public static final int TOWER_BASE_RANGE = 10;
+    public static final int TOWER_BASE_DAMAGE = 0;
+    public static final int TOWER_BASE_RANGE = 5;
     public static final int TOWER_HP = 500;
     private static final float RANGE_CYLINDER_HEIGHT = 0.025f;
-    private static final int TOWER_SAMPLES = 20;
-    private static final float TOWER_HEIGHT = 1.4f;
-    private static final float TOWER_SIZE = 0.5f;
-    private static final float ROOF_SIZE = 0.6f;
+    private static final int TOWER_SAMPLES = 15;
+    private static final float TOWER_HEIGHT = 1.0f;
+    private static final float TOWER_SIZE = 0.3f;
+    private static final float ROOF_SIZE = 0.35f;
+    private static final MazeTDGame GAME = MazeTDGame.getInstance();
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -93,11 +92,11 @@ public class Tower extends ClickableEntity {
     private float damage = TOWER_BASE_DAMAGE;
     private float damageInterval = TOWER_BASE_DAMAGE_INTERVAL;
     private float intervalCounter = 0;
-    private Projectile projectile;
+
+    //private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-
     public Tower(String name, Vector3f position) {
         super(name);
         this.position = position;
@@ -187,26 +186,21 @@ public class Tower extends ClickableEntity {
                 return;
             }
             attack(tpf);
-        } else {
-            if (projectile != null)
-                projectile.destroyProjectile();
         }
     }
 
     private void attack(float tpf) {
-        if (projectile != null) {
-            projectile.update(tpf);
-        } else {
-            projectile = new Projectile(name + "'s_projectile", position.clone().setY(2f));
-            Level.getInstance().getDynamicLevelElements().attachChild(projectile);
-
+        intervalCounter += tpf;
+        if (intervalCounter > damageInterval) {
+            Projectile p =
+                    new Projectile(
+                    name + "'s_projectile",
+                    position.clone().setY(1.f),
+                    target);
+            p.createNode(GAME);
+            EntityManager.getInstance().addEntity(p);
+            intervalCounter = 0;
         }
-//        intervalCounter += tpf;
-//        if (intervalCounter > damageInterval) {
-//            System.out.println(target.getName() + " recieved " + damage + " damage!");
-//            target.receiveDamaged(damage);
-//            intervalCounter = 0;
-//        }
     }
 
     private void checkForRangedEnter() {
@@ -306,18 +300,30 @@ public class Tower extends ClickableEntity {
     //===   Inner Classes
     //==========================================================================
 
-    private class Projectile extends Node {
+    private class Projectile extends AbstractEntity {
 
         public static final float PROJECTILE_BASE_SPEED = 3.f;
         private Geometry geometry;
         private float speed = PROJECTILE_BASE_SPEED;
         private Vector3f position;
+        private Creep target;
+        
+        private float initialDistance = 0;
 
-        public Projectile(String name, Vector3f position) {
+        public Projectile(String name, Vector3f position, Creep target) {
             super(name);
+            this.target = target;
             this.position = position;
-            createGeometry();
+            this.initialDistance = target.getPosition().subtract(position).length();
+        }
 
+        @Override
+        public Node createNode(MazeTDGame game) {
+            super.createNode(game);
+
+            createGeometry();
+            Level.getInstance().getDynamicLevelElements().attachChild(geometryNode);
+            return geometryNode;
         }
 
         private void createGeometry() {
@@ -325,43 +331,52 @@ public class Tower extends ClickableEntity {
 
             geometry = new Geometry("ProjectileGeometry", s);
             geometry.setMaterial(projectileMaterial);
-            this.attachChild(geometry);
-            this.setLocalTranslation(position);
+            geometryNode.attachChild(geometry);
+            geometryNode.setLocalTranslation(position);
         }
 
         public void update(float tpf) {
-            if (target != null && !target.isDecaying()) {
+            if (target != null) {
                 move(tpf);
                 checkForHit();
-            } else if (target.isDecaying()) {
-                
+            }
+            if (target == null || (target != null && target.isDead())) {
+                destroyProjectile();
             }
         }
 
         private void move(float tpf) {
+            
+            
+            float currentDistance = target.getPosition().subtract(position).length();
+            float percentage = (initialDistance - currentDistance) / initialDistance;
             Vector3f targetPos = target.getPosition();
-            Vector3f projectilePos = this.getLocalTranslation();
+            Vector3f projectilePos = geometryNode.getLocalTranslation();
 
             Vector3f dir = targetPos.subtract(projectilePos);
             dir.normalizeLocal();
             dir.multLocal(speed * tpf);
-
-            this.setLocalTranslation(projectilePos.add(dir));
+            projectilePos.addLocal(dir);
+            
+            //projectilePos.y += (1-percentage);
+            
+            geometryNode.setLocalTranslation(projectilePos);
         }
 
         private void onHit() {
+            System.out.println(target.getName() + " recieved " + damage + " damage!");
             target.receiveDamaged(damage);
             destroyProjectile();
         }
 
         private void destroyProjectile() {
-            Level.getInstance().getDynamicLevelElements().detachChild(this);
-            projectile = null;
+            EntityManager.getInstance().removeEntity(this.getEntityId());
+            Level.getInstance().getDynamicLevelElements().detachChild(geometryNode);
         }
 
         private void checkForHit() {
             CollisionResults collisionResults =
-                    Collider3D.getInstance().objectCollides(this.getWorldBound());
+                    Collider3D.getInstance().objectCollides(geometryNode.getWorldBound());
             // if there are creeps
             if (collisionResults != null) {
                 Node n;
