@@ -35,6 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
+import com.jme3.math.ColorRGBA;
 import entities.Map.MapSquare;
 
 /**
@@ -94,15 +95,57 @@ public class Grid {
         //grid[width - 1][height / 2] = new FieldInfo(width - 1, height / 2, 10);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                grid[x][y] = new FieldInfo(x, y, (10 + (Math.abs(x - (width - 1)) * 10) + (Math.abs(y - (height / 2)) * 10)));           
+                grid[x][y] = new FieldInfo(x, y, (10 + (Math.abs(x - (width - 1)) * 10) + (Math.abs(y - (height / 2)) * 10)));
             }
         }
         //Startfield
         grid[0][height / 2].setWeight(0);
-        
+
         //Test Tower
+        setTower(2, 0);
+        setTower(2, 1);
+        setTower(2, 2);
+        setTower(2, 3);
+        setTower(2, 4);
+        setTower(2, 5);
+        setTower(2, 6);
+        setTower(2, 7);
+        setTower(2, 8);
+        setTower(2, 9);
         setTower(2, 10);
-        setTower(12, 11);
+        setTower(2, 11);
+        setTower(2, 12);
+        setTower(2, 13);
+        setTower(2, 14);
+        setTower(2, 15);
+        setTower(2, 16);
+        setTower(2, 17);
+        setTower(2, 18);
+        setTower(2, 19);
+        setTower(2, 20);
+        setTower(4, 0);
+        setTower(4, 1);
+        setTower(4, 2);
+        setTower(4, 3);
+        setTower(4, 4);
+        setTower(4, 5);
+        setTower(4, 6);
+        setTower(4, 7);
+        setTower(4, 8);
+        setTower(4, 9);
+        setTower(4, 10);
+        setTower(4, 11);
+        setTower(4, 12);
+        setTower(4, 13);
+        setTower(4, 14);
+        setTower(4, 15);
+        setTower(4, 16);
+        setTower(4, 17);
+        setTower(4, 18);
+        setTower(4, 19);
+
+
+
     }
 
     public int getTotalWidth() {
@@ -130,9 +173,8 @@ public class Grid {
      */
     void setTower(int xCoord, int yCoord) {
         grid[xCoord][yCoord].incrementWeight(10000);
-        grid[xCoord + 1][yCoord].incrementWeight(10000);
-        grid[xCoord][yCoord + 1].incrementWeight(10000);
-        grid[xCoord + 1][yCoord + 1].incrementWeight(10000);
+        //grid[xCoord][yCoord].getSquare().setColor(ColorRGBA.Red.clone());
+
     }
 
     /**
@@ -142,9 +184,7 @@ public class Grid {
      */
     void removeTower(int xCoord, int yCoord) {
         grid[xCoord][yCoord].decrementWeight(10000);
-        grid[xCoord + 1][yCoord].decrementWeight(10000);
-        grid[xCoord][yCoord + 1].decrementWeight(10000);
-        grid[xCoord + 1][yCoord + 1].decrementWeight(10000);
+
     }
 
     /**
@@ -229,6 +269,5 @@ public class Grid {
         public MapSquare getSquare() {
             return square;
         }
-        
     }
 }

@@ -38,6 +38,8 @@ package logic.pathfinding;
 import entities.Map.MapSquare;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Queue;
 import logic.Grid;
 import logic.Grid.FieldInfo;
 
@@ -50,7 +52,7 @@ public class Pathfinder {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private ArrayList<MapSquare> path;
+    private Queue<MapSquare> path;
     private Grid grid = Grid.getInstance();
 
     /**
@@ -80,13 +82,17 @@ public class Pathfinder {
         private static final Pathfinder INSTANCE = new Pathfinder();
     }
 
+    public Queue<MapSquare> getMainPath(){
+        return path;
+    }
+    
     /**
      * TODO -> Parameter start! , ziel?
      * 
      * @return 
      */
-    public ArrayList<MapSquare> createMainPath() {
-        ArrayList<MapSquare> tempPath = new ArrayList();
+    public Queue<MapSquare> createMainPath() {
+        Queue<MapSquare> tempPath = new LinkedList();
         FieldInfo field = null;
         try {
             field = findPath(grid,grid.getFieldInfo(0, 10),grid.getFieldInfo(20, 10));
@@ -100,7 +106,7 @@ public class Pathfinder {
         }
 
 
-        Collections.reverse(tempPath);
+        Collections.reverse((LinkedList)tempPath);
 
         return tempPath;
     }
@@ -204,7 +210,6 @@ public class Pathfinder {
 
     /**
      * 
-     * PARAMETER STAT GOAL!!
      * 
      * @param f
      * @param l

@@ -57,10 +57,10 @@ import mazetd.MazeTDGame;
  * @author Hans Ferchland
  */
 public class Level implements EntityListener {
+
     //==========================================================================
     //===   Singleton
     //==========================================================================
-
     /**
      * The hidden constructor of Level.
      */
@@ -93,6 +93,7 @@ public class Level implements EntityListener {
     private Node staticLevelElements;
     private Node dynamicLevelElements;
     private Map map;
+    private Grid grid;
     //==========================================================================
     //===   Methods
     //==========================================================================
@@ -101,8 +102,9 @@ public class Level implements EntityListener {
      * Initializes the level for the first time or after destroyed.
      */
     public void initialize() {
-        if (isInitialized())
+        if (isInitialized()) {
             return;
+        }
         mainLevelNode = new Node("MainLevelNode");
         staticLevelElements = new Node("StaticLevelElements");
         dynamicLevelElements = new Node("DynamicLevelElements");
@@ -110,7 +112,7 @@ public class Level implements EntityListener {
         mainLevelNode.attachChild(dynamicLevelElements);
 
         setupLevelContent();
-        
+
         game.getRootNode().attachChild(mainLevelNode);
         initialized = true;
     }
@@ -131,13 +133,13 @@ public class Level implements EntityListener {
         
         Orb o = entityManager.createOrb(
                 "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);
-        
-        Creep c = entityManager.createCreep("FirstCreep", new Vector3f(6, 0, -5), 100, 100);
-        c.moveTo(new Vector2f(-5, 8));
+
+        Creep c = entityManager.createCreep("FirstCreep", grid.getFieldInfo(0, 10).getSquare().getLocalTranslation(), 100, 100);
         // add the level as a entity-listener
         eventManager.addEntityListener(this, t);
+        
     }
-    
+
     /**
      * Updates the level components.
      * @param tpf 
@@ -145,7 +147,7 @@ public class Level implements EntityListener {
     public void update(float tpf) {
         entityManager.update(tpf);
     }
-    
+
     /**
      * Destroys all level attributes so it will have to be initialized again.
      */
@@ -153,11 +155,11 @@ public class Level implements EntityListener {
         staticLevelElements.detachAllChildren();
         dynamicLevelElements.detachAllChildren();
         mainLevelNode.detachAllChildren();
-        
+
         game.getRootNode().detachChild(mainLevelNode);
         initialized = false;
     }
-    
+
     /**
      * Checks if the level is initiliazed already.
      * @return true if initialize() was called, false if destroy() was called
@@ -171,8 +173,8 @@ public class Level implements EntityListener {
     public void onAction(EntityEvent entityEvent) {
         if (entityEvent.getEventType() == EntityEventType.Click) {
             System.out.println(
-                    "Level says that the entity: " + 
-                    entityEvent.getEntity().getName() + " was clicked.");
+                    "Level says that the entity: "
+                    + entityEvent.getEntity().getName() + " was clicked.");
         }
     }
     //==========================================================================

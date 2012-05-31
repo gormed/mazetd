@@ -48,6 +48,8 @@ import entities.effects.OrbEffect;
 import entities.nodes.CollidableEntityNode;
 import eventsystem.port.Collider3D;
 import java.util.HashSet;
+import java.util.Queue;
+import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
 /**
@@ -83,7 +85,8 @@ public class Creep extends CollidableEntity {
     private Vector3f position;
     private Vector3f target;
     private float speed = CREEP_BASE_SPEED;
-    private boolean moving = false;
+    private boolean moving = true;
+    private Queue<Map.MapSquare> path;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -99,18 +102,28 @@ public class Creep extends CollidableEntity {
         this.maxHealthPoints = maxHealthPoints;
         this.healthPoints = healthPoints;
         this.position = position;
+        this.path = Pathfinder.getInstance().getMainPath();
+        start(path.poll().getLocalTranslation());
     }
 
+    void start(Vector3f firstTarget){
+        moveTo(firstTarget);
+    }
+    
     @Override
     protected void update(float tpf) {
         if (deacying) {
-            
+
             decayTime += tpf;
             if (decayTime > 5) {
                 Collider3D.getInstance().removeCollisonObject(collidableEntityNode);
             }
         }
         // if moving do this part
+        moveUpdate(tpf);
+    }
+
+    private void moveUpdate(float tpf) {
         if (moving) {
             position = collidableEntityNode.getLocalTranslation();
 
@@ -120,9 +133,13 @@ public class Creep extends CollidableEntity {
             dir.multLocal(speed * tpf);
 
             if (distance < CREEP_MIN_DISTANCE) {
-                position = target;
+                //position = target;
                 // moving ended because the creep is at the target
-                moving = false;
+                if (!path.isEmpty()) {
+                    moveTo(path.poll().getLocalTranslation());
+                } else {
+                    moving = false;
+                }
             } else {
                 position.addLocal(dir);
             }
@@ -172,8 +189,9 @@ public class Creep extends CollidableEntity {
      * Sets the moving-target of the creep.
      * @param target the desired position on the map
      */
-    public void moveTo(Vector2f target) {
-        this.target = new Vector3f(target.x, 0, target.y);
+    public void moveTo(Vector3f target) {
+        this.target = target;
+        this.target.y = 0;
         moving = true;
     }
 
@@ -185,7 +203,7 @@ public class Creep extends CollidableEntity {
      * Damages a creep by <code>amount</code> points.
      * @param amount the amount of receiveDamaged
      */
-     void receiveDamaged(float amount) {
+    void receiveDamaged(float amount) {
         this.healthPoints -= amount;
         if (isDead()) {
             deacying = true;
@@ -205,7 +223,7 @@ public class Creep extends CollidableEntity {
     public boolean isDead() {
         return healthPoints <= 0;
     }
-    
+
     public Vector3f getPosition() {
         return position;
     }

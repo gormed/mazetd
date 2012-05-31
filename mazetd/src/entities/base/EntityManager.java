@@ -36,6 +36,7 @@
 package entities.base;
 
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import eventsystem.port.ScreenRayCast3D;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -159,6 +160,23 @@ public class EntityManager {
      */
     public Creep createCreep(String name, Vector3f position, float healthPoints, float maxHealthPoints) {
         Creep c = new Creep(name, position, healthPoints, maxHealthPoints);
+
+        addEntity(c);
+        creepHashMap.put(c.getEntityId(), c);
+        Node geometryNode = c.createNode(game);
+        collider3D.addCollisonObject(geometryNode);
+
+        return c;
+    }
+    
+        /**
+     * Creates a creep on a given position.
+     * @param name the creeps name
+     * @param position the creeps position
+     * @return the creep just created
+     */
+    public Creep createCreep(String name, Vector2f position, float healthPoints, float maxHealthPoints) {
+        Creep c = new Creep(name, new Vector3f(position.x, 0, position.y), healthPoints, maxHealthPoints);
 
         addEntity(c);
         creepHashMap.put(c.getEntityId(), c);

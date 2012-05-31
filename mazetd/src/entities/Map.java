@@ -112,7 +112,7 @@ public class Map extends Node {
      * Creates the ground-plane of the map/level.
      */
     private void createGround() {
-        Quad q = new Quad(totalWidth,totalHeight);
+        Quad q = new Quad(totalWidth, totalHeight);
         groundPlane = new Geometry("GroundPlane", q);
 
         groundMaterial = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
@@ -126,7 +126,7 @@ public class Map extends Node {
         float[] angles = {3 * (float) Math.PI / 2, 0, 0};
 
         groundPlane.setLocalRotation(new Quaternion(angles));
-        groundPlane.setLocalTranslation(-totalWidth / 2 - SQUARE_SIZE/2, 0, totalHeight / 2 -SQUARE_SIZE/2);
+        groundPlane.setLocalTranslation(-totalWidth / 2 - SQUARE_SIZE / 2, 0, totalHeight / 2 - SQUARE_SIZE / 2);
 
         decorativeMapElemetns.attachChild(groundPlane);
     }
@@ -141,8 +141,8 @@ public class Map extends Node {
         Vector3f offset = new Vector3f(-totalWidth / 2, 0, -totalHeight / 2);
 
         for (int x = 0; x < totalWidth; x++) {
-            for (int z = 0; z < totalHeight; z++) {              
-                MapSquare m = new MapSquare(grid.getFieldInfo((((int)totalWidth-1)-x),z));
+            for (int z = 0; z < totalHeight; z++) {
+                MapSquare m = new MapSquare(grid.getFieldInfo((((int) totalWidth - 1) - x), z));
                 m.getFieldInfo().setMapSquare(m);
                 Vector3f position = new Vector3f(x, 0, z);
                 position.addLocal(offset);
@@ -172,11 +172,11 @@ public class Map extends Node {
      * @author Hans Ferchland
      */
     public class MapSquare extends Node implements TimerEventListener {
+
         public static final float MAX_ALPHA_FADE = 0.4f;
         //==========================================================================
         //===   Private Fields
         //==========================================================================
-
         private Material material;
         private ClickableGeometry geometry;
         private boolean hovered = false;
@@ -255,9 +255,11 @@ public class Map extends Node {
             } else if (!hovered && fadeColor.a >= 0.0f) {
                 fadeColor.a -= 0.01f;
             }
-            material.setColor("Ambient", fadeColor);   // ... color of this object
-            material.setColor("Diffuse", fadeColor);   // ... color of light being reflected
 
+            if (field.getWeight() < 10000) {
+                material.setColor("Ambient", fadeColor);   // ... color of this object
+                material.setColor("Diffuse", fadeColor);   // ... color of light being reflected
+            }
         }
 
         @Override
@@ -266,7 +268,13 @@ public class Map extends Node {
         }
 
         private FieldInfo getFieldInfo() {
-           return field;
+            return field;
+        }
+
+        public void setColor(ColorRGBA color) {
+            material.setColor("Ambient", color);   // ... color of this object
+            material.setColor("Diffuse", color);   // ... color of light being reflected
+
         }
     }
 }
