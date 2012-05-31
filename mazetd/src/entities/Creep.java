@@ -216,7 +216,9 @@ public class Creep extends CollidableEntity {
             // visualize the death
             material.setColor("Ambient", ColorRGBA.Red);
             // signal that the creep died
-            attacker.setTarget(null);
+            if (attacker != null) {
+                attacker.setTarget(null);
+            }
         }
     }
 

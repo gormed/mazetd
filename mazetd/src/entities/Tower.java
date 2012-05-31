@@ -48,11 +48,13 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
+import com.jme3.scene.shape.Sphere;
 import entities.base.AbstractEntity;
 import entities.base.ClickableEntity;
 import entities.nodes.CollidableEntityNode;
 import eventsystem.interfaces.Collidable3D;
 import eventsystem.port.Collider3D;
+import logic.Level;
 import mazetd.MazeTDGame;
 
 /**
@@ -62,13 +64,12 @@ import mazetd.MazeTDGame;
  */
 public class Tower extends ClickableEntity {
 
-    
     //==========================================================================
     //===   Constants
     //========================================================================== 
     public static final float TOWER_BASE_DAMAGE_INTERVAL = 1.0f;
     public static final int TOWER_BASE_DAMAGE = 5;
-    public static final int TOWER_BASE_RANGE = 4;
+    public static final int TOWER_BASE_RANGE = 10;
     public static final int TOWER_HP = 500;
     private static final float RANGE_CYLINDER_HEIGHT = 0.025f;
     private static final int TOWER_SAMPLES = 20;
@@ -83,6 +84,7 @@ public class Tower extends ClickableEntity {
     private Geometry wallGeometry;
     private Material roofMaterial;
     private Material wallMaterial;
+    private Material projectileMaterial;
     private Vector3f position;
     private Creep target;
     private float healthPoints = TOWER_HP;
@@ -91,6 +93,7 @@ public class Tower extends ClickableEntity {
     private float damage = TOWER_BASE_DAMAGE;
     private float damageInterval = TOWER_BASE_DAMAGE_INTERVAL;
     private float intervalCounter = 0;
+    private Projectile projectile;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -105,6 +108,14 @@ public class Tower extends ClickableEntity {
         super.createNode(game);
 
         // Materials
+        projectileMaterial = new Material(
+                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        projectileMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
+        projectileMaterial.setColor("Specular", ColorRGBA.White);
+        projectileMaterial.setColor("Ambient", ColorRGBA.DarkGray);   // ... color of this object
+        projectileMaterial.setColor("Diffuse", ColorRGBA.DarkGray);   // ... color of light being reflected
+
+
         roofMaterial = new Material(
                 game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         roofMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
@@ -167,78 +178,81 @@ public class Tower extends ClickableEntity {
     @Override
     protected void update(float tpf) {
         // TODO: fix collision
-
-        // if there is no target atm search for it
         if (target == null) {
-            // collide with the current collidables
-            CollisionResults collisionResults =
-                    Collider3D.getInstance().objectCollides(
-                    attackRangeCollisionNode.getWorldBound());
-            // if there are creeps
-            if (collisionResults != null) {
-                Node n;
-                // find each and
-                for (CollisionResult result : collisionResults) {
-                    n = result.getGeometry().getParent();
-                    // check if collidable entity
-                    if (n instanceof CollidableEntityNode) {
-                        CollidableEntityNode col = (CollidableEntityNode) n;
-                        AbstractEntity e = col.getEntity();
-                        // check if creep entity
-                        if (e instanceof Creep) {
-                            Creep c = (Creep) e;
-                            if (!c.isDead()) {
-                                // Creep was found, so set it for both
-                                c.setAttacker(this);
-                                target = c;
-                                //System.out.println(c.getName() + " was detected.");
-                            }
+            // if there is no target atm search for it
+            checkForRangedEnter();
+        } else if (!target.isDecaying()) {
+            // if tower has target do damage
+            if (checkForRangedLeave()) {
+                return;
+            }
+            attack(tpf);
+        } else {
+            if (projectile != null)
+                projectile.destroyProjectile();
+        }
+    }
+
+    private void attack(float tpf) {
+        if (projectile != null) {
+            projectile.update(tpf);
+        } else {
+            projectile = new Projectile(name + "'s_projectile", position.clone().setY(2f));
+            Level.getInstance().getDynamicLevelElements().attachChild(projectile);
+
+        }
+//        intervalCounter += tpf;
+//        if (intervalCounter > damageInterval) {
+//            System.out.println(target.getName() + " recieved " + damage + " damage!");
+//            target.receiveDamaged(damage);
+//            intervalCounter = 0;
+//        }
+    }
+
+    private void checkForRangedEnter() {
+        // collide with the current collidables
+        CollisionResults collisionResults =
+                Collider3D.getInstance().objectCollides(
+                attackRangeCollisionNode.getWorldBound());
+        // if there are creeps
+        if (collisionResults != null) {
+            Node n;
+            // find each and
+            for (CollisionResult result : collisionResults) {
+                n = result.getGeometry().getParent();
+                // check if collidable entity
+                if (n instanceof CollidableEntityNode) {
+                    CollidableEntityNode col = (CollidableEntityNode) n;
+                    AbstractEntity e = col.getEntity();
+                    // check if creep entity
+                    if (e instanceof Creep) {
+                        Creep c = (Creep) e;
+                        if (!c.isDead()) {
+                            // Creep was found, so set it for both
+                            c.setAttacker(this);
+                            target = c;
+                            //System.out.println(c.getName() + " was detected.");
                         }
                     }
                 }
+            }
 
-            }
-            // if tower has target do damage
-        } else {
-            // look if still in range
-            float dist = target.getPosition().subtract(position).length();
-            if (dist > towerRange) {
-                // tower is no more attacking
-                target.setAttacker(null);
-                target = null;
-                intervalCounter = 0;
-                return;
-            }
-            intervalCounter += tpf;
-            if (intervalCounter > damageInterval) {
-                System.out.println(target.getName() + " recieved " + damage + " damage!");
-                target.receiveDamaged(damage);
-                intervalCounter = 0;
-            }
         }
+    }
 
-        /*
-        CollisionResults collisionResults = new CollisionResults();
-        Node coll = Collider3D.getInstance().getCollisionNode();
-        for (Spatial s : coll.getChildren()) {
-        s.collideWith(attackRangeCollisionNode.getWorldBound(), collisionResults);
+    private boolean checkForRangedLeave() {
+        // look if still in range
+        float dist = target.getPosition().subtract(position).length();
+        if (dist > towerRange) {
+            // tower is no more attacking
+
+            //projectile.destroyProjectile();
+            target.setAttacker(null);
+            target = null;
+            intervalCounter = 0;
+            return true;
         }
-        if (collisionResults.size() > 0) {
-        System.out.println(name + " collides");
-        // Use the results
-        for (int i = 0; i < collisionResults.size(); i++) {
-        // For each hit, we know distance, impact point, name of geometry.
-        float dist = collisionResults.getCollision(i).getDistance();
-        Vector3f pt = collisionResults.getCollision(i).getContactPoint();
-        String party = collisionResults.getCollision(i).getGeometry().getName();
-        int tri = collisionResults.getCollision(i).getTriangleIndex();
-        Vector3f norm = collisionResults.getCollision(i).getTriangle(new Triangle()).getNormal();
-        System.out.println("Details of Collision #" + i + ":");
-        System.out.println("  Party " + party + " was hit at " + pt + ", " + dist + " wu away.");
-        System.out.println("  The hit triangle #" + tri + " has a normal vector of " + norm);
-        }
-        }
-         */
+        return false;
     }
 
     @Override
@@ -264,7 +278,7 @@ public class Tower extends ClickableEntity {
                 true);
 
         Material m = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        m.setColor("Color", new ColorRGBA(1, 0, 0, 0.2f));
+        m.setColor("Color", new ColorRGBA(1, 0, 0, 0.0f));
         m.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 
         float[] angles = {(float) Math.PI / 2, 0, 0};
@@ -291,4 +305,84 @@ public class Tower extends ClickableEntity {
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+
+    private class Projectile extends Node {
+
+        public static final float PROJECTILE_BASE_SPEED = 3.f;
+        private Geometry geometry;
+        private float speed = PROJECTILE_BASE_SPEED;
+        private Vector3f position;
+
+        public Projectile(String name, Vector3f position) {
+            super(name);
+            this.position = position;
+            createGeometry();
+
+        }
+
+        private void createGeometry() {
+            Sphere s = new Sphere(5, 5, 0.1f);
+
+            geometry = new Geometry("ProjectileGeometry", s);
+            geometry.setMaterial(projectileMaterial);
+            this.attachChild(geometry);
+            this.setLocalTranslation(position);
+        }
+
+        public void update(float tpf) {
+            if (target != null && !target.isDecaying()) {
+                move(tpf);
+                checkForHit();
+            } else if (target.isDecaying()) {
+                
+            }
+        }
+
+        private void move(float tpf) {
+            Vector3f targetPos = target.getPosition();
+            Vector3f projectilePos = this.getLocalTranslation();
+
+            Vector3f dir = targetPos.subtract(projectilePos);
+            dir.normalizeLocal();
+            dir.multLocal(speed * tpf);
+
+            this.setLocalTranslation(projectilePos.add(dir));
+        }
+
+        private void onHit() {
+            target.receiveDamaged(damage);
+            destroyProjectile();
+        }
+
+        private void destroyProjectile() {
+            Level.getInstance().getDynamicLevelElements().detachChild(this);
+            projectile = null;
+        }
+
+        private void checkForHit() {
+            CollisionResults collisionResults =
+                    Collider3D.getInstance().objectCollides(this.getWorldBound());
+            // if there are creeps
+            if (collisionResults != null) {
+                Node n;
+                // find each and
+                for (CollisionResult result : collisionResults) {
+                    n = result.getGeometry().getParent();
+                    // check if collidable entity
+                    if (n instanceof CollidableEntityNode) {
+                        CollidableEntityNode col = (CollidableEntityNode) n;
+                        AbstractEntity e = col.getEntity();
+                        // check if creep entity
+                        if (e instanceof Creep) {
+                            Creep c = (Creep) e;
+                            if (c.equals(target)) {
+                                onHit();
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
 }

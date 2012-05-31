@@ -126,6 +126,7 @@ public class Orb extends ClickableEntity {
 
     @Override
     public void onClick() {
+        
     }
 
     @Override

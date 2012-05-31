@@ -203,6 +203,14 @@ public class Level {
 
         }
     }
+
+    public Node getDynamicLevelElements() {
+        return dynamicLevelElements;
+    }
+
+    public Node getStaticLevelElements() {
+        return staticLevelElements;
+    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
