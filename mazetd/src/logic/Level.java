@@ -132,7 +132,7 @@ public class Level implements EntityListener {
         Orb o = entityManager.createOrb(
                 "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);
         
-        Creep c = entityManager.createCreep("FirstCreep", new Vector3f(3, 0, -2), 100, 100);
+        Creep c = entityManager.createCreep("FirstCreep", new Vector3f(6, 0, -5), 100, 100);
         c.moveTo(new Vector2f(-5, 8));
         // add the level as a entity-listener
         eventManager.addEntityListener(this, t);

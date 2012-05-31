@@ -61,6 +61,7 @@ public class CollidableEntityNode extends EntityNode implements Collidable3D {
 
     public CollidableEntityNode(String name, CollidableEntity entity) {
         super(entity, name);
+        this.entity = entity;
     }
     
     public CollidableEntity getEntity() {
@@ -72,12 +73,12 @@ public class CollidableEntityNode extends EntityNode implements Collidable3D {
         entity.onCollision(collisionResults);
     }
 
-    @Override
-    public int collideWith(Collidable other, CollisionResults results) {
-        CollidableEntityNode collidableEntityNode = entity.getCollidableEntityNode();
-        if (collidableEntityNode != null)
-            return entity.getCollidableEntityNode().collideWith(other, results);
-        else
-            return 0;
-    }
+//    @Override
+//    public int collideWith(Collidable other, CollisionResults results) {
+//        CollidableEntityNode collidableEntityNode = entity.getCollidableEntityNode();
+//        if (collidableEntityNode != null)
+//            return entity.getCollidableEntityNode().collideWith(other, results);
+//        else
+//            return 0;
+//    }
 }

@@ -46,6 +46,7 @@ import com.jme3.scene.shape.Cylinder;
 import entities.base.CollidableEntity;
 import entities.effects.OrbEffect;
 import entities.nodes.CollidableEntityNode;
+import eventsystem.port.Collider3D;
 import java.util.HashSet;
 import mazetd.MazeTDGame;
 
@@ -76,6 +77,7 @@ public class Creep extends CollidableEntity {
     private float healthPoints = CREEP_MAX_HP;
     private float maxHealthPoints = CREEP_MAX_HP;
     private boolean deacying = false;
+    private float decayTime = 0;
     private Tower attacker;
     private HashSet<OrbEffect> orbEffects = new HashSet<OrbEffect>();
     private Vector3f position;
@@ -101,6 +103,13 @@ public class Creep extends CollidableEntity {
 
     @Override
     protected void update(float tpf) {
+        if (deacying) {
+            
+            decayTime += tpf;
+            if (decayTime > 5) {
+                Collider3D.getInstance().removeCollisonObject(collidableEntityNode);
+            }
+        }
         // if moving do this part
         if (moving) {
             position = collidableEntityNode.getLocalTranslation();
@@ -168,14 +177,24 @@ public class Creep extends CollidableEntity {
         moving = true;
     }
 
+    public void stop() {
+        moving = false;
+    }
+
     /**
      * Damages a creep by <code>amount</code> points.
      * @param amount the amount of receiveDamaged
      */
-    public void receiveDamaged(float amount) {
+     void receiveDamaged(float amount) {
         this.healthPoints -= amount;
         if (isDead()) {
             deacying = true;
+            // stop movement
+            stop();
+            // visualize the death
+            material.setColor("Ambient", ColorRGBA.Red);
+            // signal that the creep died
+            attacker.setTarget(null);
         }
     }
 
@@ -185,6 +204,10 @@ public class Creep extends CollidableEntity {
      */
     public boolean isDead() {
         return healthPoints <= 0;
+    }
+    
+    public Vector3f getPosition() {
+        return position;
     }
 
     /**

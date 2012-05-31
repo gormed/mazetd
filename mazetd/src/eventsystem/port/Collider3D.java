@@ -35,6 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package eventsystem.port;
 
+import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
 import com.jme3.scene.Node;
@@ -77,7 +78,7 @@ public class Collider3D {
     //==========================================================================
     private Node collisionNode = new Node("Collision3DNode");
     private CollisionResults collisionResults;
-    private Collidable currentCollidable;
+    private BoundingVolume currentCollidable;
     private MazeTDGame game = MazeTDGame.getInstance();
     //==========================================================================
     //===   Methods
@@ -100,17 +101,20 @@ public class Collider3D {
         collisionNode.detachChild(object);
     }
 
-    public CollisionResults objectCollides(Collidable collidable) {
-        currentCollidable = collidable;
+    public CollisionResults objectCollides(BoundingVolume boundingVolume) {
+        currentCollidable = boundingVolume;
 
         collisionResults = new CollisionResults();
-        currentCollidable.collideWith(collisionNode, collisionResults);
 
-        if (collidable instanceof Collidable3D) {
-            ((Collidable3D) collidable).onCollision3D(collisionResults);
+        //collisionNode.collideWith(boundingVolume, collisionResults);
+        for (Spatial s : collisionNode.getChildren()) {
+            s.collideWith(boundingVolume, collisionResults);
         }
-
+        
         if (collisionResults.size() > 0) {
+            if (boundingVolume instanceof Collidable3D) {
+                ((Collidable3D) boundingVolume).onCollision3D(collisionResults);
+            }
             return collisionResults;
         } else {
             return null;
@@ -121,10 +125,10 @@ public class Collider3D {
         return collisionResults;
     }
 
-    public Collidable getCurrentCollidable() {
+    public BoundingVolume getCurrentCollidable() {
         return currentCollidable;
     }
-    
+
 //    private void searchForCollidable3D(Spatial spatial, CollisionResult collisionResult) {
 //        if (spatial != null) {
 //            Spatial parent;
@@ -143,4 +147,7 @@ public class Collider3D {
 //            c.onCollision3D(collisionResults);
 //        }
 //    }
+    public Node getCollisionNode() {
+        return collisionNode;
+    }
 }

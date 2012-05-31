@@ -35,19 +35,22 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities;
 
-import com.jme3.collision.Collidable;
+import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
-import com.jme3.collision.UnsupportedCollisionException;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
+import entities.base.AbstractEntity;
 import entities.base.ClickableEntity;
+import entities.nodes.CollidableEntityNode;
 import eventsystem.interfaces.Collidable3D;
 import eventsystem.port.Collider3D;
 import mazetd.MazeTDGame;
@@ -58,11 +61,14 @@ import mazetd.MazeTDGame;
  * @version 0.3
  */
 public class Tower extends ClickableEntity {
+
+    
     //==========================================================================
     //===   Constants
     //========================================================================== 
-
-    public static final int TOWER_BASE_RANGE = 5;
+    public static final float TOWER_BASE_DAMAGE_INTERVAL = 1.0f;
+    public static final int TOWER_BASE_DAMAGE = 5;
+    public static final int TOWER_BASE_RANGE = 4;
     public static final int TOWER_HP = 500;
     private static final float RANGE_CYLINDER_HEIGHT = 1.5f;
     private static final int TOWER_SAMPLES = 20;
@@ -80,8 +86,11 @@ public class Tower extends ClickableEntity {
     private Vector3f position;
     private Creep target;
     private float healthPoints = TOWER_HP;
-    private CollisionRangeNode attackRangeCollisionNode;
+    private Node attackRangeCollisionNode;
     private Geometry collisionCylinder;
+    private float damage = TOWER_BASE_DAMAGE;
+    private float damageInterval = TOWER_BASE_DAMAGE_INTERVAL;
+    private float intervalCounter = 0;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -158,8 +167,78 @@ public class Tower extends ClickableEntity {
     @Override
     protected void update(float tpf) {
         // TODO: fix collision
-//        CollisionResults collisionResults = 
-//                Collider3D.getInstance().objectCollides(collisionCylinder);
+
+        // if there is no target atm search for it
+        if (target == null) {
+            // collide with the current collidables
+            CollisionResults collisionResults =
+                    Collider3D.getInstance().objectCollides(
+                    attackRangeCollisionNode.getWorldBound());
+            // if there are creeps
+            if (collisionResults != null) {
+                Node n;
+                // find each and
+                for (CollisionResult result : collisionResults) {
+                    n = result.getGeometry().getParent();
+                    // check if collidable entity
+                    if (n instanceof CollidableEntityNode) {
+                        CollidableEntityNode col = (CollidableEntityNode) n;
+                        AbstractEntity e = col.getEntity();
+                        // check if creep entity
+                        if (e instanceof Creep) {
+                            Creep c = (Creep) e;
+                            if (!c.isDead()) {
+                                // Creep was found, so set it for both
+                                c.setAttacker(this);
+                                target = c;
+                                //System.out.println(c.getName() + " was detected.");
+                            }
+                        }
+                    }
+                }
+
+            }
+            // if tower has target do damage
+        } else {
+            // look if still in range
+            float dist = target.getPosition().subtract(position).length();
+            if (dist > towerRange) {
+                // tower is no more attacking
+                target.setAttacker(null);
+                target = null;
+                intervalCounter = 0;
+                return;
+            }
+            intervalCounter += tpf;
+            if (intervalCounter > damageInterval) {
+                System.out.println(target.getName() + " recieved " + damage + " damage!");
+                target.receiveDamaged(damage);
+                intervalCounter = 0;
+            }
+        }
+
+        /*
+        CollisionResults collisionResults = new CollisionResults();
+        Node coll = Collider3D.getInstance().getCollisionNode();
+        for (Spatial s : coll.getChildren()) {
+        s.collideWith(attackRangeCollisionNode.getWorldBound(), collisionResults);
+        }
+        if (collisionResults.size() > 0) {
+        System.out.println(name + " collides");
+        // Use the results
+        for (int i = 0; i < collisionResults.size(); i++) {
+        // For each hit, we know distance, impact point, name of geometry.
+        float dist = collisionResults.getCollision(i).getDistance();
+        Vector3f pt = collisionResults.getCollision(i).getContactPoint();
+        String party = collisionResults.getCollision(i).getGeometry().getName();
+        int tri = collisionResults.getCollision(i).getTriangleIndex();
+        Vector3f norm = collisionResults.getCollision(i).getTriangle(new Triangle()).getNormal();
+        System.out.println("Details of Collision #" + i + ":");
+        System.out.println("  Party " + party + " was hit at " + pt + ", " + dist + " wu away.");
+        System.out.println("  The hit triangle #" + tri + " has a normal vector of " + norm);
+        }
+        }
+         */
     }
 
     @Override
@@ -185,7 +264,7 @@ public class Tower extends ClickableEntity {
                 true);
 
         Material m = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        m.setColor("Color", new ColorRGBA(1, 0, 0, 0.1f));
+        m.setColor("Color", new ColorRGBA(1, 0, 0, 0.2f));
         m.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 
         float[] angles = {(float) Math.PI / 2, 0, 0};
@@ -196,34 +275,20 @@ public class Tower extends ClickableEntity {
         collisionCylinder.setLocalRotation(new Quaternion(angles));
         collisionCylinder.setQueueBucket(Bucket.Transparent);
 
-        attackRangeCollisionNode = 
-                new CollisionRangeNode("AttackCollisionCylinderNode");
+        attackRangeCollisionNode =
+                new Node("AttackCollisionCylinderNode");
         attackRangeCollisionNode.setLocalTranslation(position);
-        
+        attackRangeCollisionNode.attachChild(collisionCylinder);
     }
 
     public Node getRangeCollisionNode() {
         return attackRangeCollisionNode;
     }
 
-    public void setTarget(Creep target) {
+    void setTarget(Creep target) {
         this.target = target;
     }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
-
-    private class CollisionRangeNode extends Node {
-
-
-        
-        public CollisionRangeNode(String name) {
-            super(name);
-        }
-
-        @Override
-        public int collideWith(Collidable other, CollisionResults results) throws UnsupportedCollisionException {
-            return collisionCylinder.collideWith(other, results);
-        }
-    }
 }

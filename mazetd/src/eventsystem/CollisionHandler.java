@@ -35,6 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package eventsystem;
 
+import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.CollisionResults;
 import eventsystem.events.CollisionEvent;
 import eventsystem.interfaces.Collidable3D;
@@ -77,16 +78,17 @@ public class CollisionHandler {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private HashMap<Collidable3D, HashSet<CollisionListener>> collisionListeners = new HashMap<Collidable3D, HashSet<CollisionListener>>();
+    private HashMap<BoundingVolume, HashSet<CollisionListener>> collisionListeners =
+            new HashMap<BoundingVolume, HashSet<CollisionListener>>();
     private Collider3D collider3D = Collider3D.getInstance();
     //==========================================================================
     //===   Methods
     //==========================================================================
 
     public void addCollisionListener(
-            CollisionListener listener, Collidable3D... collidable3Ds) {
+            CollisionListener listener, BoundingVolume... boundingVolumes) {
         HashSet<CollisionListener> listeners;
-        for (Collidable3D c : collidable3Ds) {
+        for (BoundingVolume c : boundingVolumes) {
             if (!collisionListeners.containsKey(c)) {
                 listeners = new HashSet<CollisionListener>();
                 listeners.add(listener);
@@ -103,19 +105,19 @@ public class CollisionHandler {
     }
 
     public void update(float tpf) {
-        for (Map.Entry<Collidable3D, HashSet<CollisionListener>> e : collisionListeners.entrySet()) {
+        for (Map.Entry<BoundingVolume, HashSet<CollisionListener>> e : collisionListeners.entrySet()) {
             invokeCollisionEvent(e.getKey(), e.getValue());
         }
     }
 
-    private void invokeCollisionEvent(Collidable3D collidable, HashSet<CollisionListener> collisionListeners) {
+    private void invokeCollisionEvent(BoundingVolume boundingVolume, HashSet<CollisionListener> collisionListeners) {
         CollisionResults r;
-        collider3D.objectCollides(collidable);
+        collider3D.objectCollides(boundingVolume);
         r = collider3D.getCurrentCollisionResults();
         
-        collidable.onCollision3D(r);
+        //collidable.onCollision3D(r);
         
-        CollisionEvent e = new CollisionEvent(collidable, r);
+        CollisionEvent e = new CollisionEvent(boundingVolume, r);
         
         for (CollisionListener cl : collisionListeners) {
             cl.onCollision(e);
