@@ -38,17 +38,17 @@ package eventsystem;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.CollisionResults;
 import eventsystem.events.CollisionEvent;
-import eventsystem.interfaces.Collidable3D;
 import eventsystem.listener.CollisionListener;
 import eventsystem.port.Collider3D;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * The class CollisionHandler.
+ * The class CollisionHandler for the handling of the collision-events.
  * @author Hans Ferchland
+ * @version 0.2
  */
 public class CollisionHandler {
     //==========================================================================
@@ -86,8 +86,14 @@ public class CollisionHandler {
     //==========================================================================
 
     // TODO: add comments and interface to the eventmanager
-    public void addCollisionListener(
-            CollisionListener listener, BoundingVolume... boundingVolumes) {
+    /**
+     * Adds a CollisionListener to the manager that listens to collision-events
+     * from the list of BoundingVolumes given.
+     * @param listener the listener to add
+     * @param boundingVolumes the list of bv to listen to
+     */
+    void addCollisionListener(CollisionListener listener,
+            BoundingVolume... boundingVolumes) {
         HashSet<CollisionListener> listeners;
         for (BoundingVolume c : boundingVolumes) {
             if (!collisionListeners.containsKey(c)) {
@@ -101,30 +107,60 @@ public class CollisionHandler {
         }
     }
 
-    public void removeCollisionListener(
-            CollisionListener listener) {
+    /**
+     * Removes a CollisionListener from the manager and the according 
+     * BoundingVolumes if not listened to by other listeners.
+     * @param listener the listener to remove
+     */
+    void removeCollisionListener(CollisionListener listener) {
+        ArrayList<BoundingVolume> remove = new ArrayList<BoundingVolume>();
+
+        HashSet<CollisionListener> listeners;
+        for (Map.Entry<BoundingVolume, HashSet<CollisionListener>> e :
+                collisionListeners.entrySet()) {
+            listeners = e.getValue();
+            if (listeners.contains(listener)) {
+                listeners.remove(listener);
+                if (listeners.isEmpty()) {
+                    remove.add(e.getKey());
+                }
+            }
+        }
+        
+        for (BoundingVolume bv : remove) {
+            collisionListeners.remove(bv);
+        }
     }
 
-    public void update(float tpf) {
-        for (Map.Entry<BoundingVolume, HashSet<CollisionListener>> e : collisionListeners.entrySet()) {
+    /**
+     * Updated the collision listeners by invoking a collision for each 
+     * BoundingVolume.
+     * @param tpf the time-gap
+     */
+    void update(float tpf) {
+        for (Map.Entry<BoundingVolume, HashSet<CollisionListener>> e :
+                collisionListeners.entrySet()) {
             invokeCollisionEvent(e.getKey(), e.getValue());
         }
     }
 
+    /**
+     * Invokes a collision-event for a given BoundingVolume. If a collision
+     * happened all listeners are called.
+     * @param boundingVolume the bv to check for
+     * @param collisionListeners the set of listeners
+     */
     private void invokeCollisionEvent(BoundingVolume boundingVolume, HashSet<CollisionListener> collisionListeners) {
         CollisionResults r;
         collider3D.objectCollides(boundingVolume);
         r = collider3D.getCurrentCollisionResults();
-        
+
         //collidable.onCollision3D(r);
-        
+
         CollisionEvent e = new CollisionEvent(boundingVolume, r);
-        
+
         for (CollisionListener cl : collisionListeners) {
             cl.onCollision(e);
         }
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }

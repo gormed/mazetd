@@ -62,10 +62,10 @@ public class ClickableEntityNode extends EntityNode implements Clickable3D {
 
     /**
      * Contructor of the node for the clickable geometry.
-     * @param name the name of the node
+     * @param name the deseired node-name
      */
     public ClickableEntityNode(String name, ClickableEntity entity) {
-        super(name);
+        super(entity, name);
         this.entity = entity;
     }
 

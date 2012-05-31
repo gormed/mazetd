@@ -36,10 +36,16 @@
 package entities.effects;
 
 /**
- *
+ * The enum OrbEffectType for the types of the effect the different orb-elements
+ * have.
+ * 
+ * @see Orb
+ * @see Orb.ElementType
  * @author Hans Ferchland
+ * @version 0.2
  */
 public enum OrbEffectType {
+    // TODO: add the other types ;)
     POISON,
     FROST,
     FIRE

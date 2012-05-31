@@ -35,7 +35,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities.base;
 
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import eventsystem.port.ScreenRayCast3D;
 import com.jme3.math.Vector3f;
@@ -152,7 +151,7 @@ public class EntityManager {
         towerHashMap.put(t.getEntityId(), t);
         Node geometryNode = t.createNode(game);
         rayCast3D.addClickableObject(geometryNode);
-        
+
         return t;
     }
 
@@ -172,8 +171,8 @@ public class EntityManager {
 
         return c;
     }
-    
-        /**
+
+    /**
      * Creates a creep on a given position.
      * @param name the creeps name
      * @param position the creeps position
@@ -207,21 +206,30 @@ public class EntityManager {
         return o;
     }
 
+    /**
+     * Gets the hashmap with all creeps with their entityid as key.
+     * @return all the creeps in a hashmap keyed by its entity-ids
+     */
     public HashMap<Integer, Creep> getCreepHashMap() {
         return creepHashMap;
     }
 
+    /**
+     * Gets the hashmap with all orbs with their entityid as key.
+     * @return all the orbs in a hashmap keyed by its entity-ids
+     */
     public HashMap<Integer, Orb> getOrbHashMap() {
         return orbHashMap;
     }
 
+    /**
+     * Gets the hashmap with all towers with their entityid as key.
+     * @return all the towers in a hashmap keyed by its entity-ids
+     */
     public HashMap<Integer, Tower> getTowerHashMap() {
         return towerHashMap;
     }
-    
-    
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
-
 }

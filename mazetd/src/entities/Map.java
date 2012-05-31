@@ -60,9 +60,10 @@ import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
 /**
- * The class Map.
- * @author Hans Ferchland
- * @version 0.1
+ * The class Map as graphical representation of the logical Grid-class.
+ * Handles MapSquares and click-events for tower-build-selections.
+ * @author Hans Ferchland & Hady Khalifa
+ * @version 0.3
  */
 public class Map extends Node {
     //==========================================================================
@@ -99,6 +100,9 @@ public class Map extends Node {
     //===   Methods & Constructor
     //==========================================================================
 
+    /**
+     * Creates the Map, background of the level and grid for tower-placement.
+     */
     public Map() {
         super("MainMap");
         totalHeight = grid.getTotalHeight();
@@ -200,10 +204,17 @@ public class Map extends Node {
             this.field = field;
         }
 
+        /**
+         * Gets the geometry that is clickable (the whole square^^).
+         * @return 
+         */
         public ClickableGeometry getGeometry() {
             return geometry;
         }
 
+        /**
+         * TODO: Hady
+         */
         private void buildTowerOnField() {
             if (this.getFieldInfo().getWeight() < 10000 && checkCreepOnField(this.getFieldInfo(), entityManager.getCreepHashMap())) {
                 Level.getInstance().buildTower(this);
@@ -214,21 +225,26 @@ public class Map extends Node {
             }
         }
 
-        //TODO
+        /**
+         * TODO: Hady
+         */
         private boolean checkCreepOnField(FieldInfo field, HashMap<Integer, Creep> creeps) {
             for (Creep creep : creeps.values()) {
-                if(creep.getCurrentSquare().equals(field)){
-                                    return false;
+                if (creep.getCurrentSquare().equals(field)) {
+                    return false;
                 }
 
             }
 
             return true;
         }
-            /**
-             * creates the geometry for a square with default size and color.
-             */
+
+        /**
+         * Creates the geometry for a square with default size and color.
+         */
         private void createGeometry() {
+            // Creates an anonymous inner class in the map square for simple
+            // click event-handling
             geometry = new ClickableGeometry(name + "_Geometry", new Quad(SQUARE_SIZE, SQUARE_SIZE)) {
 
                 /**
@@ -272,6 +288,13 @@ public class Map extends Node {
             this.attachChild(geometry);
         }
 
+        /**
+         * TODO: Hady
+         */
+        public FieldInfo getFieldInfo() {
+            return field;
+        }
+
         @Override
         public void onTimedEvent(TimerEvent t) {
             if (hovered && fadeColor.a < MAX_ALPHA_FADE) {
@@ -292,16 +315,6 @@ public class Map extends Node {
         @Override
         public float getPeriod() {
             return 0.02f;
-        }
-
-        public FieldInfo getFieldInfo() {
-            return field;
-        }
-
-        public void setColor(ColorRGBA color) {
-            material.setColor("Ambient", color);   // ... color of this object
-            material.setColor("Diffuse", color);   // ... color of light being reflected
-
         }
     }
 }

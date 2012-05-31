@@ -47,15 +47,19 @@ import entities.base.ClickableEntity;
 import mazetd.MazeTDGame;
 
 /**
- * The class Orb.
+ * The class Orb for upgrade-orbs in MazeTD - for orbs that drop from 
+ * killed creeps.
  * @author Hans Ferchland
- * @version
+ * @version 0.2
  */
 public class Orb extends ClickableEntity {
     //==========================================================================
     //===   Enums
     //==========================================================================
 
+    /**
+     * The enum ElementType discribes which Elements for orbs exist.
+     */
     public enum ElementType {
 
         RED,
@@ -82,6 +86,12 @@ public class Orb extends ClickableEntity {
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
+    /**
+     * Creates an orb from a position and any given ElementType.
+     * @param name the desired name
+     * @param position the desired position
+     * @param type the desired ElementType
+     */
     public Orb(String name, Vector3f position, ElementType type) {
         super(name);
         this.position = position;
@@ -100,6 +110,29 @@ public class Orb extends ClickableEntity {
         return clickableEntityNode;
     }
 
+    @Override
+    protected void update(float tpf) {
+        height += tpf;
+        float y = 0.1f * (float) Math.sin(1.5f * height);
+        element.geometry.setLocalTranslation(0, HEIGHT_OVER_GROUND + y, 0);
+    }
+
+    @Override
+    public void onClick() {
+    }
+
+    @Override
+    public void onMouseOver() {
+    }
+
+    @Override
+    public void onMouseLeft() {
+    }
+
+    /**
+     * Creates the Element from the given ElementType from the Orb.
+     * @return the Element of the orb
+     */
     private Element createElement() {
         switch (type) {
             case BLUE:
@@ -116,32 +149,20 @@ public class Orb extends ClickableEntity {
                 return Element.getBlueElement();
         }
     }
-
-    @Override
-    protected void update(float tpf) {
-        height += tpf;
-        float y = 0.1f * (float) Math.sin(1.5f * height);
-        element.geometry.setLocalTranslation(0, HEIGHT_OVER_GROUND + y, 0);
-    }
-
-    @Override
-    public void onClick() {
-        
-    }
-
-    @Override
-    public void onMouseOver() {
-    }
-
-    @Override
-    public void onMouseLeft() {
-    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
 
+    /**
+     * The class Element discribes the orb-element from the Orb.
+     * @author Hans Ferchland
+     */
     private static class Element {
 
+        /**
+         * Creates a red orb-element.
+         * @return the red orb-element
+         */
         public static Element getRedElement() {
             Element e = new Element();
             e.color = ColorRGBA.Red.clone();
@@ -149,7 +170,10 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
-
+        /**
+         * Creates a blue orb-element.
+         * @return the blue orb-element
+         */
         public static Element getBlueElement() {
             Element e = new Element();
             e.color = ColorRGBA.Blue.clone();
@@ -157,7 +181,10 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
-
+        /**
+         * Creates a green orb-element.
+         * @return the green orb-element
+         */
         public static Element getGreenElement() {
             Element e = new Element();
             e.color = ColorRGBA.Green.clone();
@@ -165,7 +192,10 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
-
+        /**
+         * Creates a yellow orb-element.
+         * @return the yellow orb-element
+         */
         public static Element getYellowElement() {
             Element e = new Element();
             e.color = ColorRGBA.Yellow.clone();
@@ -173,7 +203,10 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
-
+        /**
+         * Creates a white orb-element.
+         * @return the white orb-element
+         */
         public static Element getWhiteElement() {
             Element e = new Element();
             e.color = ColorRGBA.White.clone();
@@ -185,9 +218,15 @@ public class Orb extends ClickableEntity {
         private Geometry geometry;
         private Material material;
 
+        /**
+         * Hidden constructor, only static creation should happen!
+         */
         private Element() {
         }
 
+        /**
+         * Creates the base of any element.
+         */
         private void createBaseElement() {
             // orbs Material        
             material = new Material(

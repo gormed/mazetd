@@ -39,13 +39,22 @@ import com.jme3.collision.CollisionResults;
 import entities.nodes.CollidableEntityNode;
 
 /**
- *
+ * The interface SimpleCollidable for all objects that collide in MazeTD.
  * @author Hans Ferchland
  */
 public interface SimpleCollidable {
     
+    /**
+     * Gets the entity node with the collsion-geometry for a collision-check.
+     * @return the node with the collision-geometry
+     */
     public CollidableEntityNode getCollidableEntityNode();
     
+    /**
+     * This method is called if the object is in a collision with another 
+     * object.
+     * @param collisionResults the results of the collision just happened
+     */
     public void onCollision(CollisionResults collisionResults);
 
 }

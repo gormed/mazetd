@@ -36,9 +36,12 @@
 package entities.effects;
 
 /**
- * The class OrbEffect.
+ * The class OrbEffect for the effects creeps will suffer if 
+ * hit by the given projectile. This class is abstract and will have childs like
+ * PosionOrbEffect or so.
+ *  
  * @author Hans Ferchland
- * @version
+ * @version 0.2
  */
 public abstract class OrbEffect {
     //==========================================================================
@@ -49,16 +52,39 @@ public abstract class OrbEffect {
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
+    /**
+     * Creates an OrbEffect by the effect type and the orbs level.
+     * 
+     * @see OrbEffectType
+     * @param effectType the desired type
+     * @param level the desired level
+     */
     public OrbEffect(OrbEffectType effectType, int level) {
         this.effectType = effectType;
         this.level = level;
     }
     
+    /**
+     * Updated the orb effect over time if timed (like poison).
+     * @param tpf 
+     */
     public abstract void update(float tpf);
     
+    /**
+     * If its a timed effect this method should be filled with the desired 
+     * behaviour and called on every tick the effect should happen 
+     * (e.g. all 2 secs).
+     */
     public abstract void onEffect();
     
+    /**
+     * Will be called if the projectile hits and the effect happens 
+     * the first time. Usefull for one-time effects.
+     */
     public abstract void onStart();
     
+    /**
+     * Should be called if the effect is removed.
+     */
     public abstract void onEnd();
 }

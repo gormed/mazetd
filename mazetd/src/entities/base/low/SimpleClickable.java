@@ -43,6 +43,11 @@ import entities.nodes.ClickableEntityNode;
  */
 public interface SimpleClickable {
 
+    /**
+     * Gets the geometry that is clickable and will raise the given events if 
+     * clicked.
+     * @return the node with the geometry that will be clickable
+     */
     public ClickableEntityNode getClickableEntityNode();
 
     /**

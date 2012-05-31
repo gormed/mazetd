@@ -55,6 +55,10 @@ public abstract class ClickableEntity extends AbstractEntity implements SimpleCl
     //===   Methods & Constructor
     //==========================================================================
 
+    /**
+     * Constructs an ClickableEntity by a given name
+     * @param name the desired name
+     */
     public ClickableEntity(String name) {
         super(name);
     }

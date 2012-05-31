@@ -56,9 +56,9 @@ import logic.Level;
 import mazetd.MazeTDGame;
 
 /**
- * The class Tower.
+ * The class Tower for a basical tower in MazeTD.
  * @author Hady Khalifa & Hans Ferchland
- * @version 0.3
+ * @version 0.4
  */
 public class Tower extends ClickableEntity {
 
@@ -92,11 +92,15 @@ public class Tower extends ClickableEntity {
     private float damage = TOWER_BASE_DAMAGE;
     private float damageInterval = TOWER_BASE_DAMAGE_INTERVAL;
     private float intervalCounter = 0;
-
-    //private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
+
+    /**
+     * Contructor of a basical tower for MazeTD.
+     * @param name the name of the tower
+     * @param position the desired position
+     */
     public Tower(String name, Vector3f position) {
         super(name);
         this.position = position;
@@ -189,6 +193,26 @@ public class Tower extends ClickableEntity {
         }
     }
 
+    @Override
+    public void onClick() {
+        System.out.println("You clicked tower: #" + getEntityId() + " - " + getName());
+    }
+
+    @Override
+    public void onMouseOver() {
+    }
+
+    @Override
+    public void onMouseLeft() {
+    }
+
+    /**
+     * Attacks a creep in a give time interval defined by 
+     * <code>damageInterval</code> and <code>intervalCounter</code> and does 
+     * <code>damage</code> amount of damage if the fired projectile hits the 
+     * target.
+     * @param tpf the time-gap
+     */
     private void attack(float tpf) {
         intervalCounter += tpf;
         if (intervalCounter > damageInterval) {
@@ -203,6 +227,10 @@ public class Tower extends ClickableEntity {
         }
     }
 
+    /**
+     * Checks if a creep entered the range of the tower and sets target 
+     * if found a creep.
+     */
     private void checkForRangedEnter() {
         // collide with the current collidables
         CollisionResults collisionResults =
@@ -234,6 +262,10 @@ public class Tower extends ClickableEntity {
         }
     }
 
+    /**
+     * Checks if the targeted creep is still in range.
+     * @return true if in range, false otherwise
+     */
     private boolean checkForRangedLeave() {
         // look if still in range
         float dist = target.getPosition().subtract(position).length();
@@ -249,19 +281,10 @@ public class Tower extends ClickableEntity {
         return false;
     }
 
-    @Override
-    public void onClick() {
-        System.out.println("You clicked tower: #" + getEntityId() + " - " + getName());
-    }
-
-    @Override
-    public void onMouseOver() {
-    }
-
-    @Override
-    public void onMouseLeft() {
-    }
-
+    /**
+     * Creates the bounding-volume for the range-checks.
+     * @param game the MazeTDGame singleton
+     */
     private void createCollision(MazeTDGame game) {
 
         Cylinder c = new Cylinder(
@@ -289,10 +312,18 @@ public class Tower extends ClickableEntity {
         attackRangeCollisionNode.attachChild(collisionCylinder);
     }
 
+    /**
+     * Gets the collison node and bounding-volume for range checks.
+     * @return the node containing the bv
+     */
     public Node getRangeCollisionNode() {
         return attackRangeCollisionNode;
     }
 
+    /**
+     * Sets the creep-target for the tower.
+     * @param target 
+     */
     void setTarget(Creep target) {
         this.target = target;
     }
@@ -300,21 +331,52 @@ public class Tower extends ClickableEntity {
     //===   Inner Classes
     //==========================================================================
 
+    /**
+     * The class Projectile for the fired graphical and logical instance of a 
+     * projectile fired by a tower.
+     * @author Hans Ferchland
+     */
     private class Projectile extends AbstractEntity {
+        //==========================================================================
+        //===   COnstants
+        //==========================================================================
 
         public static final float PROJECTILE_BASE_SPEED = 3.f;
+        //==========================================================================
+        //===   Private Fields
+        //==========================================================================
         private Geometry geometry;
         private float speed = PROJECTILE_BASE_SPEED;
         private Vector3f position;
         private Creep target;
-        
         private float initialDistance = 0;
+        //==========================================================================
+        //===   Methods & Constructor
+        //==========================================================================
 
+        /**
+         * The constructor of a Projectile that is fired to <code>target</code>
+         * creep from given position: <code>position</code>.
+         * @param name
+         * @param position
+         * @param target 
+         */
         public Projectile(String name, Vector3f position, Creep target) {
             super(name);
             this.target = target;
             this.position = position;
             this.initialDistance = target.getPosition().subtract(position).length();
+        }
+
+        @Override
+        public void update(float tpf) {
+            if (target != null) {
+                move(tpf);
+                checkForHit();
+            }
+            if (target == null || (target != null && target.isDead())) {
+                destroy();
+            }
         }
 
         @Override
@@ -326,6 +388,9 @@ public class Tower extends ClickableEntity {
             return geometryNode;
         }
 
+        /**
+         * Creates the geometry for the Projectirl.
+         */
         private void createGeometry() {
             Sphere s = new Sphere(5, 5, 0.1f);
 
@@ -335,19 +400,13 @@ public class Tower extends ClickableEntity {
             geometryNode.setLocalTranslation(position);
         }
 
-        public void update(float tpf) {
-            if (target != null) {
-                move(tpf);
-                checkForHit();
-            }
-            if (target == null || (target != null && target.isDead())) {
-                destroyProjectile();
-            }
-        }
-
+        /**
+         * Moves the projectile each update call.
+         * @param tpf the time-gap
+         */
         private void move(float tpf) {
-            
-            
+
+
             float currentDistance = target.getPosition().subtract(position).length();
             float percentage = (initialDistance - currentDistance) / initialDistance;
             Vector3f targetPos = target.getPosition();
@@ -357,23 +416,34 @@ public class Tower extends ClickableEntity {
             dir.normalizeLocal();
             dir.multLocal(speed * tpf);
             projectilePos.addLocal(dir);
-            
+            // TODO: add curved flying
             //projectilePos.y += (1-percentage);
-            
+
             geometryNode.setLocalTranslation(projectilePos);
         }
 
+        /*
+         * Is called from the projectile if the target was hit. Does the 
+         * proper damage and destroys the projectile.
+         */
         private void onHit() {
             System.out.println(target.getName() + " recieved " + damage + " damage!");
             target.receiveDamaged(damage);
-            destroyProjectile();
+            destroy();
         }
 
-        private void destroyProjectile() {
+        /**
+         * Destroys the projectile due removing from entity-manager and
+         * from dynamic level elements.
+         */
+        private void destroy() {
             EntityManager.getInstance().removeEntity(this.getEntityId());
             Level.getInstance().getDynamicLevelElements().detachChild(geometryNode);
         }
 
+        /**
+         * Checks for collision with the targeted creep and fires onHit().
+         */
         private void checkForHit() {
             CollisionResults collisionResults =
                     Collider3D.getInstance().objectCollides(geometryNode.getWorldBound());

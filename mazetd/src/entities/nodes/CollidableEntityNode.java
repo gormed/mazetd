@@ -35,15 +35,15 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities.nodes;
 
-import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
 import entities.base.CollidableEntity;
 import eventsystem.interfaces.Collidable3D;
 
 /**
- * The class CollidableNode.
+ * The class CollidableEntityNode which has as child all geometry that will be
+ * collidable.
  * @author Hans Ferchland
- * @version
+ * @version 0.2
  */
 public class CollidableEntityNode extends EntityNode implements Collidable3D {
     //==========================================================================
@@ -55,17 +55,14 @@ public class CollidableEntityNode extends EntityNode implements Collidable3D {
     //===   Methods & Constructor
     //==========================================================================
 
-    public CollidableEntityNode(String name) {
-        super(name);
-    }
-
+    /**
+     * Constructs a entity node that will be collidable.
+     * @param name the deseired node-name
+     * @param entity the entity connected to the collidable
+     */
     public CollidableEntityNode(String name, CollidableEntity entity) {
         super(entity, name);
         this.entity = entity;
-    }
-    
-    public CollidableEntity getEntity() {
-        return entity;
     }
 
     @Override
@@ -73,6 +70,10 @@ public class CollidableEntityNode extends EntityNode implements Collidable3D {
         entity.onCollision(collisionResults);
     }
 
+    @Override
+    public CollidableEntity getEntity() {
+        return entity;
+    }
 //    @Override
 //    public int collideWith(Collidable other, CollisionResults results) {
 //        CollidableEntityNode collidableEntityNode = entity.getCollidableEntityNode();

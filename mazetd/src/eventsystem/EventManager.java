@@ -35,26 +35,21 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package eventsystem;
 
-import eventsystem.events.EntityEvent;
-import com.jme3.collision.CollisionResult;
+import com.jme3.bounding.BoundingVolume;
 import eventsystem.listener.KeyInputListener;
 import eventsystem.listener.MouseInputListener;
-import com.jme3.input.InputManager;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.math.Vector2f;
 import entities.base.AbstractEntity;
-import entities.base.ClickableEntity;
+import eventsystem.listener.CollisionListener;
 import eventsystem.listener.EntityListener;
 import eventsystem.listener.TimerEventListener;
-import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * The class EventManager for all events.
  * @author Hans Ferchland
- * @version 0.3
+ * @version 0.4
  */
 public class EventManager {
     //==========================================================================
@@ -191,7 +186,7 @@ public class EventManager {
 
         enitiyHandler.addEntityListener(entityListener, entitys);
     }
-    
+
     /**
      * Adds a EntityListener any entity-event.
      * @param entityListener the listener
@@ -199,5 +194,26 @@ public class EventManager {
     public void removeEntityListener(EntityListener entityListener, AbstractEntity... entitys) {
 
         enitiyHandler.removeEntityListener(entityListener);
+    }
+
+    /**
+     * Adds a CollisionListener to the manager that listens to collision-events
+     * from the list of BoundingVolumes given.
+     * @param listener the listener to add
+     * @param boundingVolumes the list of bv to listen to
+     */
+    public void addCollisionListener(
+            CollisionListener listener, BoundingVolume... boundingVolumes) {
+        collisionHandler.addCollisionListener(listener, boundingVolumes);
+    }
+
+    /**
+     * Removes a CollisionListener from the manager and the according 
+     * BoundingVolumes if not listened to by other listeners.
+     * @param listener the listener to remove
+     */
+    public void removeCollisionListener(
+            CollisionListener listener) {
+        collisionHandler.removeCollisionListener(listener);
     }
 }

@@ -108,10 +108,6 @@ public class Creep extends CollidableEntity {
         start(path.poll().getLocalTranslation());
     }
 
-    void start(Vector3f firstTarget) {
-        moveTo(firstTarget);
-    }
-
     @Override
     protected void update(float tpf) {
         if (deacying) {
@@ -125,6 +121,21 @@ public class Creep extends CollidableEntity {
         moveUpdate(tpf);
     }
 
+    /**
+     * Starts the movement of a creep coordinated by pathfinding.
+     * @param firstTarget the first desired position to go to
+     */
+    void start(Vector3f firstTarget) {
+        moveTo(firstTarget);
+    }
+
+    /**
+     * Moves the creep for every update call. The creep will go to a position 
+     * given by its path calculated by the pathfinder. If it arrives on a position,
+     * controlled by a min. distance, it will poll the next point in path to 
+     * go to from the path-Queue.
+     * @param tpf the time-gap
+     */
     private void moveUpdate(float tpf) {
         if (moving) {
             position = collidableEntityNode.getLocalTranslation();
@@ -135,17 +146,22 @@ public class Creep extends CollidableEntity {
             dir.multLocal(speed * tpf);
 
             if (distance < CREEP_MIN_DISTANCE) {
-                //position = target;
                 // moving ended because the creep is at the target
                 if (!path.isEmpty()) {
+                    // so get the next square to move to
                     this.currentSquare = path.peek();
+                    // and remove it from the Queue
                     moveTo(path.poll().getLocalTranslation());
                 } else {
+                    // TODO: handle tower-attacking or greep-enters-goal event
+                    // otherwise we are attacking a tower or are at the goal.
                     moving = false;
                 }
             } else {
+                // if not at the targeted position, move
                 position.addLocal(dir);
             }
+            // apply translation to the geometry
             collidableEntityNode.setLocalTranslation(position);
         }
     }
@@ -198,13 +214,17 @@ public class Creep extends CollidableEntity {
         moving = true;
     }
 
+    /**
+     * Stops the movement of the creep. You have to 
+     * call moveTo() to move it again.
+     */
     public void stop() {
         moving = false;
     }
 
     /**
      * Damages a creep by <code>amount</code> points.
-     * @param amount the amount of receiveDamaged
+     * @param amount the amount of received damaged
      */
     void receiveDamaged(float amount) {
         this.healthPoints -= amount;
@@ -222,13 +242,18 @@ public class Creep extends CollidableEntity {
     }
 
     /**
-     * Checks if the creep is dead
+     * Checks if the creep is dead.
      * @return true if below or at 0 HP, false otherwise
      */
     public boolean isDead() {
         return healthPoints <= 0;
     }
 
+    /**
+     * The current position of the creep. May be obsolete if not moving, call 
+     * getCollidableEntityNode().getLocalTranslation() for exact info.
+     * @return the position
+     */
     public Vector3f getPosition() {
         return position;
     }
@@ -292,16 +317,23 @@ public class Creep extends CollidableEntity {
         orbEffects.remove(effect);
     }
 
+    /**
+     * Applys a new path-Queue for the creep.
+     * @param path the new path for the creeps movement
+     */
     public void setPath(Queue<MapSquare> path) {
         this.path = path;
     }
-    
-    
+
+    /**
+     * Gets the currently targeted MapSquare of this creep.
+     * @return the targeted map-square
+     */
+    public MapSquare getCurrentSquare() {
+        // TODO: check the old square too if building a tower!
+        return currentSquare;
+    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
-
-    public MapSquare getCurrentSquare() {
-        return currentSquare;
-    }
 }

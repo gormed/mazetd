@@ -41,7 +41,7 @@ import mazetd.MazeTDGame;
 /**
  * The class AbstractEntity. This class is the parent of all entitys!
  * @author Hans Ferchland
- * @version 0.1
+ * @version 0.2
  */
 public abstract class AbstractEntity {
     //==========================================================================
@@ -117,9 +117,4 @@ public abstract class AbstractEntity {
     public String getName() {
         return name;
     }
-
-
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }

@@ -40,9 +40,9 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 
 /**
- * The class ClickableGeometry.
+ * The class ClickableGeometry for geometry that listens to mouse-events.
  * @author Hans Ferchland
- * @version
+ * @version 0.2
  */
 public abstract class ClickableGeometry extends Geometry implements Clickable3D {
 

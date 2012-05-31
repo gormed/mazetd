@@ -41,9 +41,9 @@ import entities.nodes.CollidableEntityNode;
 import mazetd.MazeTDGame;
 
 /**
- * The class CollidableEntity.
+ * The class CollidableEntity for entities that will be collidable with others.
  * @author Hans Ferchland
- * @version
+ * @version 0.2
  */
 public abstract class CollidableEntity extends AbstractEntity implements SimpleCollidable {
 
@@ -55,6 +55,10 @@ public abstract class CollidableEntity extends AbstractEntity implements SimpleC
     //===   Methods & Constructor
     //==========================================================================
 
+    /**
+     * Contructs a collidable entity.
+     * @param name the desired name of the entity
+     */
     public CollidableEntity(String name) {
         super(name);
     }
