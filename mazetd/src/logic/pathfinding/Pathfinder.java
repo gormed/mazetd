@@ -56,7 +56,7 @@ public class Pathfinder {
     private Grid grid = Grid.getInstance();
 
     /**
-     * 
+     * Constructor Pathfinder
      */
     private Pathfinder() {
                 path = createMainPath();
@@ -88,8 +88,10 @@ public class Pathfinder {
     
     /**
      * 
+     *      
+     * Ermittelt den Kürzesten Pfad zwischen dem Start- und dem Ziel-Feld;
      * 
-     * @return 
+     * @return  Queue aus MapSquares in der Richtigen Reihenfolge zum begehen
      */
     public Queue<MapSquare> createMainPath() {
         Queue<MapSquare> tempPath = new LinkedList();
@@ -113,7 +115,9 @@ public class Pathfinder {
     
      /**
      * 
+     * Ermittelt den Kürzesten Pfad zwischen 2 Feldern;
      * 
+     * @param start Field
      * @return 
      */
     public Queue<MapSquare> createCreepPath(FieldInfo start) {
@@ -137,12 +141,17 @@ public class Pathfinder {
     }
 
     /**
-     * Modified A*-Algorithmus
+     * Modified A*-Algorithm
+     * 
+     * Ermittelt  den kuerzesten Pfad zwischen zwei übergebenen Feldern
+     * Wird intern genutzt
      * 
      * @param grid
-     * @return 
+     * @param start Field
+     * @param goal Field
+     * @return Feld - der Pfad kann von diesem Feld aus seinen Vorgaengern erstellt werden
      */
-    public FieldInfo findPath(Grid grid, FieldInfo start, FieldInfo goal) {
+    private FieldInfo findPath(Grid grid, FieldInfo start, FieldInfo goal) {
         ArrayList<FieldInfo> openList = new ArrayList();
         ArrayList<FieldInfo> closedList = new ArrayList();
 
@@ -218,8 +227,9 @@ public class Pathfinder {
     }
 
     /**
+     * Gibt das Field mit dem geringsten Gewicht aus einer ArrayList zurueck
      * 
-     * @param l
+     * @param l Liste aus FieldInfo 
      * @return 
      */
     private static FieldInfo getLeastWeight(ArrayList<FieldInfo> l) //Field aus open-/closedList mit niedrigster Weight suchen

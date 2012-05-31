@@ -166,15 +166,13 @@ public class Level {
     public boolean isInitialized() {
         return initialized;
     }
-
-    /*  @Override
-    public void onAction(EntityEvent entityEvent) {
-    if (entityEvent.getEventType() == EntityEventType.Click) {
-    System.out.println(
-    "Level says that the entity: "
-    + entityEvent.getEntity().getName() + " was clicked.");
-    }
-    }
+    
+    /**
+     * Erzeugt ein grafisches Tower-Objekt an der Position des übergebenen Squares
+     * - Liegt der erzeugte Tower auf dem Path wird ein neuer Path generiert 
+     *   und allen Creeps übergeben
+     * 
+     * @param map 
      */
     public void buildTower(MapSquare map) {
         // add tower
@@ -191,10 +189,20 @@ public class Level {
 
     }
 
+    /**
+     * Ermittelt für alle Creeps den neuen Path
+     * - wenn der Creep auf dem MainPath ist wird der MainPath ab der Creepposition übergeben
+     * - sonst wird von seiner Position zum Ziel ein eigener Pfad erstellt
+     * 
+     * @param alle creeps
+     * @param mainPath 
+     */
     private void checkCreeps(HashMap<Integer, Creep> creeps, Queue<MapSquare> mainPath) {
         for (Creep creep : creeps.values()) {
             Queue<MapSquare> path = mainPath;
+            //Ist der Creep auf dem MainPath?
             if (mainPath.contains(creep.getCurrentSquare())) {
+                //Ziehe alle Squares aus der Queue bis das richtige am anfang steht
                 while (!path.poll().equals(creep.getCurrentSquare())) {
                 }
                 creep.setPath(path);
