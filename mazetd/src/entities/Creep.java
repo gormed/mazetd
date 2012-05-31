@@ -43,6 +43,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Cylinder;
+import entities.Map.MapSquare;
 import entities.base.CollidableEntity;
 import entities.effects.OrbEffect;
 import entities.nodes.CollidableEntityNode;
@@ -87,6 +88,7 @@ public class Creep extends CollidableEntity {
     private float speed = CREEP_BASE_SPEED;
     private boolean moving = true;
     private Queue<Map.MapSquare> path;
+    private MapSquare currentSquare;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -103,13 +105,14 @@ public class Creep extends CollidableEntity {
         this.healthPoints = healthPoints;
         this.position = position;
         this.path = Pathfinder.getInstance().getMainPath();
+        this.currentSquare = path.peek();
         start(path.poll().getLocalTranslation());
     }
 
-    void start(Vector3f firstTarget){
+    void start(Vector3f firstTarget) {
         moveTo(firstTarget);
     }
-    
+
     @Override
     protected void update(float tpf) {
         if (deacying) {
@@ -136,6 +139,7 @@ public class Creep extends CollidableEntity {
                 //position = target;
                 // moving ended because the creep is at the target
                 if (!path.isEmpty()) {
+                    this.currentSquare = path.peek();
                     moveTo(path.poll().getLocalTranslation());
                 } else {
                     moving = false;
@@ -286,7 +290,17 @@ public class Creep extends CollidableEntity {
     public void removeOrbEffect(OrbEffect effect) {
         orbEffects.remove(effect);
     }
+
+    public void setPath(Queue<MapSquare> path) {
+        this.path = path;
+    }
+    
+    
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+
+    public MapSquare getCurrentSquare() {
+        return currentSquare;
+    }
 }

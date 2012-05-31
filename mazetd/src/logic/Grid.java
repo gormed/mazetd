@@ -102,7 +102,7 @@ public class Grid {
         grid[0][height / 2].setWeight(0);
 
         //Test Tower
-        setTower(2, 0);
+      /*  setTower(2,0);
         setTower(2, 1);
         setTower(2, 2);
         setTower(2, 3);
@@ -123,6 +123,7 @@ public class Grid {
         setTower(2, 18);
         setTower(2, 19);
         setTower(2, 20);
+
         setTower(4, 0);
         setTower(4, 1);
         setTower(4, 2);
@@ -143,7 +144,7 @@ public class Grid {
         setTower(4, 17);
         setTower(4, 18);
         setTower(4, 19);
-
+*/
 
 
     }
@@ -226,11 +227,11 @@ public class Grid {
          * 
          * @param value 
          */
-        private void incrementWeight(int weight) {
+        public  void incrementWeight(int weight) {
             this.weight += weight;
         }
 
-        private void decrementWeight(int weight) {
+        public void decrementWeight(int weight) {
             this.weight -= weight;
         }
 

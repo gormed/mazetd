@@ -59,7 +59,7 @@ public class Pathfinder {
      * 
      */
     private Pathfinder() {
-        init();
+                path = createMainPath();
     }
 
     /**
@@ -69,11 +69,11 @@ public class Pathfinder {
     public static Pathfinder getInstance() {
         return PathfinderHolder.INSTANCE;
     }
-
-    private void init() {
-        path = createMainPath();
+    
+    public void setMainPath(Queue<MapSquare> path){
+        this.path = path;
     }
-
+    
     /**
      * 
      */

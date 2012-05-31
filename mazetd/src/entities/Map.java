@@ -53,6 +53,8 @@ import eventsystem.events.TimerEvent;
 import eventsystem.listener.TimerEventListener;
 import logic.Grid;
 import logic.Grid.FieldInfo;
+import logic.Level;
+import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
 /**
@@ -199,6 +201,20 @@ public class Map extends Node {
             return geometry;
         }
 
+        private void buildTowerOnField() {
+            if (this.getFieldInfo().getWeight() < 10000) {
+                Level.getInstance().buildTower(this);
+                this.getFieldInfo().incrementWeight(10000);
+                if(Pathfinder.getInstance().getMainPath().contains(this)){
+                    Pathfinder.getInstance().setMainPath(Pathfinder.getInstance().createMainPath());
+                }
+            }
+            
+
+            //TODO control if on path -> generate Path
+
+        }
+
         /**
          * creates the geometry for a square with default size and color.
          */
@@ -213,6 +229,7 @@ public class Map extends Node {
                     // TODO: implement handling if a square is clicked
                     System.out.println(name + " clicked!");
                     System.out.println(field.toString());
+                    buildTowerOnField();
                 }
 
                 @Override
@@ -267,7 +284,7 @@ public class Map extends Node {
             return 0.02f;
         }
 
-        private FieldInfo getFieldInfo() {
+        public FieldInfo getFieldInfo() {
             return field;
         }
 

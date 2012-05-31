@@ -40,14 +40,18 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entities.Creep;
 import entities.Map;
+import entities.Map.MapSquare;
 import entities.Orb;
 import entities.Tower;
 import entities.base.EntityManager;
+import entities.geometry.ClickableGeometry;
 import eventsystem.events.EntityEvent;
 import eventsystem.events.EntityEvent.EntityEventType;
 import eventsystem.EventManager;
 import eventsystem.listener.EntityListener;
 import eventsystem.port.ScreenRayCast3D;
+import java.util.HashMap;
+import java.util.Queue;
 import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
@@ -56,7 +60,7 @@ import mazetd.MazeTDGame;
  * enitiy creation and destruction.
  * @author Hans Ferchland
  */
-public class Level implements EntityListener {
+public class Level {
 
     //==========================================================================
     //===   Singleton
@@ -126,18 +130,13 @@ public class Level implements EntityListener {
         map = new Map();
         Grid grid = Grid.getInstance();
         staticLevelElements.attachChild(map);
-        // add tower (for test)
-        Tower t = entityManager.createTower(
-                "FirstTower", new Vector3f(0, 0, 0));
-        staticLevelElements.attachChild(t.getRangeCollisionNode());
-        
+
         Orb o = entityManager.createOrb(
                 "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);
 
         Creep c = entityManager.createCreep("FirstCreep", grid.getFieldInfo(0, 10).getSquare().getLocalTranslation(), 100, 100);
-        // add the level as a entity-listener
-        eventManager.addEntityListener(this, t);
-        
+
+
     }
 
     /**
@@ -169,12 +168,39 @@ public class Level implements EntityListener {
         return initialized;
     }
 
-    @Override
+    /*  @Override
     public void onAction(EntityEvent entityEvent) {
-        if (entityEvent.getEventType() == EntityEventType.Click) {
-            System.out.println(
-                    "Level says that the entity: "
-                    + entityEvent.getEntity().getName() + " was clicked.");
+    if (entityEvent.getEventType() == EntityEventType.Click) {
+    System.out.println(
+    "Level says that the entity: "
+    + entityEvent.getEntity().getName() + " was clicked.");
+    }
+    }
+     */
+    public void buildTower(MapSquare map) {
+        // add tower
+        Tower t = entityManager.createTower(
+                "FirstTower", map.getLocalTranslation());
+        staticLevelElements.attachChild(t.getRangeCollisionNode());
+        map.getFieldInfo().incrementWeight(10000);
+        //Liegt der Turm auf dem aktuellen MainPath?
+        if (Pathfinder.getInstance().getMainPath().contains(map)) {
+            //NeuerPfad wird generiert
+            Pathfinder.getInstance().setMainPath(Pathfinder.getInstance().createMainPath());
+            checkCreeps(entityManager.getCreepHashMap(), Pathfinder.getInstance().getMainPath());
+        }
+
+    }
+
+    private void checkCreeps(HashMap<Integer, Creep> creeps, Queue<MapSquare> mainPath) {
+        for (Creep creep : creeps.values()) {
+            Queue<MapSquare> path = mainPath;
+            if (mainPath.contains(creep.getCurrentSquare())) {
+                while (!path.poll().equals(creep.getCurrentSquare())) {
+                }
+                creep.setPath(path);
+            }
+
         }
     }
     //==========================================================================

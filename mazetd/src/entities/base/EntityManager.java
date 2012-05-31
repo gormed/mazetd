@@ -202,7 +202,22 @@ public class EntityManager {
 
         return o;
     }
+
+    public HashMap<Integer, Creep> getCreepHashMap() {
+        return creepHashMap;
+    }
+
+    public HashMap<Integer, Orb> getOrbHashMap() {
+        return orbHashMap;
+    }
+
+    public HashMap<Integer, Tower> getTowerHashMap() {
+        return towerHashMap;
+    }
+    
+    
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+
 }
