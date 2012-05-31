@@ -70,7 +70,7 @@ public class Tower extends ClickableEntity {
     public static final int TOWER_BASE_DAMAGE = 5;
     public static final int TOWER_BASE_RANGE = 4;
     public static final int TOWER_HP = 500;
-    private static final float RANGE_CYLINDER_HEIGHT = 1.5f;
+    private static final float RANGE_CYLINDER_HEIGHT = 0.025f;
     private static final int TOWER_SAMPLES = 20;
     private static final float TOWER_HEIGHT = 1.4f;
     private static final float TOWER_SIZE = 0.5f;
@@ -271,7 +271,7 @@ public class Tower extends ClickableEntity {
 
         collisionCylinder = new Geometry("CollisionCylinderGeometry", c);
         collisionCylinder.setMaterial(m);
-        collisionCylinder.setLocalTranslation(0, 1.2f, 0);
+        collisionCylinder.setLocalTranslation(0, 0.1f, 0);
         collisionCylinder.setLocalRotation(new Quaternion(angles));
         collisionCylinder.setQueueBucket(Bucket.Transparent);
 

@@ -85,6 +85,7 @@ public class CollisionHandler {
     //===   Methods
     //==========================================================================
 
+    // TODO: add comments and interface to the eventmanager
     public void addCollisionListener(
             CollisionListener listener, BoundingVolume... boundingVolumes) {
         HashSet<CollisionListener> listeners;
