@@ -97,7 +97,7 @@ public class Level {
     private Node staticLevelElements;
     private Node dynamicLevelElements;
     private Map map;
-    private Grid grid;
+    private Grid grid = Grid.getInstance();
     //==========================================================================
     //===   Methods
     //==========================================================================
@@ -128,13 +128,12 @@ public class Level {
 
         // Setup Grid and Map
         map = new Map();
-        Grid grid = Grid.getInstance();
         staticLevelElements.attachChild(map);
 
         Orb o = entityManager.createOrb(
                 "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);
 
-        Creep c = entityManager.createCreep("FirstCreep", grid.getFieldInfo(0, 10).getSquare().getLocalTranslation(), 100, 100);
+        Creep c = entityManager.createCreep("FirstCreep", grid.getFieldInfo(0, 10).getSquare().getLocalTranslation(), 10000, 10000);
 
 
     }
@@ -145,7 +144,6 @@ public class Level {
      */
     public void update(float tpf) {
         entityManager.update(tpf);
-        
     }
 
     /**
@@ -201,6 +199,10 @@ public class Level {
                 }
                 creep.setPath(path);
             }
+            else{
+                Queue<MapSquare> uniquePath = Pathfinder.getInstance().createCreepPath(creep.getCurrentSquare().getFieldInfo());
+                creep.setPath(uniquePath);
+            }
 
         }
     }
@@ -212,7 +214,4 @@ public class Level {
     public Node getStaticLevelElements() {
         return staticLevelElements;
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }

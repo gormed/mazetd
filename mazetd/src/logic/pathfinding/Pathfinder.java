@@ -87,7 +87,7 @@ public class Pathfinder {
     }
     
     /**
-     * TODO -> Parameter start! , ziel?
+     * 
      * 
      * @return 
      */
@@ -101,6 +101,31 @@ public class Pathfinder {
         }
 
         while (field.getParent() != null) {
+            tempPath.add(field.getSquare());
+            field = field.getParent();
+        }
+
+
+        Collections.reverse((LinkedList)tempPath);
+
+        return tempPath;
+    }
+    
+     /**
+     * 
+     * 
+     * @return 
+     */
+    public Queue<MapSquare> createCreepPath(FieldInfo start) {
+        Queue<MapSquare> tempPath = new LinkedList();
+        FieldInfo field = null;
+        try {
+            field = findPath(grid,start,grid.getFieldInfo(20, 10));
+        } catch (RuntimeException e) {
+            System.out.println("fehler Pathfinder-> findPath()");
+        }
+
+        while (!field.getParent().equals(start)) {
             tempPath.add(field.getSquare());
             field = field.getParent();
         }

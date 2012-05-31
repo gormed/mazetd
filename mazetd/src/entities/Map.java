@@ -48,9 +48,11 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
+import entities.base.EntityManager;
 import eventsystem.EventManager;
 import eventsystem.events.TimerEvent;
 import eventsystem.listener.TimerEventListener;
+import java.util.HashMap;
 import logic.Grid;
 import logic.Grid.FieldInfo;
 import logic.Level;
@@ -92,6 +94,7 @@ public class Map extends Node {
     private float totalWidth;
     private MazeTDGame game = MazeTDGame.getInstance();
     private Grid grid = Grid.getInstance();
+    private EntityManager entityManager = EntityManager.getInstance();
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -202,22 +205,29 @@ public class Map extends Node {
         }
 
         private void buildTowerOnField() {
-            if (this.getFieldInfo().getWeight() < 10000) {
+            if (this.getFieldInfo().getWeight() < 10000 && checkCreepOnField(this.getFieldInfo(), entityManager.getCreepHashMap())) {
                 Level.getInstance().buildTower(this);
                 this.getFieldInfo().incrementWeight(10000);
-                if(Pathfinder.getInstance().getMainPath().contains(this)){
+                if (Pathfinder.getInstance().getMainPath().contains(this)) {
                     Pathfinder.getInstance().setMainPath(Pathfinder.getInstance().createMainPath());
                 }
             }
-            
-
-            //TODO control if on path -> generate Path
-
         }
 
-        /**
-         * creates the geometry for a square with default size and color.
-         */
+        //TODO
+        private boolean checkCreepOnField(FieldInfo field, HashMap<Integer, Creep> creeps) {
+            for (Creep creep : creeps.values()) {
+                if(creep.getCurrentSquare().equals(field)){
+                                    return false;
+                }
+
+            }
+
+            return true;
+        }
+            /**
+             * creates the geometry for a square with default size and color.
+             */
         private void createGeometry() {
             geometry = new ClickableGeometry(name + "_Geometry", new Quad(SQUARE_SIZE, SQUARE_SIZE)) {
 
