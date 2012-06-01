@@ -55,7 +55,7 @@ public class IsoCameraControl implements ActionListener {
     //==========================================================================
 
     /** The Constant CAMERA_HEIGHT. */
-    private static float CAMERA_HEIGHT = 15;
+    public static float CAMERA_HEIGHT = 15;
     /** The Constant CAMERA_ANGLE. */
     private static final float CAMERA_ANGLE = (float) Math.PI / 2.5f;
     /** The Constant CAMERA_ACTIVE_ZONE_X for the activation of camera movement in x-dir. */

@@ -45,6 +45,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
@@ -136,7 +137,7 @@ public class Map extends Node {
 
         groundPlane.setLocalRotation(new Quaternion(angles));
         groundPlane.setLocalTranslation(-totalWidth / 2 - SQUARE_SIZE / 2, 0, totalHeight / 2 - SQUARE_SIZE / 2);
-
+        groundPlane.setShadowMode(ShadowMode.Receive);
         decorativeMapElemetns.attachChild(groundPlane);
     }
 

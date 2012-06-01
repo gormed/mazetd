@@ -54,6 +54,8 @@ import de.lessvoid.nifty.Nifty;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
+import com.jme3.post.ssao.SSAOFilter;
+import com.jme3.shadow.PssmShadowRenderer;
 import gui.elements.MainmenuScreen;
 
 /**
@@ -66,14 +68,18 @@ import gui.elements.MainmenuScreen;
  * @see SimpleApplication
  */
 public class MazeTDGame extends SimpleApplication {
-    
+    //==========================================================================
+    //===   Constants
+    //==========================================================================
+
+    private static final boolean SHADOWS_ENABLED = true;
+    private static final boolean SSAO_ENABLED = false;
     //==========================================================================
     //===   Singleton and Main-method
     //==========================================================================
-    
-
     /** The single reference to the game*/
     private static MazeTDGame instance;
+    private boolean wasPaused;
 
     /** The hidden contructor of the game*/
     private MazeTDGame() {
@@ -118,6 +124,7 @@ public class MazeTDGame extends SimpleApplication {
     private FilterPostProcessor postProcessor;
     private BloomFilter bloomFilter =
             new BloomFilter(BloomFilter.GlowMode.Objects);
+    private PssmShadowRenderer pssmShadowRenderer;
     //==========================================================================
     //===   Package Fields
     //==========================================================================
@@ -162,6 +169,27 @@ public class MazeTDGame extends SimpleApplication {
         bloomFilter.setBlurScale(1f);
         postProcessor.addFilter(bloomFilter);
         viewPort.addProcessor(postProcessor);
+        if (SSAO_ENABLED) {
+            /** Ambient occlusion shadows */
+            FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+            SSAOFilter ssaoFilter = new SSAOFilter(12.94f, 43.92f, 0.33f, 0.61f);
+            fpp.addFilter(ssaoFilter);
+            viewPort.addProcessor(fpp);
+
+
+        }
+        if (SHADOWS_ENABLED) {
+            /** Advanced shadows for uneven surfaces */
+            pssmShadowRenderer = new PssmShadowRenderer(assetManager, 1024, 3);
+            pssmShadowRenderer.setDirection(new Vector3f(-.5f, -.5f, -.5f).normalizeLocal());
+            pssmShadowRenderer.setFilterMode(PssmShadowRenderer.FilterMode.Bilinear);
+            pssmShadowRenderer.setShadowIntensity(0.5f);
+            pssmShadowRenderer.setEdgesThickness(-3);
+//            pssmShadowRenderer.setEdgesThickness(0);
+//            pssmShadowRenderer.setCompareMode(PssmShadowRenderer.CompareMode.Hardware);
+            viewPort.addProcessor(pssmShadowRenderer);
+        }
+
     }
 
     /**
@@ -195,13 +223,19 @@ public class MazeTDGame extends SimpleApplication {
     }
 
     @Override
+    public void loseFocus() {
+        wasPaused = true;
+        super.loseFocus();
+    }
+
+    @Override
     public void initialize() {
         // init Application
         super.initialize();
         // init isometric camera
         isoCameraControl = new IsoCameraControl(this);
         detachDebugCamera();
-        
+
         //init the Post-Processors
         initPostProcessors();
         // init input for debugging and camera
@@ -237,6 +271,11 @@ public class MazeTDGame extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
+        if (wasPaused) {
+            tpf = 0;
+            wasPaused = false;
+        }
+
         // frequently updates the games current state
         gamestateManager.update(tpf);
         // camera
@@ -275,6 +314,14 @@ public class MazeTDGame extends SimpleApplication {
             settings.put("FrameRate", 100);
             //settings.put("SettingsDialogImage", "/Interface/solarwars_v2.png");
         }
+    }
+
+    public PssmShadowRenderer getPssmShadowRenderer() {
+        return pssmShadowRenderer;
+    }
+
+    public IsoCameraControl getIsoCameraControl() {
+        return isoCameraControl;
     }
 
     //==========================================================================

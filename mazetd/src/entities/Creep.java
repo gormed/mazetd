@@ -36,10 +36,14 @@
 package entities;
 
 import com.jme3.collision.CollisionResults;
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Cylinder;
 import entities.Map.MapSquare;
@@ -65,12 +69,12 @@ public class Creep extends CollidableEntity {
     //==========================================================================
 
     public static final float CREEP_BASE_SPEED = 1.1f;
-    private static final float CREEP_GROUND_RADIUS = 0.25f;
-    private static final float CREEP_HEIGHT = 0.5f;
+    public static final float CREEP_GROUND_RADIUS = 0.25f;
+    public static final float CREEP_HEIGHT = 0.5f;
     public static final int CREEP_MAX_HP = 100;
-    private static final float CREEP_MIN_DISTANCE = 0.1f;
+    public static final float CREEP_MIN_DISTANCE = 0.1f;
     private static final int CREEP_SAMPLES = 10;
-    private static final float CREEP_TOP_RADIUS = 0.1f;
+    public static final float CREEP_TOP_RADIUS = 0.1f;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -88,6 +92,7 @@ public class Creep extends CollidableEntity {
     private boolean moving = true;
     private Queue<Map.MapSquare> path;
     private MapSquare currentSquare;
+    private ParticleEmitter emitter;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -174,6 +179,16 @@ public class Creep extends CollidableEntity {
     public CollidableEntityNode createNode(MazeTDGame game) {
         super.createNode(game);
 
+        createCreepGeometry(game);
+
+        return collidableEntityNode;
+    }
+
+    /**
+     * Creates the creeps geometry and attaches it to the collidableEntityNode.
+     * @param game the MazeTDGame reference
+     */
+    private void createCreepGeometry(MazeTDGame game) {
         // Material
         material = new Material(
                 game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
@@ -195,14 +210,16 @@ public class Creep extends CollidableEntity {
 
         geometry = new Geometry("Creep_Geometry_" + name, c);
         geometry.setMaterial(material);
-        geometry.setLocalTranslation(0, CREEP_HEIGHT * 0.5f, 0);
+        geometry.setLocalTranslation(0, CREEP_HEIGHT * 0.5f + 0.01f, 0);
         geometry.setLocalRotation(new Quaternion(angles));
+        geometry.setQueueBucket(Bucket.Inherit);
 
         collidableEntityNode.attachChild(geometry);
         collidableEntityNode.setLocalTranslation(position);
-
-        return collidableEntityNode;
+        collidableEntityNode.setShadowMode(ShadowMode.CastAndReceive);
     }
+
+
 
     /**
      * Sets the moving-target of the creep.
@@ -229,6 +246,7 @@ public class Creep extends CollidableEntity {
     void receiveDamaged(float amount) {
         this.healthPoints -= amount;
         if (isDead()) {
+            // set decaying
             deacying = true;
             // stop movement
             stop();
@@ -240,6 +258,8 @@ public class Creep extends CollidableEntity {
             }
         }
     }
+
+
 
     /**
      * Checks if the creep is dead.

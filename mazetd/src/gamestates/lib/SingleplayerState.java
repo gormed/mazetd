@@ -49,6 +49,7 @@ import entities.geometry.ClickableGeometry;
 import gamestates.Gamestate;
 import gamestates.GamestateManager;
 import logic.Level;
+import mazetd.IsoCameraControl;
 import mazetd.MazeTDGame;
 
 /**
@@ -69,7 +70,18 @@ public class SingleplayerState extends Gamestate {
 
     @Override
     public void update(float tpf) {
+
+        updateLightsAndShadows(tpf);
         level.update(tpf);
+
+    }
+
+    private void updateLightsAndShadows(float tpf) {
+        pointLight.setPosition(game.getCamera().getLocation().clone());
+        Vector3f camLoc = game.getCamera().getLocation().clone();
+        camLoc.y = IsoCameraControl.CAMERA_HEIGHT / 2;
+        Vector3f dir = Vector3f.ZERO.clone().subtract(camLoc);
+        game.getPssmShadowRenderer().setDirection(dir.normalize());
     }
 
     @Override

@@ -37,12 +37,16 @@ package entities;
 
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
+import com.jme3.effect.shapes.EmitterPointShape;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
@@ -50,6 +54,7 @@ import com.jme3.scene.shape.Sphere;
 import entities.base.AbstractEntity;
 import entities.base.ClickableEntity;
 import entities.base.EntityManager;
+import entities.effects.OrbEffect;
 import entities.nodes.CollidableEntityNode;
 import eventsystem.port.Collider3D;
 import logic.Level;
@@ -84,6 +89,7 @@ public class Tower extends ClickableEntity {
     private Material roofMaterial;
     private Material wallMaterial;
     private Material projectileMaterial;
+    private ColorRGBA projectileColor = new ColorRGBA(0.5f, 0.5f, 0.5f, 1f);
     private Vector3f position;
     private Creep target;
     private float healthPoints = TOWER_HP;
@@ -115,8 +121,8 @@ public class Tower extends ClickableEntity {
                 game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         projectileMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
         projectileMaterial.setColor("Specular", ColorRGBA.White);
-        projectileMaterial.setColor("Ambient", ColorRGBA.DarkGray);   // ... color of this object
-        projectileMaterial.setColor("Diffuse", ColorRGBA.DarkGray);   // ... color of light being reflected
+        projectileMaterial.setColor("Ambient", projectileColor);   // ... color of this object
+        projectileMaterial.setColor("Diffuse", projectileColor);   // ... color of light being reflected
 
 
         roofMaterial = new Material(
@@ -147,7 +153,7 @@ public class Tower extends ClickableEntity {
         roofGeometry.setMaterial(roofMaterial);
         roofGeometry.setLocalTranslation(0, TOWER_HEIGHT + ROOF_SIZE / 2, 0);
         roofGeometry.setLocalRotation(new Quaternion(angles));
-        //roofGeometry.setQueueBucket(Bucket.Translucent);
+        roofGeometry.setQueueBucket(Bucket.Inherit);
 
 
         // Wall
@@ -164,14 +170,14 @@ public class Tower extends ClickableEntity {
         wallGeometry.setMaterial(wallMaterial);
         wallGeometry.setLocalTranslation(0, TOWER_HEIGHT / 2, 0);
         wallGeometry.setLocalRotation(new Quaternion(angles));
-        //wallGeometry.setQueueBucket(Bucket.Translucent);
+        wallGeometry.setQueueBucket(Bucket.Inherit);
 
         // Hierarchy
         clickableEntityNode.attachChild(wallGeometry);
         clickableEntityNode.attachChild(roofGeometry);
         // apply position to main node
         clickableEntityNode.setLocalTranslation(position);
-
+        clickableEntityNode.setShadowMode(ShadowMode.CastAndReceive);
         // create collision for tower attacking range
         createCollision(game);
 
@@ -342,6 +348,8 @@ public class Tower extends ClickableEntity {
         //==========================================================================
 
         public static final float PROJECTILE_BASE_SPEED = 3.f;
+        public static final float MAX_FADE = 0.8f;
+        public static final int PROJECTILE_IMPACT_PARTICLES = 5;
         //==========================================================================
         //===   Private Fields
         //==========================================================================
@@ -350,6 +358,15 @@ public class Tower extends ClickableEntity {
         private Vector3f position;
         private Creep target;
         private float initialDistance = 0;
+        private OrbEffect orbEffect;
+        private boolean decays = false;
+        private float fadeCounter = 0;
+        // floating Particles
+        private ParticleEmitter floatingEmitter;
+        private float emittingTime = 0.2f;
+        private float emittingCounter = 0;
+        // impact Particles
+        private ParticleEmitter impactEmitter;
         //==========================================================================
         //===   Methods & Constructor
         //==========================================================================
@@ -374,8 +391,11 @@ public class Tower extends ClickableEntity {
                 move(tpf);
                 checkForHit();
             }
-            if (target == null || (target != null && target.isDead())) {
-                destroy();
+            if (decays) {
+                fadeCounter += tpf;
+                if (fadeCounter > MAX_FADE) {
+                    destroy();
+                }
             }
         }
 
@@ -384,8 +404,74 @@ public class Tower extends ClickableEntity {
             super.createNode(game);
 
             createGeometry();
-            Level.getInstance().getDynamicLevelElements().attachChild(geometryNode);
+            createFloatingParticleEmitter(game);
+            createImpactParticleEmitter(game);
+
+            Level.getInstance().
+                    getDynamicLevelElements().attachChild(geometryNode);
+
+            
             return geometryNode;
+        }
+
+        private void createFloatingParticleEmitter(MazeTDGame game) {
+            /** Uses Texture from jme3-test-data library! */
+            floatingEmitter = new ParticleEmitter(
+                    "Emitter", ParticleMesh.Type.Triangle, 30);
+            Material mat_red = new Material(
+                    game.getAssetManager(),
+                    "Common/MatDefs/Misc/Particle.j3md");
+            mat_red.setTexture(
+                    "Texture",
+                    game.getAssetManager().
+                    loadTexture("Textures/Effects/flame.png"));
+            floatingEmitter.setMaterial(mat_red);
+            // 2x2 texture animation
+            floatingEmitter.setImagesX(2);
+            floatingEmitter.setImagesY(2);
+            ColorRGBA end = projectileColor.clone(); end.a = 0;
+            floatingEmitter.setEndColor(end);
+            floatingEmitter.setStartColor(projectileColor);
+            floatingEmitter.getParticleInfluencer().setInitialVelocity(
+                    target.getPosition().subtract(position).normalize().negate());
+            floatingEmitter.setStartSize(0.2f);
+            floatingEmitter.setEndSize(0.05f);
+            floatingEmitter.setGravity(0f, 0f, 0f);
+            floatingEmitter.setLowLife(0.15f);
+            floatingEmitter.setHighLife(0.2f);
+            floatingEmitter.setParticlesPerSec(60);
+            floatingEmitter.getParticleInfluencer().setVelocityVariation(0.3f);
+            geometryNode.attachChild(floatingEmitter);
+            floatingEmitter.preload(game.getRenderManager(), game.getViewPort());
+            floatingEmitter.emitAllParticles();
+
+        }
+
+        private void createImpactParticleEmitter(MazeTDGame game) {
+            /** Explosion effect. Uses Texture from jme3-test-data library! */
+            impactEmitter = new ParticleEmitter(
+                    "impactEmitter", ParticleMesh.Type.Triangle, PROJECTILE_IMPACT_PARTICLES);
+            Material impactEmitter_mat = new Material(GAME.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
+            impactEmitter_mat.setTexture("Texture", GAME.getAssetManager().loadTexture(
+                    "Textures/Effects/Debris.png"));
+            impactEmitter.setMaterial(impactEmitter_mat);
+            impactEmitter.setImagesX(3);
+            impactEmitter.setImagesY(3); // 3x3 texture animation
+            impactEmitter.setRotateSpeed(4);
+            impactEmitter.setSelectRandomImage(true);
+            impactEmitter.setLowLife(MAX_FADE * 0.9f);
+            impactEmitter.setHighLife(MAX_FADE);
+            impactEmitter.setStartSize(0.1f);
+            impactEmitter.setEndSize(0.16f);
+            impactEmitter.getParticleInfluencer().
+                    setInitialVelocity(new Vector3f(0, 2, 0));
+            impactEmitter.setStartColor(projectileColor);
+            impactEmitter.setGravity(0f, 6f, 3f);
+            impactEmitter.getParticleInfluencer().setVelocityVariation(.25f);
+
+            impactEmitter.preload(game.getRenderManager(), game.getViewPort());
+
+
         }
 
         /**
@@ -396,8 +482,30 @@ public class Tower extends ClickableEntity {
 
             geometry = new Geometry("ProjectileGeometry", s);
             geometry.setMaterial(projectileMaterial);
+            geometry.setShadowMode(ShadowMode.CastAndReceive);
             geometryNode.attachChild(geometry);
             geometryNode.setLocalTranslation(position);
+        }
+
+        /**
+         * Emitts paricles once for an impact.
+         */
+        private void emitImpactParitcles() {
+
+            geometryNode.attachChild(impactEmitter);
+            geometryNode.detachChild(floatingEmitter);
+            impactEmitter.emitAllParticles();
+            impactEmitter.setParticlesPerSec(0);
+
+
+//            Level.getInstance().getDynamicLevelElements().attachChild(impactEmitter);
+//
+//            //impactEmitter.setEnabled(true);
+//            impactEmitter.setShape(new EmitterPointShape(position));
+//
+//            impactEmitter.setParticlesPerSec(20);
+//            impactEmitter.emitAllParticles();
+//            impactEmitter.setParticlesPerSec(0);
         }
 
         /**
@@ -407,19 +515,23 @@ public class Tower extends ClickableEntity {
         private void move(float tpf) {
 
 
-            float currentDistance = target.getPosition().subtract(position).length();
-            float percentage = (initialDistance - currentDistance) / initialDistance;
-            Vector3f targetPos = target.getPosition();
-            Vector3f projectilePos = geometryNode.getLocalTranslation();
+//            float currentDistance =
+//                    target.getPosition().subtract(position).length();
+//            float percentage =
+//                    (initialDistance - currentDistance) / initialDistance;
 
-            Vector3f dir = targetPos.subtract(projectilePos);
+            position = geometryNode.getLocalTranslation();
+
+            Vector3f dir = target.getPosition().subtract(position);
             dir.normalizeLocal();
             dir.multLocal(speed * tpf);
-            projectilePos.addLocal(dir);
+            position.addLocal(dir);
             // TODO: add curved flying
-            //projectilePos.y += (1-percentage);
-
-            geometryNode.setLocalTranslation(projectilePos);
+//            if (percentage < 0.9f) {
+//                Math.min(0.1f + percentage, 1f);
+//                projectilePos.y += Math.sin((percentage) * Math.PI * 2f) * tpf * 1f;
+//            }
+            geometryNode.setLocalTranslation(position);
         }
 
         /*
@@ -429,7 +541,8 @@ public class Tower extends ClickableEntity {
         private void onHit() {
             System.out.println(target.getName() + " recieved " + damage + " damage!");
             target.receiveDamaged(damage);
-            destroy();
+            decays = true;
+
         }
 
         /**
@@ -445,29 +558,40 @@ public class Tower extends ClickableEntity {
          * Checks for collision with the targeted creep and fires onHit().
          */
         private void checkForHit() {
+            float dist =
+                    target.getPosition().subtract(position).length();
+
+            if (dist <= Creep.CREEP_TOP_RADIUS) {
+                emitImpactParitcles();
+                onHit();
+            }
+
+            /**
             CollisionResults collisionResults =
-                    Collider3D.getInstance().objectCollides(geometryNode.getWorldBound());
+            Collider3D.getInstance().objectCollides(geometryNode.getWorldBound());
             // if there are creeps
             if (collisionResults != null) {
-                Node n;
-                // find each and
-                for (CollisionResult result : collisionResults) {
-                    n = result.getGeometry().getParent();
-                    // check if collidable entity
-                    if (n instanceof CollidableEntityNode) {
-                        CollidableEntityNode col = (CollidableEntityNode) n;
-                        AbstractEntity e = col.getEntity();
-                        // check if creep entity
-                        if (e instanceof Creep) {
-                            Creep c = (Creep) e;
-                            if (c.equals(target)) {
-                                onHit();
-                            }
-                        }
-                    }
-                }
-
+            Node n;
+            // find each and
+            for (CollisionResult result : collisionResults) {
+            n = result.getGeometry().getParent();
+            // check if collidable entity
+            if (n instanceof CollidableEntityNode) {
+            CollidableEntityNode col = (CollidableEntityNode) n;
+            AbstractEntity e = col.getEntity();
+            // check if creep entity
+            if (e instanceof Creep) {
+            Creep c = (Creep) e;
+            if (c.equals(target)) {
+            onHit();
+            emitParitcles(position);
             }
+            }
+            }
+            }
+            
+            }
+             */
         }
     }
 }

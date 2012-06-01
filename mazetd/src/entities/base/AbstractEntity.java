@@ -85,6 +85,7 @@ public abstract class AbstractEntity {
      */
     public Node createNode(MazeTDGame game) {
         geometryNode = new Node(name + "s_GeometryNode");
+        
         return geometryNode;
     }
 
