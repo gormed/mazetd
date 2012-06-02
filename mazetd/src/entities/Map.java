@@ -359,6 +359,8 @@ public class Map extends Node {
                 //fadeColor.clamp();
 
             } else if (!hovered && fadeColor.a >= 0.0f) {
+                if (creepOn)
+                    creepOn = false;
                 fadeColor.a -= 0.01f;
             }
 
@@ -370,6 +372,7 @@ public class Map extends Node {
                 material.setColor("Diffuse", ColorRGBA.BlackNoAlpha);   // ... color of light being reflected
             }
             if (creepOn) {
+                
                 material.setColor("Ambient", ColorRGBA.Red);   // ... color of this object
                 material.setColor("Diffuse", ColorRGBA.Red);   // ... color of light being reflected
 

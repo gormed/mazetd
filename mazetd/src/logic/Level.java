@@ -37,7 +37,6 @@ package logic;
 
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import entities.Creep;
 import entities.Map;
 import entities.Map.MapSquare;
 import entities.Orb;
@@ -46,7 +45,6 @@ import entities.base.EntityManager;
 import eventsystem.EventManager;
 import eventsystem.port.Collider3D;
 import eventsystem.port.ScreenRayCast3D;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import logic.pathfinding.CreepAI;

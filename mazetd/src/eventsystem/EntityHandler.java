@@ -38,9 +38,10 @@ package eventsystem;
 import com.jme3.collision.CollisionResult;
 import com.jme3.math.Vector2f;
 import entities.base.AbstractEntity;
+import entities.base.ClickableEntity;
+import entities.base.low.SimpleClickable;
 import eventsystem.events.EntityEvent;
 import eventsystem.listener.EntityListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -149,18 +150,21 @@ public class EntityHandler {
      * @see ClickableEntity.ClickableEntityNode
      */
     public void invokeEntityAction(
-            EntityEvent.EntityEventType actionType, AbstractEntity entity,
+            EntityEvent.EntityEventType actionType, SimpleClickable entity,
             Vector2f mouse, CollisionResult result) {
         if (entityListeners.isEmpty()) {
             return;
         }
-        EntityEvent event = new EntityEvent(entity, actionType, mouse, result);
-
-        if (entityListeners.containsKey(entity)) {
-            HashSet<EntityListener> listeners = entityListeners.get(entity);
-            for (EntityListener l : listeners) {
-                l.onAction(event);
+        if (entity instanceof AbstractEntity) {
+            AbstractEntity e = (AbstractEntity) entity;
+            EntityEvent event = new EntityEvent(e, actionType, mouse, result);
+            if (entityListeners.containsKey(e)) {
+                HashSet<EntityListener> listeners = entityListeners.get(e);
+                for (EntityListener l : listeners) {
+                    l.onAction(event);
+                }
             }
         }
+
     }
 }

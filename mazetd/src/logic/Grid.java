@@ -35,7 +35,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
-import com.jme3.math.ColorRGBA;
 import entities.Map.MapSquare;
 
 /**
@@ -173,7 +172,7 @@ public class Grid {
      * @param yCoord 
      */
     void setTower(int xCoord, int yCoord) {
-        grid[xCoord][yCoord].incrementWeight(10000);
+        grid[xCoord][yCoord].setWeight(10000);
         //grid[xCoord][yCoord].getSquare().setColor(ColorRGBA.Red.clone());
 
     }

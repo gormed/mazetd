@@ -50,7 +50,7 @@ import logic.Grid.FieldInfo;
  */
 public class Pathfinder {
 
-    public static final boolean DEBUG_PATH = true;
+    public static boolean DEBUG_PATH = true;
     //==========================================================================
     //===   Singleton
     //==========================================================================
@@ -80,9 +80,11 @@ public class Pathfinder {
     //===   Private Fields
     //==========================================================================
     private Queue<MapSquare> path;
+    private Queue<MapSquare> lastPath;
     private Grid grid = Grid.getInstance();
     private boolean gridChanged = false;
     private MapSquare changedSquare;
+    private int changedWeight;
     private Point2i start = new Point2i(0, Grid.getInstance().getTotalHeight() / 2);
     private Point2i end = new Point2i(Grid.getInstance().getTotalWidth() - 1, Grid.getInstance().getTotalHeight() / 2);
 
@@ -91,15 +93,35 @@ public class Pathfinder {
     //==========================================================================
     public void initialize() {
         setMainPath(createMainPath());
-//        if (DEBUG_PATH) {
-//            for (MapSquare ms : path) {
-//                ms.setMainPathDebug(true);
-//            }
-//        }
+        lastPath = path;
     }
 
     public void update(float tpf) {
-        if (gridChanged && getMainPath().contains(changedSquare)) {
+        if (gridChanged) {
+            changedSquare.getFieldInfo().setWeight(changedWeight);
+            if (getMainPath().contains(changedSquare)) {
+                lastPath = path;
+                path = createMainPath();
+                gridChanged = false;
+                
+//                Future fut = MazeTDGame.getInstance().enqueue(new Callable() {
+//
+//                    @Override
+//                    public Object call()
+//                            throws Exception {
+//
+//                        return createMainPath();
+//                    }
+//                });
+//                try {
+//                    setMainPath((Queue<MapSquare>) fut.get());
+//                    gridChanged = false;
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
+//                } catch (ExecutionException ex) {
+//                    Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+            }
 
             setMainPath(createMainPath());
             gridChanged = false;
@@ -128,18 +150,22 @@ public class Pathfinder {
         }
     }
 
+    void setChangedMapSquare(MapSquare square, int newWight) {
+        changedSquare = square;
+        gridChanged = true;
+        changedWeight = newWight;
+    }
+
     public void setMainPath(Queue<MapSquare> path) {
         this.path = path;
     }
 
-    public void setChangedMapSquare(MapSquare square, int newWeight) {
-        square.getFieldInfo().incrementWeight(newWeight);
-        changedSquare = square;
-        gridChanged = true;
-    }
-
     public Queue<MapSquare> getMainPath() {
         return new LinkedList<MapSquare>(path);
+    }
+
+    public Queue<MapSquare> getLastPath() {
+        return lastPath;
     }
 
     public FieldInfo getStartField() {

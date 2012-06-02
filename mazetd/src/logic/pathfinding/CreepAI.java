@@ -57,6 +57,7 @@ public class CreepAI {
      * The hidden constructor of CreepAI.
      */
     private CreepAI() {
+//        currentMainPath = new LinkedList<MapSquare>(pathfinder.getMainPath());
     }
 
     /**
@@ -79,27 +80,29 @@ public class CreepAI {
     private EntityManager entityManager = EntityManager.getInstance();
     private Pathfinder pathfinder = Pathfinder.getInstance();
     private MapSquare changedSquare = null;
+    private boolean changed = false;
     private int changedWeight = 1;
+//    private Queue<MapSquare> currentMainPath;
     //==========================================================================
     //===   Methods
     //==========================================================================
 
     public void update(float tpf) {
-        if (changedSquare != null) {
+        if (changed) {
             updateCreepPathes(tpf, changedSquare, changedWeight);
-            changedSquare = null;
+            changed = false;
         }
     }
 
     private void updateCreepPathes(float tpf, MapSquare square, int newWeight) {
         
         //Liegt der Turm auf dem aktuellen MainPath?
-        if (pathfinder.getMainPath().contains(square)) {
+        if (pathfinder.getLastPath().contains(square)) {
             //NeuerPfad wird generiert
             checkCreeps(entityManager.getCreepHashMap(),
                     pathfinder.getMainPath());
         }
-
+        //currentMainPath = new LinkedList<MapSquare>(pathfinder.getMainPath());
     }
 
     /**
@@ -113,7 +116,6 @@ public class CreepAI {
     private void checkCreeps(
             HashMap<Integer, Creep> creeps,
             Queue<MapSquare> mainPath) {
-        HashSet<MapSquare> allPathSquares = new HashSet<MapSquare>();
 
         for (Creep creep : creeps.values()) {
             Queue<MapSquare> path = new LinkedList<MapSquare>(mainPath);
@@ -131,27 +133,7 @@ public class CreepAI {
                 creep.setPath(uniquePath);
             }
             
-            
-            // ==========
-            // DEBUG ONLY
-            // ==========
-            if (Pathfinder.DEBUG_PATH) {
-                for (MapSquare ms : path) {
-                    allPathSquares.add(ms);
-                }
-            }
-        }
-        // ==========
-        // DEBUG ONLY
-        // ==========
-        if (Pathfinder.DEBUG_PATH) {
-            for (MapSquare s : Map.getInstance().getMapSquares()) {
-                if (allPathSquares.contains(s)) {
-                    s.setCreepPathDebug(true);
-                } else {
-                    s.setCreepPathDebug(true);
-                }
-            }
+
         }
     }
 
@@ -159,6 +141,7 @@ public class CreepAI {
         this.changedSquare = square;
         this.changedWeight = newWight;
         pathfinder.setChangedMapSquare(square, newWight);
+        this.changed = true;
     }
     //==========================================================================
     //===   Inner Classes

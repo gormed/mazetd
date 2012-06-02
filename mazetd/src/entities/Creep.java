@@ -35,29 +35,35 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities;
 
+import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Cylinder;
 import entities.Map.MapSquare;
 import entities.Orb.ElementType;
 import entities.base.CollidableEntity;
 import entities.base.EntityManager;
 import entities.effects.OrbEffect;
+import entities.geometry.ClickableGeometry;
 import entities.nodes.CollidableEntityNode;
 import eventsystem.CreepHandler;
 import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.port.Collider3D;
+import eventsystem.port.ScreenRayCast3D;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Random;
+import logic.Level;
 import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
@@ -94,6 +100,8 @@ public class Creep extends CollidableEntity {
     private Vector3f target;
     private boolean deacying = false;
     private float decayTime = 0;
+    private ClickableGeometry debugGeometry;
+    private boolean debugPathToggle = false;
     // logic
     private float healthPoints = CREEP_MAX_HP;
     private float maxHealthPoints = CREEP_MAX_HP;
@@ -142,6 +150,12 @@ public class Creep extends CollidableEntity {
         }
         // if moving do this part
         moveUpdate(tpf);
+
+        if (debugPathToggle) {
+            for (MapSquare s : path) {
+                s.setCreepPathDebug(moving);
+            }
+        }
     }
 
     @Override
@@ -154,8 +168,62 @@ public class Creep extends CollidableEntity {
 
         createCreepGeometry(game);
         createGoldEmitter(game);
+        createDebugGeometry(game);
 
         return collidableEntityNode;
+    }
+
+    private void createDebugGeometry(MazeTDGame game) {
+
+        Material m = new Material(
+                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        m.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
+        m.setColor("Specular", ColorRGBA.BlackNoAlpha);
+        m.setColor("Ambient", ColorRGBA.BlackNoAlpha);   // ... color of this object
+        m.setColor("Diffuse", ColorRGBA.BlackNoAlpha);   // ... color of light being reflected
+
+
+        float[] angles = {(float) Math.PI / 2, 0, 0};
+
+        debugGeometry = new ClickableGeometry(
+                name + "_DebugGeometry",
+                new Cylinder(
+                CREEP_SAMPLES,
+                CREEP_SAMPLES,
+                CREEP_GROUND_RADIUS,
+                CREEP_TOP_RADIUS,
+                CREEP_HEIGHT,
+                true, false)) {
+
+            @Override
+            public void onRayCastClick(Vector2f mouse, CollisionResult result) {
+                debugPathToggle = !debugPathToggle;
+            }
+
+            @Override
+            public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
+                for (MapSquare s : path) {
+                    s.setCreepPathDebug(moving);
+                }
+
+            }
+
+            @Override
+            public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
+                if (!debugPathToggle) {
+                    for (MapSquare s : path) {
+                        s.setCreepPathDebug(false);
+                    }
+                }
+
+            }
+        };
+        debugGeometry.setMaterial(m);
+        debugGeometry.setCullHint(CullHint.Always);
+        //debugGeometry.setLocalTranslation(0, CREEP_HEIGHT * 0.5f + 0.01f, 0);
+        debugGeometry.setLocalRotation(new Quaternion(angles));
+        ScreenRayCast3D.getInstance().addClickableObject(debugGeometry);
+
     }
 
     /**
@@ -196,6 +264,7 @@ public class Creep extends CollidableEntity {
                     // so get the next square to move to
                     this.lastSquare = currentSquare;
                     this.currentSquare = path.peek();
+                    this.currentSquare.setCreepPathDebug(false);
                     // and remove it from the Queue
                     moveTo(path.poll().getLocalTranslation());
                 } else {
@@ -209,6 +278,7 @@ public class Creep extends CollidableEntity {
             }
             // apply translation to the geometry
             collidableEntityNode.setLocalTranslation(position);
+            debugGeometry.setLocalTranslation(position);
         }
     }
 
@@ -412,6 +482,11 @@ public class Creep extends CollidableEntity {
      * @param path the new path for the creeps movement
      */
     public void setPath(Queue<MapSquare> path) {
+        if (Pathfinder.DEBUG_PATH) {
+            for (MapSquare s : this.path) {
+                s.setCreepPathDebug(false);
+            }
+        }
         this.path = path;
         moveTo(path.poll().getLocalTranslation());
     }
