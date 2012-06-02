@@ -210,9 +210,15 @@ public class WaveManager {
 
     }
 
-//==========================================================================
-//===   Inner Classes
-//==========================================================================
+    public WaveDescription getCurrentWave() {
+        return currentWave;
+    }
+
+    
+    
+    //==========================================================================
+    //===   Inner Classes
+    //==========================================================================
     private abstract class WaveTimer implements TimerEventListener {
 
         private float period;

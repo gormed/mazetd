@@ -40,21 +40,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.vecmath.Point2i;
 import logic.Grid;
 import logic.Grid.FieldInfo;
-import mazetd.MazeTDGame;
 
 /**
  *
  * @author Hady Khalifa
  */
 public class Pathfinder {
+
+    public static final boolean DEBUG_PATH = true;
     //==========================================================================
     //===   Singleton
     //==========================================================================
@@ -88,38 +84,47 @@ public class Pathfinder {
     private boolean gridChanged = false;
     private MapSquare changedSquare;
     private Point2i start = new Point2i(0, Grid.getInstance().getTotalHeight() / 2);
-    private Point2i end = new Point2i(Grid.getInstance().getTotalWidth()-1, Grid.getInstance().getTotalHeight() / 2);
+    private Point2i end = new Point2i(Grid.getInstance().getTotalWidth() - 1, Grid.getInstance().getTotalHeight() / 2);
 
     //==========================================================================
     //===   Methods
     //==========================================================================
     public void initialize() {
-        path = createMainPath();
+        setMainPath(createMainPath());
+//        if (DEBUG_PATH) {
+//            for (MapSquare ms : path) {
+//                ms.setMainPathDebug(true);
+//            }
+//        }
     }
 
     public void update(float tpf) {
-        if (gridChanged) {
-            if (getMainPath().contains(changedSquare)) {
+        if (gridChanged && getMainPath().contains(changedSquare)) {
 
-                Future fut = MazeTDGame.getInstance().enqueue(new Callable() {
-
-                    @Override
-                    public Object call()
-                            throws Exception {
-
-                        return createMainPath();
-                    }
-                });
-                try {
-                    setMainPath((Queue<MapSquare>) fut.get());
-                    gridChanged = false;
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ExecutionException ex) {
-                    Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-
+            setMainPath(createMainPath());
+            gridChanged = false;
+//            if (DEBUG_PATH) {
+//                for (MapSquare ms : path) {
+//                    ms.setMainPathDebug(true);
+//                }
+//            }
+//            Future fut = MazeTDGame.getInstance().enqueue(new Callable() {
+//
+//                @Override
+//                public Object call()
+//                        throws Exception {
+//
+//                    return createMainPath();
+//                }
+//            });
+//            try {
+//                setMainPath((Queue<MapSquare>) fut.get());
+//                gridChanged = false;
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (ExecutionException ex) {
+//                Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
+//            }
         }
     }
 
@@ -127,7 +132,8 @@ public class Pathfinder {
         this.path = path;
     }
 
-    public void setChangedMapSquare(MapSquare square) {
+    public void setChangedMapSquare(MapSquare square, int newWeight) {
+        square.getFieldInfo().incrementWeight(newWeight);
         changedSquare = square;
         gridChanged = true;
     }
@@ -159,9 +165,11 @@ public class Pathfinder {
         } catch (RuntimeException e) {
             System.out.println("fehler Pathfinder-> findPath()");
         }
-
+        MapSquare s;
         while (!field.getParent().equals(getStartField())) {
-            tempPath.add(field.getSquare());
+            s = field.getSquare();
+
+            tempPath.add(s);
             field = field.getParent();
         }
 
@@ -175,24 +183,30 @@ public class Pathfinder {
      * 
      * Ermittelt den Kürzesten Pfad zwischen 2 Feldern;
      * 
-     * @param start Field
+     * @param creepPos Field
      * @return 
      */
-    public Queue<MapSquare> createCreepPath(FieldInfo start) {
+    public Queue<MapSquare> createCreepPath(FieldInfo creepPos) {
         Queue<MapSquare> tempPath = new LinkedList();
         FieldInfo field = null;
         try {
-            field = findPath(grid, start, getEndField());
+            field = findPath(grid, creepPos, getEndField());
         } catch (RuntimeException e) {
             System.out.println("fehler Pathfinder-> findPath()");
         }
 
-        while (field != null && !field.getParent().equals(start)) {
+//        while (field != null && !field.getParent().equals(start)) {
+        while (field != null ) {
             tempPath.add(field.getSquare());
             field = field.getParent();
+            if (field.equals(creepPos))
+                break;
         }
-
-
+//        if (DEBUG_PATH) {
+//            for (MapSquare ms : tempPath) {
+//                ms.setCreepPathDebug(true);
+//            }
+//        }
         Collections.reverse((LinkedList) tempPath);
 
         return tempPath;

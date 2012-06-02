@@ -79,8 +79,6 @@ class Projectile extends AbstractEntity {
     private float fadeCounter = 0;
     // floating Particles
     private ParticleEmitter floatingEmitter;
-    private float emittingTime = 0.2f;
-    private float emittingCounter = 0;
     // impact Particles
     private ParticleEmitter impactEmitter;
     //==========================================================================
@@ -217,9 +215,9 @@ class Projectile extends AbstractEntity {
      * Emitts paricles once for an impact.
      */
     private void emitImpactParitcles() {
-
-        geometryNode.attachChild(impactEmitter);
-        geometryNode.detachChild(floatingEmitter);
+        impactEmitter.setLocalTranslation(geometryNode.getLocalTranslation());
+        Level.getInstance().getDynamicLevelElements().attachChild(impactEmitter);
+        Level.getInstance().getDynamicLevelElements().detachChild(geometryNode);
         impactEmitter.emitAllParticles();
         impactEmitter.setParticlesPerSec(0);
 
@@ -277,7 +275,7 @@ class Projectile extends AbstractEntity {
      */
     private void destroy() {
         EntityManager.getInstance().removeEntity(this.getEntityId());
-        Level.getInstance().getDynamicLevelElements().detachChild(geometryNode);
+        Level.getInstance().getDynamicLevelElements().detachChild(impactEmitter);
     }
 
     /**

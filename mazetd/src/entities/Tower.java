@@ -79,7 +79,6 @@ public class Tower extends ClickableEntity {
     private static final float TOWER_SIZE = 0.3f;
     private static final float ROOF_SIZE = 0.35f;
     private static final MazeTDGame GAME = MazeTDGame.getInstance();
-    
     private static Tower hoveredTower = null;
     //==========================================================================
     //===   Private Fields
@@ -189,6 +188,7 @@ public class Tower extends ClickableEntity {
             target = checkForRangedEnter();
             if (target != null) {
                 target.setAttacker(this);
+                attack(tpf);
             }
         } else if (!target.isDead()) {
             // if tower has target do damage
@@ -337,7 +337,7 @@ public class Tower extends ClickableEntity {
         collisionMaterial.getAdditionalRenderState().setBlendMode(BlendMode.AlphaAdditive);
 
         float[] angles = {(float) Math.PI / 2, 0, 0};
-        
+
         collisionCylinder = new Geometry("CollisionCylinderGeometry", c);
         collisionCylinder.setMaterial(collisionMaterial);
         collisionCylinder.setLocalTranslation(0, TOWER_RANGE_RADIUS_HEIGHT, 0);

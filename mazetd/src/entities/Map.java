@@ -54,6 +54,7 @@ import eventsystem.EventManager;
 import eventsystem.events.TimerEvent;
 import eventsystem.listener.TimerEventListener;
 import java.util.HashMap;
+import java.util.HashSet;
 import logic.Grid;
 import logic.Grid.FieldInfo;
 import logic.Level;
@@ -122,6 +123,7 @@ public class Map extends Node {
     private MazeTDGame game = MazeTDGame.getInstance();
     private Grid grid = Grid.getInstance();
     private EntityManager entityManager = EntityManager.getInstance();
+    private HashSet<MapSquare> mapSquares = new HashSet<MapSquare>();
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -189,9 +191,14 @@ public class Map extends Node {
                 m.setLocalTranslation(position);
 
                 clickableMapElements.attachChild(m);
+                mapSquares.add(m);
                 EventManager.getInstance().addTimerEventListener(m);
             }
         }
+    }
+
+    public HashSet<MapSquare> getMapSquares() {
+        return new HashSet<MapSquare>(mapSquares);
     }
 
     /**
@@ -222,6 +229,9 @@ public class Map extends Node {
         private Material material;
         private ClickableGeometry geometry;
         private boolean hovered = false;
+        private boolean mainPath;
+        private boolean creepPath;
+        private boolean creepOn;
         private ColorRGBA fadeColor = SQUARE_COLOR.clone();
         private FieldInfo field;
         //==========================================================================
@@ -249,25 +259,26 @@ public class Map extends Node {
          * TODO: Hady
          */
         private void buildTowerOnField() {
-            if (this.getFieldInfo().getWeight() < 10000 && checkCreepOnField(this.getFieldInfo(), entityManager.getCreepHashMap())) {
+            if (this.getFieldInfo().getWeight() < 10000 && 
+                    !isCreepOnField(this.getFieldInfo(), 
+                    entityManager.getCreepHashMap())) {
                 Level.getInstance().buildTower(this);
-                this.getFieldInfo().incrementWeight(10000);
-                Pathfinder.getInstance().setChangedMapSquare(this);
             }
         }
 
         /**
          * TODO: Hady
          */
-        private boolean checkCreepOnField(FieldInfo field, HashMap<Integer, Creep> creeps) {
+        private boolean isCreepOnField(FieldInfo field, HashMap<Integer, Creep> creeps) {
             for (Creep creep : creeps.values()) {
                 if (creep.isOnSquare(field.getSquare())) {
-                    return false;
+                    creepOn = true;
+                    return true;
                 }
 
             }
-
-            return true;
+            creepOn = false;
+            return false;
         }
 
         /**
@@ -327,6 +338,14 @@ public class Map extends Node {
             return field;
         }
 
+        public void setMainPathDebug(boolean value) {
+            mainPath = value;
+        }
+
+        public void setCreepPathDebug(boolean value) {
+            creepPath = value;
+        }
+
         public Vector2f getPosition() {
             Vector3f pos3d = getLocalTranslation();
             return new Vector2f(pos3d.x, pos3d.z);
@@ -346,6 +365,22 @@ public class Map extends Node {
             if (field.getWeight() < 10000) {
                 material.setColor("Ambient", fadeColor);   // ... color of this object
                 material.setColor("Diffuse", fadeColor);   // ... color of light being reflected
+            } else {
+                material.setColor("Ambient", ColorRGBA.BlackNoAlpha);   // ... color of this object
+                material.setColor("Diffuse", ColorRGBA.BlackNoAlpha);   // ... color of light being reflected
+            }
+            if (creepOn) {
+                material.setColor("Ambient", ColorRGBA.Red);   // ... color of this object
+                material.setColor("Diffuse", ColorRGBA.Red);   // ... color of light being reflected
+
+            } else if (creepPath && Pathfinder.DEBUG_PATH) {
+                material.setColor("Ambient", ColorRGBA.Orange);   // ... color of this object
+                material.setColor("Diffuse", ColorRGBA.Orange);   // ... color of light being reflected
+
+            } else if (mainPath && Pathfinder.DEBUG_PATH) {
+                material.setColor("Ambient", ColorRGBA.Cyan);   // ... color of this object
+                material.setColor("Diffuse", ColorRGBA.Cyan);   // ... color of light being reflected
+
             }
         }
 

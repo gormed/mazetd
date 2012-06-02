@@ -47,6 +47,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Cylinder;
 import entities.Map.MapSquare;
+import entities.Orb.ElementType;
 import entities.base.CollidableEntity;
 import entities.base.EntityManager;
 import entities.effects.OrbEffect;
@@ -56,6 +57,7 @@ import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.port.Collider3D;
 import java.util.HashSet;
 import java.util.Queue;
+import java.util.Random;
 import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
@@ -74,7 +76,7 @@ public class Creep extends CollidableEntity {
     public static final float CREEP_BASE_DAMAGE = 50.0f;
     public static final float CREEP_BASE_ORB_DROP = 0.0f;
     public static final float CREEP_BASE_SPEED = 1.1f;
-    public static final int CREEP_DECAY = 2;
+    public static final float CREEP_DECAY = 1f;
     public static final int CREEP_GOLD_PARTICLES = 5;
     public static final float CREEP_GROUND_RADIUS = 0.25f;
     public static final float CREEP_HEIGHT = 0.5f;
@@ -293,21 +295,41 @@ public class Creep extends CollidableEntity {
      */
     void applyDamge(float amount) {
         this.healthPoints -= amount;
-        if (isDead()) {
-            // invoke creep event
-            CreepHandler.getInstance().
-                    invokeCreepAction(CreepEventType.Death, this, attacker);
-            // set decaying
-            deacying = true;
-            // stop movement
-            stop();
+        if (isDead() && !deacying) {
             // visualize the death
             triggerGoldEmitter();
             material.setColor("Ambient", ColorRGBA.Red);
-            // signal that the creep died
-//            if (attacker != null) {
-//                attacker.setTarget(null);
-//            }
+            Tower save = attacker;
+            // trigger on death
+            onDeath();
+
+            // invoke creep death event
+            CreepHandler.getInstance().
+                    invokeCreepAction(CreepEventType.Death, this, save);
+        }
+    }
+
+    private void onDeath() {
+        // set decaying
+        deacying = true;
+        // stop movement
+        stop();
+        // drop an orb if chance is high enough
+        dropOrb();
+    }
+
+    private void dropOrb() {
+        Random r = new Random(System.currentTimeMillis());
+
+        if (r.nextFloat() <= this.orbDropRate) {
+            ElementType random;
+            random = ElementType.values()[
+                    r.nextInt(ElementType.values().length)];
+            //Orb o = new Orb(name + "'s orb", new Vector3f(position.x, 0, position.z), random);
+            EntityManager.getInstance().createOrb(
+                    name + "'s orb",
+                    new Vector3f(position.x, 0, position.z),
+                    random);
         }
     }
 
@@ -391,6 +413,7 @@ public class Creep extends CollidableEntity {
      */
     public void setPath(Queue<MapSquare> path) {
         this.path = path;
+        moveTo(path.poll().getLocalTranslation());
     }
 
     public boolean isOnSquare(MapSquare field) {

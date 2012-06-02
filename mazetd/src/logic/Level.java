@@ -49,6 +49,7 @@ import eventsystem.port.ScreenRayCast3D;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+import logic.pathfinding.CreepAI;
 import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
@@ -89,6 +90,7 @@ public class Level {
     private boolean initialized = false;
     private EntityManager entityManager = EntityManager.getInstance();
     private EventManager eventManager = EventManager.getInstance();
+    private CreepAI creepAI = CreepAI.getInstance();
     private ScreenRayCast3D rayCast3D = ScreenRayCast3D.getInstance();
     private Collider3D collider3D = Collider3D.getInstance();
     private WaveManager waveManager = WaveManager.getInstance();
@@ -161,9 +163,9 @@ public class Level {
             description.creepCount = 7 + 3 * i;
             description.creepDamage = 50 + 10 * i;
             description.creepGoldDrop = 10 + 5 * i;
-            description.creepOrbDropRate = 0.05f + 0.01f * i;
+            description.creepOrbDropRate = 0.125f + 0.01f * i;
             description.creepSpeed = 0.8f + 0.05f * i;
-            description.maxCreepHealthPoints = 35 + 7.5f * i;
+            description.maxCreepHealthPoints = 45 + 18.5f * i;
 
             waveDescriptions.add(description);
         }
@@ -176,6 +178,7 @@ public class Level {
      */
     public void update(float tpf) {
         pathfinder.update(tpf);
+        creepAI.update(tpf);
         entityManager.update(tpf);
     }
 
@@ -216,40 +219,11 @@ public class Level {
         Tower t = entityManager.createTower(
                 "FirstTower", map.getLocalTranslation());
         staticLevelElements.attachChild(t.getRangeCollisionNode());
-        map.getFieldInfo().incrementWeight(10000);
-        //Liegt der Turm auf dem aktuellen MainPath?
-        if (Pathfinder.getInstance().getMainPath().contains(map)) {
-            //NeuerPfad wird generiert
-            Pathfinder.getInstance().setMainPath(Pathfinder.getInstance().createMainPath());
-            checkCreeps(entityManager.getCreepHashMap(), Pathfinder.getInstance().getMainPath());
-        }
 
+        creepAI.setChangeMapSquare(map, 10000);
     }
 
-    /**
-     * Ermittelt für alle Creeps den neuen Path
-     * - wenn der Creep auf dem MainPath ist wird der MainPath ab der Creepposition übergeben
-     * - sonst wird von seiner Position zum Ziel ein eigener Pfad erstellt
-     * 
-     * @param alle creeps
-     * @param mainPath 
-     */
-    private void checkCreeps(HashMap<Integer, Creep> creeps, Queue<MapSquare> mainPath) {
-        for (Creep creep : creeps.values()) {
-            Queue<MapSquare> path = mainPath;
-            //Ist der Creep auf dem MainPath?
-            if (mainPath.contains(creep.getCurrentSquare())) {
-                //Ziehe alle Squares aus der Queue bis das richtige am anfang steht
-                while (!path.poll().equals(creep.getCurrentSquare())) {
-                }
-                creep.setPath(path);
-            } else {
-                Queue<MapSquare> uniquePath = Pathfinder.getInstance().createCreepPath(creep.getCurrentSquare().getFieldInfo());
-                creep.setPath(uniquePath);
-            }
 
-        }
-    }
 
     /**
      * Retrieves the node where all dynamic elements are stored.

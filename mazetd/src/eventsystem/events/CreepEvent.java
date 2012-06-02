@@ -47,7 +47,8 @@ public class CreepEvent extends AbstractEvent {
     public enum CreepEventType {
         Death,
         ReachedEnd,
-        Attacks
+        Attacks,
+        Created
     }
     //==========================================================================
     //===   Private Fields

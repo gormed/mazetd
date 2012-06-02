@@ -185,6 +185,7 @@ public class MazeTDGame extends SimpleApplication {
             pssmShadowRenderer.setFilterMode(PssmShadowRenderer.FilterMode.Bilinear);
             pssmShadowRenderer.setShadowIntensity(0.5f);
             pssmShadowRenderer.setEdgesThickness(-3);
+            pssmShadowRenderer.setShadowZExtend(getCamera().getFrustumFar());
 //            pssmShadowRenderer.setEdgesThickness(0);
 //            pssmShadowRenderer.setCompareMode(PssmShadowRenderer.CompareMode.Hardware);
             viewPort.addProcessor(pssmShadowRenderer);

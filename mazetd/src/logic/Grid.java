@@ -59,8 +59,8 @@ public class Grid {
      * Constructor
      */
     private Grid() {
-        totalHeight = 8;
-        totalWidth = 21;
+        totalHeight = 9;
+        totalWidth = 27;
         initGrid(totalWidth, totalHeight);
     }
 

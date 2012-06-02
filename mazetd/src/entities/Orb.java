@@ -35,6 +35,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities;
 
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
@@ -44,6 +46,9 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
 import entities.base.ClickableEntity;
+import entities.base.EntityManager;
+import eventsystem.port.Collider3D;
+import eventsystem.port.ScreenRayCast3D;
 import mazetd.MazeTDGame;
 
 /**
@@ -72,6 +77,7 @@ public class Orb extends ClickableEntity {
     //===   Constants
     //==========================================================================
     private static final float HEIGHT_OVER_GROUND = 0.4f;
+    public static final int ORB_DECAY = 2;
     private static final int ORB_SAMPLES = 10;
     private static final float ORB_SIZE = 0.125f;
     private static MazeTDGame game = MazeTDGame.getInstance();
@@ -82,6 +88,10 @@ public class Orb extends ClickableEntity {
     private ElementType type;
     private Element element;
     private float height = 0.4f;
+    private boolean deacying = false;
+    private float decayTime = 0;
+    // Particle
+    private ParticleEmitter explodesEmitter;
 
     //==========================================================================
     //===   Methods & Constructor
@@ -107,18 +117,32 @@ public class Orb extends ClickableEntity {
         clickableEntityNode.setLocalTranslation(position);
         clickableEntityNode.attachChild(element.geometry);
 
+        createExpodesEmitter(game);
+
         return clickableEntityNode;
     }
 
     @Override
     protected void update(float tpf) {
+
+        if (deacying) {
+
+            decayTime += tpf;
+            if (decayTime > ORB_DECAY) {
+                ScreenRayCast3D.getInstance().
+                        removeClickableObject(clickableEntityNode);
+                EntityManager.getInstance().removeEntity(id);
+            }
+        }
         height += tpf;
         float y = 0.1f * (float) Math.sin(1.5f * height);
         element.geometry.setLocalTranslation(0, HEIGHT_OVER_GROUND + y, 0);
+
     }
 
     @Override
     public void onClick() {
+        explodes();
     }
 
     @Override
@@ -127,6 +151,51 @@ public class Orb extends ClickableEntity {
 
     @Override
     public void onMouseLeft() {
+    }
+
+    private void explodes() {
+        emittExplosion();
+        // set decaying
+        deacying = true;
+    }
+
+    private void emittExplosion() {
+        explodesEmitter.setLocalTranslation(element.geometry.getLocalTranslation());
+        clickableEntityNode.attachChild(explodesEmitter);
+        clickableEntityNode.detachChild(element.geometry);
+        explodesEmitter.emitAllParticles();
+        explodesEmitter.setParticlesPerSec(0);
+    }
+
+    private void createExpodesEmitter(MazeTDGame game) {
+        /** Explosion effect. Uses Texture from jme3-test-data library! */
+        explodesEmitter = new ParticleEmitter(
+                "Debris", ParticleMesh.Type.Triangle, 20);
+        Material debris_mat = new Material(
+                game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
+        debris_mat.setTexture("Texture",
+                game.getAssetManager().
+                loadTexture("Textures/Effects/shockwave.png"));
+        explodesEmitter.setMaterial(debris_mat);
+        explodesEmitter.setImagesX(1);
+        explodesEmitter.setImagesY(1); // 3x3 texture animation
+        explodesEmitter.setRotateSpeed(0);
+        //explodesEmitter.setSelectRandomImage(true);
+        explodesEmitter.getParticleInfluencer().
+                setInitialVelocity(new Vector3f(0, -0.3f, 0));
+        explodesEmitter.setStartColor(element.color);
+        ColorRGBA end = element.color.clone();
+        end.a = 0;
+        explodesEmitter.setEndColor(end);
+        explodesEmitter.setStartSize(ORB_SIZE);
+        explodesEmitter.setEndSize(ORB_SIZE * 3);
+        explodesEmitter.setLowLife(1.0f);
+        explodesEmitter.setHighLife(1.5f);
+        explodesEmitter.setGravity(0f, -1.5f, 0f);
+        explodesEmitter.getParticleInfluencer().setVelocityVariation(.5f);
+        //clickableEntityNode.attachChild(debris);
+        //debris.emitAllParticles();
+
     }
 
     /**
@@ -170,6 +239,7 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
+
         /**
          * Creates a blue orb-element.
          * @return the blue orb-element
@@ -181,6 +251,7 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
+
         /**
          * Creates a green orb-element.
          * @return the green orb-element
@@ -192,6 +263,7 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
+
         /**
          * Creates a yellow orb-element.
          * @return the yellow orb-element
@@ -203,6 +275,7 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
+
         /**
          * Creates a white orb-element.
          * @return the white orb-element

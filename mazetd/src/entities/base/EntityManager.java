@@ -42,6 +42,9 @@ import com.jme3.scene.Node;
 import entities.Creep;
 import entities.Orb;
 import entities.Tower;
+import eventsystem.CreepHandler;
+import eventsystem.EventManager;
+import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.port.Collider3D;
 import java.util.HashMap;
 import java.util.Map;
@@ -168,7 +171,11 @@ public class EntityManager {
         creepHashMap.put(c.getEntityId(), c);
         Node geometryNode = c.createNode(game);
         collider3D.addCollisonObject(geometryNode);
-
+        CreepHandler.getInstance().
+                invokeCreepAction(
+                CreepEventType.Created, c, null);
+        
+        
         return c;
     }
 
@@ -179,14 +186,11 @@ public class EntityManager {
      * @return the creep just created
      */
     public Creep createCreep(String name, Vector2f position, float healthPoints, float maxHealthPoints) {
-        Creep c = new Creep(name, new Vector3f(position.x, 0, position.y), healthPoints, maxHealthPoints);
-
-        addEntity(c);
-        creepHashMap.put(c.getEntityId(), c);
-        Node geometryNode = c.createNode(game);
-        collider3D.addCollisonObject(geometryNode);
-
-        return c;
+        return createCreep(
+                name, 
+                new Vector3f(position.x, 0, position.y),
+                healthPoints, 
+                maxHealthPoints);
     }
 
     /**
