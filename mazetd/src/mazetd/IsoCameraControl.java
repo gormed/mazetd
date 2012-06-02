@@ -148,7 +148,7 @@ public class IsoCameraControl implements ActionListener {
     public void reset() {
         float[] rot = {CAMERA_ANGLE, 0, 0};
         initialUpVec = cam.getUp().clone();
-        cam.setLocation(new Vector3f(0, CAMERA_HEIGHT, -CAMERA_HEIGHT / 2.5f));
+        cam.setLocation(new Vector3f(0, CAMERA_HEIGHT, -CAMERA_HEIGHT / 2f));
         cam.setRotation(new Quaternion(rot));
     }
 

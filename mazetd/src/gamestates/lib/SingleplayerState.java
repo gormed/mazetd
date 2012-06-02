@@ -81,7 +81,9 @@ public class SingleplayerState extends Gamestate {
         Vector3f camLoc = game.getCamera().getLocation().clone();
         camLoc.y = IsoCameraControl.CAMERA_HEIGHT / 2;
         Vector3f dir = Vector3f.ZERO.clone().subtract(camLoc);
-        game.getPssmShadowRenderer().setDirection(dir.normalize());
+        if (game.getPssmShadowRenderer() != null) {
+            game.getPssmShadowRenderer().setDirection(dir.normalize());
+        }
     }
 
     @Override

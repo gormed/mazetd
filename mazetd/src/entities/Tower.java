@@ -37,9 +37,6 @@ package entities;
 
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
-import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh;
-import com.jme3.effect.shapes.EmitterPointShape;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
@@ -49,37 +46,41 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Cylinder;
-import com.jme3.scene.shape.Sphere;
 import entities.base.AbstractEntity;
 import entities.base.ClickableEntity;
 import entities.base.EntityManager;
-import entities.effects.OrbEffect;
 import entities.nodes.CollidableEntityNode;
 import eventsystem.port.Collider3D;
-import logic.Level;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import mazetd.MazeTDGame;
 
 /**
  * The class Tower for a basical tower in MazeTD.
  * @author Hady Khalifa & Hans Ferchland
- * @version 0.4
+ * @version 0.5
  */
 public class Tower extends ClickableEntity {
 
     //==========================================================================
     //===   Constants
     //========================================================================== 
-    public static final float TOWER_BASE_DAMAGE_INTERVAL = 1.0f;
-    public static final int TOWER_BASE_DAMAGE = 0;
-    public static final int TOWER_BASE_RANGE = 5;
+    public static final float TOWER_BASE_DAMAGE_INTERVAL = 1.2f;
+    public static final int TOWER_BASE_DAMAGE = 5;
+    public static final int TOWER_BASE_RANGE = 3;
     public static final int TOWER_HP = 500;
-    private static final float RANGE_CYLINDER_HEIGHT = 0.025f;
+    public static final float TOWER_RANGE_RADIUS_HEIGHT = 0.15f;
+    private static final float RANGE_CYLINDER_HEIGHT = 0.01f;
     private static final int TOWER_SAMPLES = 15;
     private static final float TOWER_HEIGHT = 1.0f;
     private static final float TOWER_SIZE = 0.3f;
     private static final float ROOF_SIZE = 0.35f;
     private static final MazeTDGame GAME = MazeTDGame.getInstance();
+    
+    private static Tower hoveredTower = null;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -88,7 +89,7 @@ public class Tower extends ClickableEntity {
     private Geometry wallGeometry;
     private Material roofMaterial;
     private Material wallMaterial;
-    private Material projectileMaterial;
+    private Material collisionMaterial;
     private ColorRGBA projectileColor = new ColorRGBA(0.5f, 0.5f, 0.5f, 1f);
     private Vector3f position;
     private Creep target;
@@ -98,6 +99,8 @@ public class Tower extends ClickableEntity {
     private float damage = TOWER_BASE_DAMAGE;
     private float damageInterval = TOWER_BASE_DAMAGE_INTERVAL;
     private float intervalCounter = 0;
+    private boolean hovered = false;
+    private ColorRGBA fadeColor = projectileColor.clone();
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -117,12 +120,6 @@ public class Tower extends ClickableEntity {
         super.createNode(game);
 
         // Materials
-        projectileMaterial = new Material(
-                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-        projectileMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
-        projectileMaterial.setColor("Specular", ColorRGBA.White);
-        projectileMaterial.setColor("Ambient", projectileColor);   // ... color of this object
-        projectileMaterial.setColor("Diffuse", projectileColor);   // ... color of light being reflected
 
 
         roofMaterial = new Material(
@@ -189,13 +186,18 @@ public class Tower extends ClickableEntity {
         // TODO: fix collision
         if (target == null) {
             // if there is no target atm search for it
-            checkForRangedEnter();
-        } else if (!target.isDecaying()) {
+            target = checkForRangedEnter();
+            if (target != null) {
+                target.setAttacker(this);
+            }
+        } else if (!target.isDead()) {
             // if tower has target do damage
             if (checkForRangedLeave()) {
                 return;
             }
             attack(tpf);
+        } else if (target.isDead()) {
+            target = null;
         }
     }
 
@@ -206,10 +208,17 @@ public class Tower extends ClickableEntity {
 
     @Override
     public void onMouseOver() {
+        if (hoveredTower != null) {
+            hoveredTower.getRangeCollisionNode().setCullHint(CullHint.Always);
+        }
+        attackRangeCollisionNode.setCullHint(CullHint.Never);
+        hoveredTower = this;
     }
 
     @Override
     public void onMouseLeft() {
+        hoveredTower = null;
+        attackRangeCollisionNode.setCullHint(CullHint.Always);
     }
 
     /**
@@ -226,7 +235,9 @@ public class Tower extends ClickableEntity {
                     new Projectile(
                     name + "'s_projectile",
                     position.clone().setY(1.f),
-                    target);
+                    target,
+                    damage,
+                    projectileColor);
             p.createNode(GAME);
             EntityManager.getInstance().addEntity(p);
             intervalCounter = 0;
@@ -237,7 +248,7 @@ public class Tower extends ClickableEntity {
      * Checks if a creep entered the range of the tower and sets target 
      * if found a creep.
      */
-    private void checkForRangedEnter() {
+    private Creep checkForRangedEnter() {
         // collide with the current collidables
         CollisionResults collisionResults =
                 Collider3D.getInstance().objectCollides(
@@ -245,6 +256,7 @@ public class Tower extends ClickableEntity {
         // if there are creeps
         if (collisionResults != null) {
             Node n;
+            ArrayList<Creep> creeps = new ArrayList<Creep>();
             // find each and
             for (CollisionResult result : collisionResults) {
                 n = result.getGeometry().getParent();
@@ -255,17 +267,37 @@ public class Tower extends ClickableEntity {
                     // check if creep entity
                     if (e instanceof Creep) {
                         Creep c = (Creep) e;
-                        if (!c.isDead()) {
-                            // Creep was found, so set it for both
-                            c.setAttacker(this);
-                            target = c;
+                        if (!c.isDead() && !creeps.contains(c)) {
+                            // Creep was found
+                            creeps.add(c);
                             //System.out.println(c.getName() + " was detected.");
                         }
                     }
                 }
             }
+            if (creeps.isEmpty()) {
+                return null;
+            }
 
+            Collections.sort(creeps, new Comparator<Creep>() {
+
+                @Override
+                public int compare(Creep o1, Creep o2) {
+                    float dist1 = o1.getPosition().subtract(position).length();
+                    float dist2 = o2.getPosition().subtract(position).length();
+
+                    if (dist1 < dist2) {
+                        return 1;
+                    } else if (dist1 > dist2) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            return creeps.get(0);
         }
+        return null;
     }
 
     /**
@@ -275,7 +307,7 @@ public class Tower extends ClickableEntity {
     private boolean checkForRangedLeave() {
         // look if still in range
         float dist = target.getPosition().subtract(position).length();
-        if (dist > towerRange) {
+        if (dist > towerRange + Creep.CREEP_GROUND_RADIUS) {
             // tower is no more attacking
 
             //projectile.destroyProjectile();
@@ -300,15 +332,15 @@ public class Tower extends ClickableEntity {
                 RANGE_CYLINDER_HEIGHT,
                 true);
 
-        Material m = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        m.setColor("Color", new ColorRGBA(1, 0, 0, 0.0f));
-        m.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        collisionMaterial = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        collisionMaterial.setColor("Color", new ColorRGBA(1, 0, 0, 0.075f));
+        collisionMaterial.getAdditionalRenderState().setBlendMode(BlendMode.AlphaAdditive);
 
         float[] angles = {(float) Math.PI / 2, 0, 0};
-
+        
         collisionCylinder = new Geometry("CollisionCylinderGeometry", c);
-        collisionCylinder.setMaterial(m);
-        collisionCylinder.setLocalTranslation(0, 0.1f, 0);
+        collisionCylinder.setMaterial(collisionMaterial);
+        collisionCylinder.setLocalTranslation(0, TOWER_RANGE_RADIUS_HEIGHT, 0);
         collisionCylinder.setLocalRotation(new Quaternion(angles));
         collisionCylinder.setQueueBucket(Bucket.Transparent);
 
@@ -336,262 +368,4 @@ public class Tower extends ClickableEntity {
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
-
-    /**
-     * The class Projectile for the fired graphical and logical instance of a 
-     * projectile fired by a tower.
-     * @author Hans Ferchland
-     */
-    private class Projectile extends AbstractEntity {
-        //==========================================================================
-        //===   COnstants
-        //==========================================================================
-
-        public static final float PROJECTILE_BASE_SPEED = 3.f;
-        public static final float MAX_FADE = 0.8f;
-        public static final int PROJECTILE_IMPACT_PARTICLES = 5;
-        //==========================================================================
-        //===   Private Fields
-        //==========================================================================
-        private Geometry geometry;
-        private float speed = PROJECTILE_BASE_SPEED;
-        private Vector3f position;
-        private Creep target;
-        private float initialDistance = 0;
-        private OrbEffect orbEffect;
-        private boolean decays = false;
-        private float fadeCounter = 0;
-        // floating Particles
-        private ParticleEmitter floatingEmitter;
-        private float emittingTime = 0.2f;
-        private float emittingCounter = 0;
-        // impact Particles
-        private ParticleEmitter impactEmitter;
-        //==========================================================================
-        //===   Methods & Constructor
-        //==========================================================================
-
-        /**
-         * The constructor of a Projectile that is fired to <code>target</code>
-         * creep from given position: <code>position</code>.
-         * @param name
-         * @param position
-         * @param target 
-         */
-        public Projectile(String name, Vector3f position, Creep target) {
-            super(name);
-            this.target = target;
-            this.position = position;
-            this.initialDistance = target.getPosition().subtract(position).length();
-        }
-
-        @Override
-        public void update(float tpf) {
-            if (target != null) {
-                move(tpf);
-                checkForHit();
-            }
-            if (decays) {
-                fadeCounter += tpf;
-                if (fadeCounter > MAX_FADE) {
-                    destroy();
-                }
-            }
-        }
-
-        @Override
-        public Node createNode(MazeTDGame game) {
-            super.createNode(game);
-
-            createGeometry();
-            createFloatingParticleEmitter(game);
-            createImpactParticleEmitter(game);
-
-            Level.getInstance().
-                    getDynamicLevelElements().attachChild(geometryNode);
-
-            
-            return geometryNode;
-        }
-
-        private void createFloatingParticleEmitter(MazeTDGame game) {
-            /** Uses Texture from jme3-test-data library! */
-            floatingEmitter = new ParticleEmitter(
-                    "Emitter", ParticleMesh.Type.Triangle, 30);
-            Material mat_red = new Material(
-                    game.getAssetManager(),
-                    "Common/MatDefs/Misc/Particle.j3md");
-            mat_red.setTexture(
-                    "Texture",
-                    game.getAssetManager().
-                    loadTexture("Textures/Effects/flame.png"));
-            floatingEmitter.setMaterial(mat_red);
-            // 2x2 texture animation
-            floatingEmitter.setImagesX(2);
-            floatingEmitter.setImagesY(2);
-            ColorRGBA end = projectileColor.clone(); end.a = 0;
-            floatingEmitter.setEndColor(end);
-            floatingEmitter.setStartColor(projectileColor);
-            floatingEmitter.getParticleInfluencer().setInitialVelocity(
-                    target.getPosition().subtract(position).normalize().negate());
-            floatingEmitter.setStartSize(0.2f);
-            floatingEmitter.setEndSize(0.05f);
-            floatingEmitter.setGravity(0f, 0f, 0f);
-            floatingEmitter.setLowLife(0.15f);
-            floatingEmitter.setHighLife(0.2f);
-            floatingEmitter.setParticlesPerSec(60);
-            floatingEmitter.getParticleInfluencer().setVelocityVariation(0.3f);
-            geometryNode.attachChild(floatingEmitter);
-            floatingEmitter.preload(game.getRenderManager(), game.getViewPort());
-            floatingEmitter.emitAllParticles();
-
-        }
-
-        private void createImpactParticleEmitter(MazeTDGame game) {
-            /** Explosion effect. Uses Texture from jme3-test-data library! */
-            impactEmitter = new ParticleEmitter(
-                    "impactEmitter", ParticleMesh.Type.Triangle, PROJECTILE_IMPACT_PARTICLES);
-            Material impactEmitter_mat = new Material(GAME.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
-            impactEmitter_mat.setTexture("Texture", GAME.getAssetManager().loadTexture(
-                    "Textures/Effects/Debris.png"));
-            impactEmitter.setMaterial(impactEmitter_mat);
-            impactEmitter.setImagesX(3);
-            impactEmitter.setImagesY(3); // 3x3 texture animation
-            impactEmitter.setRotateSpeed(4);
-            impactEmitter.setSelectRandomImage(true);
-            impactEmitter.setLowLife(MAX_FADE * 0.9f);
-            impactEmitter.setHighLife(MAX_FADE);
-            impactEmitter.setStartSize(0.1f);
-            impactEmitter.setEndSize(0.16f);
-            impactEmitter.getParticleInfluencer().
-                    setInitialVelocity(new Vector3f(0, 2, 0));
-            impactEmitter.setStartColor(projectileColor);
-            impactEmitter.setGravity(0f, 6f, 3f);
-            impactEmitter.getParticleInfluencer().setVelocityVariation(.25f);
-
-            impactEmitter.preload(game.getRenderManager(), game.getViewPort());
-
-
-        }
-
-        /**
-         * Creates the geometry for the Projectirl.
-         */
-        private void createGeometry() {
-            Sphere s = new Sphere(5, 5, 0.1f);
-
-            geometry = new Geometry("ProjectileGeometry", s);
-            geometry.setMaterial(projectileMaterial);
-            geometry.setShadowMode(ShadowMode.CastAndReceive);
-            geometryNode.attachChild(geometry);
-            geometryNode.setLocalTranslation(position);
-        }
-
-        /**
-         * Emitts paricles once for an impact.
-         */
-        private void emitImpactParitcles() {
-
-            geometryNode.attachChild(impactEmitter);
-            geometryNode.detachChild(floatingEmitter);
-            impactEmitter.emitAllParticles();
-            impactEmitter.setParticlesPerSec(0);
-
-
-//            Level.getInstance().getDynamicLevelElements().attachChild(impactEmitter);
-//
-//            //impactEmitter.setEnabled(true);
-//            impactEmitter.setShape(new EmitterPointShape(position));
-//
-//            impactEmitter.setParticlesPerSec(20);
-//            impactEmitter.emitAllParticles();
-//            impactEmitter.setParticlesPerSec(0);
-        }
-
-        /**
-         * Moves the projectile each update call.
-         * @param tpf the time-gap
-         */
-        private void move(float tpf) {
-
-
-//            float currentDistance =
-//                    target.getPosition().subtract(position).length();
-//            float percentage =
-//                    (initialDistance - currentDistance) / initialDistance;
-
-            position = geometryNode.getLocalTranslation();
-
-            Vector3f dir = target.getPosition().subtract(position);
-            dir.normalizeLocal();
-            dir.multLocal(speed * tpf);
-            position.addLocal(dir);
-            // TODO: add curved flying
-//            if (percentage < 0.9f) {
-//                Math.min(0.1f + percentage, 1f);
-//                projectilePos.y += Math.sin((percentage) * Math.PI * 2f) * tpf * 1f;
-//            }
-            geometryNode.setLocalTranslation(position);
-        }
-
-        /*
-         * Is called from the projectile if the target was hit. Does the 
-         * proper damage and destroys the projectile.
-         */
-        private void onHit() {
-            System.out.println(target.getName() + " recieved " + damage + " damage!");
-            target.receiveDamaged(damage);
-            decays = true;
-
-        }
-
-        /**
-         * Destroys the projectile due removing from entity-manager and
-         * from dynamic level elements.
-         */
-        private void destroy() {
-            EntityManager.getInstance().removeEntity(this.getEntityId());
-            Level.getInstance().getDynamicLevelElements().detachChild(geometryNode);
-        }
-
-        /**
-         * Checks for collision with the targeted creep and fires onHit().
-         */
-        private void checkForHit() {
-            float dist =
-                    target.getPosition().subtract(position).length();
-
-            if (dist <= Creep.CREEP_TOP_RADIUS) {
-                emitImpactParitcles();
-                onHit();
-            }
-
-            /**
-            CollisionResults collisionResults =
-            Collider3D.getInstance().objectCollides(geometryNode.getWorldBound());
-            // if there are creeps
-            if (collisionResults != null) {
-            Node n;
-            // find each and
-            for (CollisionResult result : collisionResults) {
-            n = result.getGeometry().getParent();
-            // check if collidable entity
-            if (n instanceof CollidableEntityNode) {
-            CollidableEntityNode col = (CollidableEntityNode) n;
-            AbstractEntity e = col.getEntity();
-            // check if creep entity
-            if (e instanceof Creep) {
-            Creep c = (Creep) e;
-            if (c.equals(target)) {
-            onHit();
-            emitParitcles(position);
-            }
-            }
-            }
-            }
-            
-            }
-             */
-        }
-    }
 }

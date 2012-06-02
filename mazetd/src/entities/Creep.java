@@ -48,8 +48,11 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Cylinder;
 import entities.Map.MapSquare;
 import entities.base.CollidableEntity;
+import entities.base.EntityManager;
 import entities.effects.OrbEffect;
 import entities.nodes.CollidableEntityNode;
+import eventsystem.CreepHandler;
+import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.port.Collider3D;
 import java.util.HashSet;
 import java.util.Queue;
@@ -68,7 +71,11 @@ public class Creep extends CollidableEntity {
     //===   Constants
     //==========================================================================
 
+    public static final float CREEP_BASE_DAMAGE = 50.0f;
+    public static final float CREEP_BASE_ORB_DROP = 0.0f;
     public static final float CREEP_BASE_SPEED = 1.1f;
+    public static final int CREEP_DECAY = 2;
+    public static final int CREEP_GOLD_PARTICLES = 5;
     public static final float CREEP_GROUND_RADIUS = 0.25f;
     public static final float CREEP_HEIGHT = 0.5f;
     public static final int CREEP_MAX_HP = 100;
@@ -78,21 +85,30 @@ public class Creep extends CollidableEntity {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    // visual
     private Geometry geometry;
     private Material material;
-    private float healthPoints = CREEP_MAX_HP;
-    private float maxHealthPoints = CREEP_MAX_HP;
-    private boolean deacying = false;
-    private float decayTime = 0;
-    private Tower attacker;
-    private HashSet<OrbEffect> orbEffects = new HashSet<OrbEffect>();
     private Vector3f position;
     private Vector3f target;
+    private boolean deacying = false;
+    private float decayTime = 0;
+    // logic
+    private float healthPoints = CREEP_MAX_HP;
+    private float maxHealthPoints = CREEP_MAX_HP;
+    private Tower attacker;
+    private Tower attacking;
+    private float damage = CREEP_BASE_DAMAGE;
+    private HashSet<OrbEffect> orbEffects = new HashSet<OrbEffect>();
     private float speed = CREEP_BASE_SPEED;
     private boolean moving = true;
+    private int goldDrop = 0;
+    private float orbDropRate = CREEP_BASE_ORB_DROP;
+    // Pathfinding
     private Queue<Map.MapSquare> path;
     private MapSquare currentSquare;
-    private ParticleEmitter emitter;
+    private MapSquare lastSquare = null;
+    //Particles
+    private ParticleEmitter goldEmitter;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -118,20 +134,42 @@ public class Creep extends CollidableEntity {
         if (deacying) {
 
             decayTime += tpf;
-            if (decayTime > 5) {
-                Collider3D.getInstance().removeCollisonObject(collidableEntityNode);
+            if (decayTime > CREEP_DECAY) {
+                rotten();
             }
         }
         // if moving do this part
         moveUpdate(tpf);
     }
 
+    @Override
+    public void onCollision(CollisionResults collisionResults) {
+    }
+
+    @Override
+    public CollidableEntityNode createNode(MazeTDGame game) {
+        super.createNode(game);
+
+        createCreepGeometry(game);
+        createGoldEmitter(game);
+
+        return collidableEntityNode;
+    }
+
     /**
      * Starts the movement of a creep coordinated by pathfinding.
      * @param firstTarget the first desired position to go to
      */
-    void start(Vector3f firstTarget) {
+    private void start(Vector3f firstTarget) {
         moveTo(firstTarget);
+    }
+
+    /**
+     * Finally frees the creeps resources.
+     */
+    private void rotten() {
+        Collider3D.getInstance().removeCollisonObject(collidableEntityNode);
+        EntityManager.getInstance().removeEntity(id);
     }
 
     /**
@@ -154,6 +192,7 @@ public class Creep extends CollidableEntity {
                 // moving ended because the creep is at the target
                 if (!path.isEmpty()) {
                     // so get the next square to move to
+                    this.lastSquare = currentSquare;
                     this.currentSquare = path.peek();
                     // and remove it from the Queue
                     moveTo(path.poll().getLocalTranslation());
@@ -169,19 +208,6 @@ public class Creep extends CollidableEntity {
             // apply translation to the geometry
             collidableEntityNode.setLocalTranslation(position);
         }
-    }
-
-    @Override
-    public void onCollision(CollisionResults collisionResults) {
-    }
-
-    @Override
-    public CollidableEntityNode createNode(MazeTDGame game) {
-        super.createNode(game);
-
-        createCreepGeometry(game);
-
-        return collidableEntityNode;
     }
 
     /**
@@ -219,7 +245,29 @@ public class Creep extends CollidableEntity {
         collidableEntityNode.setShadowMode(ShadowMode.CastAndReceive);
     }
 
+    private void createGoldEmitter(MazeTDGame game) {
 
+        goldEmitter = new ParticleEmitter("Emitter",
+                ParticleMesh.Type.Triangle, CREEP_GOLD_PARTICLES);
+        Material mat_red = new Material(
+                game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
+        mat_red.setTexture("Texture",
+                game.getAssetManager().loadTexture("Textures/Effects/GoldCoin.png"));
+        goldEmitter.setMaterial(mat_red);
+        goldEmitter.setImagesX(4);
+        goldEmitter.setImagesY(4); // 4x4 texture animation
+        goldEmitter.setEndColor(new ColorRGBA(1f, 1f, 0f, 0f));
+        goldEmitter.setStartColor(new ColorRGBA(1f, 1f, 0f, 1.0f));
+        goldEmitter.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2.5f, 0));
+        goldEmitter.setStartSize(0.15f);
+        goldEmitter.setEndSize(0.175f);
+        goldEmitter.setGravity(0f, 1.7f, 1f);
+        goldEmitter.setLowLife(0.9f);
+        goldEmitter.setHighLife(1.2f);
+        goldEmitter.getParticleInfluencer().setVelocityVariation(0.3f);
+        goldEmitter.preload(game.getRenderManager(), game.getViewPort());
+        goldEmitter.setLocalTranslation(0, CREEP_HEIGHT + 0.2f, 0);
+    }
 
     /**
      * Sets the moving-target of the creep.
@@ -243,23 +291,31 @@ public class Creep extends CollidableEntity {
      * Damages a creep by <code>amount</code> points.
      * @param amount the amount of received damaged
      */
-    void receiveDamaged(float amount) {
+    void applyDamge(float amount) {
         this.healthPoints -= amount;
         if (isDead()) {
+            // invoke creep event
+            CreepHandler.getInstance().
+                    invokeCreepAction(CreepEventType.Death, this, attacker);
             // set decaying
             deacying = true;
             // stop movement
             stop();
             // visualize the death
+            triggerGoldEmitter();
             material.setColor("Ambient", ColorRGBA.Red);
             // signal that the creep died
-            if (attacker != null) {
-                attacker.setTarget(null);
-            }
+//            if (attacker != null) {
+//                attacker.setTarget(null);
+//            }
         }
     }
 
-
+    private void triggerGoldEmitter() {
+        collidableEntityNode.attachChild(goldEmitter);
+        goldEmitter.emitAllParticles();
+        goldEmitter.setParticlesPerSec(0);
+    }
 
     /**
      * Checks if the creep is dead.
@@ -292,14 +348,6 @@ public class Creep extends CollidableEntity {
      */
     public void setAttacker(Tower attacker) {
         this.attacker = attacker;
-    }
-
-    /**
-     * Checks if a creep is dead/decaying.
-     * @return true if dead, false otherwise
-     */
-    public boolean isDecaying() {
-        return deacying;
     }
 
     /**
@@ -345,13 +393,71 @@ public class Creep extends CollidableEntity {
         this.path = path;
     }
 
+    public boolean isOnSquare(MapSquare field) {
+        // TODO: check the old square too if building a tower!
+
+        return field.equals(currentSquare)
+                || (lastSquare != null && field.equals(lastSquare));
+    }
+
     /**
      * Gets the currently targeted MapSquare of this creep.
      * @return the targeted map-square
      */
     public MapSquare getCurrentSquare() {
-        // TODO: check the old square too if building a tower!
         return currentSquare;
+    }
+
+    /**
+     * Stes the creeps speed, base speed is 1.1.
+     * @param value the new speed
+     */
+    public void setSpeed(float value) {
+        speed = value;
+    }
+
+    /**
+     * Sets the gold dropped by this creep on death.
+     * @param value 
+     */
+    public void setGoldDrop(int value) {
+        goldDrop = value;
+    }
+
+    /**
+     * Sets the orb drop rate by this creep on death.
+     * @param value 
+     */
+    public void setOrbDropRate(float value) {
+        orbDropRate = value;
+    }
+
+    /**
+     * Sets the damage done to towers.
+     * @param value 
+     */
+    public void setDamage(float value) {
+        damage = value;
+    }
+
+    public float getDamage() {
+        return damage;
+    }
+
+    public int getGoldDrop() {
+        return goldDrop;
+    }
+
+    public float getMaxHealthPoints() {
+        return maxHealthPoints;
+    }
+
+    public float getOrbDropRate() {
+        return orbDropRate;
+    }
+
+    public float getSpeed() {
+        return speed;
     }
     //==========================================================================
     //===   Inner Classes

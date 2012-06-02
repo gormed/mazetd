@@ -248,6 +248,7 @@ public class MazeTDGame extends SimpleApplication {
         eventManager = EventManager.getInstance();
         // ScreenRayCast3D
         rayCast3D = ScreenRayCast3D.getInstance();
+        rayCast3D.initialize();
 
     }
 

@@ -35,7 +35,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entities.Creep;
@@ -44,13 +43,11 @@ import entities.Map.MapSquare;
 import entities.Orb;
 import entities.Tower;
 import entities.base.EntityManager;
-import entities.geometry.ClickableGeometry;
-import eventsystem.events.EntityEvent;
-import eventsystem.events.EntityEvent.EntityEventType;
 import eventsystem.EventManager;
-import eventsystem.listener.EntityListener;
+import eventsystem.port.Collider3D;
 import eventsystem.port.ScreenRayCast3D;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Queue;
 import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
@@ -93,10 +90,13 @@ public class Level {
     private EntityManager entityManager = EntityManager.getInstance();
     private EventManager eventManager = EventManager.getInstance();
     private ScreenRayCast3D rayCast3D = ScreenRayCast3D.getInstance();
+    private Collider3D collider3D = Collider3D.getInstance();
+    private WaveManager waveManager = WaveManager.getInstance();
+    private Pathfinder pathfinder = Pathfinder.getInstance();
     private Node mainLevelNode;
     private Node staticLevelElements;
     private Node dynamicLevelElements;
-    private Map map;
+    private Map map = Map.getInstance();
     private Grid grid = Grid.getInstance();
     //==========================================================================
     //===   Methods
@@ -106,14 +106,21 @@ public class Level {
      * Initializes the level for the first time or after destroyed.
      */
     public void initialize() {
-        if (isInitialized()) {
+        if (initialized) {
             return;
         }
+
+        rayCast3D.initialize();
+        collider3D.initialize();
+
         mainLevelNode = new Node("MainLevelNode");
         staticLevelElements = new Node("StaticLevelElements");
         dynamicLevelElements = new Node("DynamicLevelElements");
         mainLevelNode.attachChild(staticLevelElements);
         mainLevelNode.attachChild(dynamicLevelElements);
+
+        map.initialize();
+        pathfinder.initialize();
 
         setupLevelContent();
 
@@ -127,15 +134,40 @@ public class Level {
     private void setupLevelContent() {
 
         // Setup Grid and Map
-        map = new Map();
+
         staticLevelElements.attachChild(map);
+
+        waveManager.loadWaves(testWaves());
+        waveManager.initialize();
 
         Orb o = entityManager.createOrb(
                 "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);
 
-        Creep c = entityManager.createCreep("FirstCreep", grid.getFieldInfo(0, 10).getSquare().getLocalTranslation(), 10000, 10000);
+//        Creep c = entityManager.createCreep("FirstCreep",
+//                Pathfinder.getInstance().getStartField().getSquare().getLocalTranslation(),
+//                100, 100);
 
 
+    }
+
+    private Queue<WaveManager.WaveDescription> testWaves() {
+        LinkedList<WaveManager.WaveDescription> waveDescriptions =
+                new LinkedList<WaveManager.WaveDescription>();
+
+        WaveManager.WaveDescription description;
+
+        for (int i = 0; i < 30; i++) {
+            description = waveManager.new WaveDescription();
+            description.creepCount = 7 + 3 * i;
+            description.creepDamage = 50 + 10 * i;
+            description.creepGoldDrop = 10 + 5 * i;
+            description.creepOrbDropRate = 0.05f + 0.01f * i;
+            description.creepSpeed = 0.8f + 0.05f * i;
+            description.maxCreepHealthPoints = 35 + 7.5f * i;
+
+            waveDescriptions.add(description);
+        }
+        return waveDescriptions;
     }
 
     /**
@@ -143,6 +175,7 @@ public class Level {
      * @param tpf 
      */
     public void update(float tpf) {
+        pathfinder.update(tpf);
         entityManager.update(tpf);
     }
 
@@ -150,6 +183,10 @@ public class Level {
      * Destroys all level attributes so it will have to be initialized again.
      */
     public void destroy() {
+
+        collider3D.destroy();
+        rayCast3D.destroy();
+
         staticLevelElements.detachAllChildren();
         dynamicLevelElements.detachAllChildren();
         mainLevelNode.detachAllChildren();
@@ -166,7 +203,7 @@ public class Level {
     public boolean isInitialized() {
         return initialized;
     }
-    
+
     /**
      * Erzeugt ein grafisches Tower-Objekt an der Position des übergebenen Squares
      * - Liegt der erzeugte Tower auf dem Path wird ein neuer Path generiert 
@@ -206,8 +243,7 @@ public class Level {
                 while (!path.poll().equals(creep.getCurrentSquare())) {
                 }
                 creep.setPath(path);
-            }
-            else{
+            } else {
                 Queue<MapSquare> uniquePath = Pathfinder.getInstance().createCreepPath(creep.getCurrentSquare().getFieldInfo());
                 creep.setPath(uniquePath);
             }
@@ -215,10 +251,18 @@ public class Level {
         }
     }
 
+    /**
+     * Retrieves the node where all dynamic elements are stored.
+     * @return the jme3 node
+     */
     public Node getDynamicLevelElements() {
         return dynamicLevelElements;
     }
 
+    /**
+     * Retrieves the node where all static elements are stored.
+     * @return the jme3 node
+     */
     public Node getStaticLevelElements() {
         return staticLevelElements;
     }

@@ -154,7 +154,7 @@ public class EntityHandler {
         if (entityListeners.isEmpty()) {
             return;
         }
-        EntityEvent event = new EntityEvent(this, entity, actionType, mouse, result);
+        EntityEvent event = new EntityEvent(entity, actionType, mouse, result);
 
         if (entityListeners.containsKey(entity)) {
             HashSet<EntityListener> listeners = entityListeners.get(entity);

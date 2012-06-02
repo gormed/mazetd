@@ -49,7 +49,7 @@ public abstract class AbstractEntity {
     //==========================================================================
 
     /** the unique id of the entity! */
-    int id;
+    protected int id;
     /** the desired name of an entity, could be twice in the game. */
     protected String name;
     /** The Node for the geometry of this entity. */

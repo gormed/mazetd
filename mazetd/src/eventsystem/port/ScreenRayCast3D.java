@@ -66,11 +66,6 @@ public class ScreenRayCast3D implements MouseInputListener {
      * The hidden constructor of the singleton.
      */
     private ScreenRayCast3D() {
-        clickable3D = new Node("Clickable3DNodes");
-        game.getRootNode().attachChild(clickable3D);
-        inputManager = game.getInputManager();
-        inputManager.setCursorVisible(true);
-        cam = game.getCamera();
 
         EventManager.getInstance().addMouseButtonEvent(
                 Mappings.RAYCAST_3D,
@@ -81,10 +76,6 @@ public class ScreenRayCast3D implements MouseInputListener {
                 new MouseButtonTrigger(MouseInput.BUTTON_MIDDLE),
                 new MouseButtonTrigger(MouseInput.BUTTON_MIDDLE));
 
-        EventManager.getInstance().addMouseInputListener(
-                this,
-                Mappings.RAYCAST_3D,
-                Mappings.RAYCAST_3D_MOVE);
     }
 
     /**
@@ -113,13 +104,58 @@ public class ScreenRayCast3D implements MouseInputListener {
     private Clickable3D lastClicked = null;
     private Clickable3D lastHovered = null;
     private MazeTDGame game = MazeTDGame.getInstance();
-    private InputManager inputManager;
-    private Camera cam;
+    private InputManager inputManager = MazeTDGame.getInstance().getInputManager();
+    ;
+    private Camera cam = MazeTDGame.getInstance().getCamera();
     private Vector2f lastMousePosition = Vector2f.ZERO.clone();
-
+    private boolean initialized;
     //==========================================================================
     //===   Methods
     //==========================================================================
+
+    /**
+     * Initializes the class if not already done or it was destroyed.
+     */
+    public void initialize() {
+        if (initialized) {
+            return;
+        }
+        clickable3D = new Node("Clickable3DNodes");
+        game.getRootNode().attachChild(clickable3D);
+        inputManager.setCursorVisible(true);
+
+        EventManager.getInstance().addMouseInputListener(
+                this,
+                Mappings.RAYCAST_3D,
+                Mappings.RAYCAST_3D_MOVE);
+        initialized = true;
+    }
+
+    /**
+     * Destroys the class, removes all resources from jme3.
+     */
+    public void destroy() {
+        if (!initialized) {
+            return;
+        }
+
+        EventManager.getInstance().
+                removeMouseInputListener(this);
+
+        clickable3D.detachAllChildren();
+        game.getRootNode().detachChild(clickable3D);
+        clickable3D = null;
+        initialized = false;
+    }
+
+    /**
+     * Checks if the class was already initialized.
+     * @return true if initialize false otherwise
+     */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
     /**
      * Retrieve the last clicked RayCast3DNode.
      * @return the last clicked RayCast3DNode

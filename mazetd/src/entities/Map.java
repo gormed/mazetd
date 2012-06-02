@@ -68,9 +68,34 @@ import mazetd.MazeTDGame;
  */
 public class Map extends Node {
     //==========================================================================
-    //===   Static Fields and Methods
+    //===   Singleton
     //==========================================================================
 
+    /**
+     * The hidden constructor of the singleton.
+     */
+    private Map() {
+        super("MainMap");
+    }
+
+    /**
+     * Static method to retrieve the one and olny reference to the manager.
+     * @return the reference of the EventManager
+     */
+    public static Map getInstance() {
+        return MapHolder.INSTANCE;
+    }
+
+    /**
+     * Holder class for the EventManager
+     */
+    private static class MapHolder {
+
+        private static final Map INSTANCE = new Map();
+    }
+    //==========================================================================
+    //===   Static Fields and Methods
+    //==========================================================================
     /** default color of a square */
     private static ColorRGBA SQUARE_COLOR = new ColorRGBA(0, 1, 0, 0.0f);
     /** default size of a square */
@@ -104,8 +129,7 @@ public class Map extends Node {
     /**
      * Creates the Map, background of the level and grid for tower-placement.
      */
-    public Map() {
-        super("MainMap");
+    public void initialize() {
         totalHeight = grid.getTotalHeight();
         totalWidth = grid.getTotalWidth();
         decorativeMapElemetns = new Node("DorativeMapElemetns");
@@ -134,9 +158,13 @@ public class Map extends Node {
         groundPlane.setMaterial(groundMaterial);
 
         float[] angles = {3 * (float) Math.PI / 2, 0, 0};
+        Vector3f pos = new Vector3f(
+                -totalWidth / 2 - SQUARE_SIZE / 2,
+                0,
+                (totalHeight / 2 - SQUARE_SIZE / 2));
 
         groundPlane.setLocalRotation(new Quaternion(angles));
-        groundPlane.setLocalTranslation(-totalWidth / 2 - SQUARE_SIZE / 2, 0, totalHeight / 2 - SQUARE_SIZE / 2);
+        groundPlane.setLocalTranslation(pos);
         groundPlane.setShadowMode(ShadowMode.Receive);
         decorativeMapElemetns.attachChild(groundPlane);
     }
@@ -182,7 +210,11 @@ public class Map extends Node {
      * @author Hans Ferchland
      */
     public class MapSquare extends Node implements TimerEventListener {
+        //==========================================================================
+        //===   Constants
+        //========================================================================== 
 
+        public static final float MAP_SQUARE_HEIGHT = 0.1f;
         public static final float MAX_ALPHA_FADE = 0.4f;
         //==========================================================================
         //===   Private Fields
@@ -220,9 +252,7 @@ public class Map extends Node {
             if (this.getFieldInfo().getWeight() < 10000 && checkCreepOnField(this.getFieldInfo(), entityManager.getCreepHashMap())) {
                 Level.getInstance().buildTower(this);
                 this.getFieldInfo().incrementWeight(10000);
-                if (Pathfinder.getInstance().getMainPath().contains(this)) {
-                    Pathfinder.getInstance().setMainPath(Pathfinder.getInstance().createMainPath());
-                }
+                Pathfinder.getInstance().setChangedMapSquare(this);
             }
         }
 
@@ -231,7 +261,7 @@ public class Map extends Node {
          */
         private boolean checkCreepOnField(FieldInfo field, HashMap<Integer, Creep> creeps) {
             for (Creep creep : creeps.values()) {
-                if (creep.getCurrentSquare().equals(field)) {
+                if (creep.isOnSquare(field.getSquare())) {
                     return false;
                 }
 
@@ -246,7 +276,8 @@ public class Map extends Node {
         private void createGeometry() {
             // Creates an anonymous inner class in the map square for simple
             // click event-handling
-            geometry = new ClickableGeometry(name + "_Geometry", new Quad(SQUARE_SIZE, SQUARE_SIZE)) {
+            geometry = new ClickableGeometry(name + "_Geometry",
+                    new Quad(SQUARE_SIZE, SQUARE_SIZE)) {
 
                 /**
                  * Will be called if the square is clicked.
@@ -284,7 +315,7 @@ public class Map extends Node {
             float[] angles = {3 * (float) Math.PI / 2, 0, 0};
 
             geometry.setLocalRotation(new Quaternion(angles));
-            geometry.setLocalTranslation(-SQUARE_SIZE / 2, 0.05f, SQUARE_SIZE / 2);
+            geometry.setLocalTranslation(-SQUARE_SIZE / 2, MAP_SQUARE_HEIGHT, SQUARE_SIZE / 2);
 
             this.attachChild(geometry);
         }
@@ -294,6 +325,11 @@ public class Map extends Node {
          */
         public FieldInfo getFieldInfo() {
             return field;
+        }
+
+        public Vector2f getPosition() {
+            Vector3f pos3d = getLocalTranslation();
+            return new Vector2f(pos3d.x, pos3d.z);
         }
 
         @Override

@@ -28,75 +28,52 @@
  * 
  * 
  * Project: MazeTD Project
- * File: EntityEvent.java
- * Type: events.EntityEvent
+ * File: CreepEvent.java
+ * Type: eventsystem.events.CreepEvent
  * 
- * Documentation created: 22.05.2012 - 21:46:30 by Hans Ferchland
+ * Documentation created: 01.06.2012 - 16:16:55 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package eventsystem.events;
 
-import com.jme3.collision.CollisionResult;
-import com.jme3.math.Vector2f;
-import entities.base.AbstractEntity;
+import entities.Creep;
+import entities.Tower;
 
 /**
- * The class EntityEvent for all events of an entity.
+ * The class CreepEvent.
  * @author Hans Ferchland
  * @version
  */
-public class EntityEvent extends AbstractEvent {
-
-    public enum EntityEventType {
-
-        Click,
-        MouseOver,
-        MouseLeft
+public class CreepEvent extends AbstractEvent {
+    public enum CreepEventType {
+        Death,
+        ReachedEnd,
+        Attacks
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private AbstractEntity entity;
-    private EntityEventType eventType;
-    private Vector2f mouse;
-    private CollisionResult result;
+    private CreepEventType type;
+    private Tower target;
+    private Creep creep;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-
-    public EntityEvent(Object source, AbstractEntity entity, EntityEventType eventType) {
-        super(source);
-        this.entity = entity;
-        this.eventType = eventType;
+    public CreepEvent(CreepEventType type, Creep creep, Tower target) {
+        super(creep);
+        this.creep = creep;
+        this.target = target;
+        this.type = type;
+    }
+    
+    public Creep getCreep() {
+        return creep;
     }
 
-    public EntityEvent(
-            AbstractEntity entity,
-            EntityEventType eventType,
-            Vector2f mouse,
-            CollisionResult result) {
-        super(entity);
-        this.entity = entity;
-        this.eventType = eventType;
-        this.mouse = mouse;
-        this.result = result;
+    public Tower getTarget() {
+        return target;
     }
 
-    public AbstractEntity getEntity() {
-        return entity;
+    public CreepEventType getType() {
+        return type;
     }
-
-    public EntityEventType getEventType() {
-        return eventType;
-    }
-
-    public Vector2f getMouse() {
-        return mouse;
-    }
-
-    public CollisionResult getResult() {
-        return result;
-    }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }

@@ -37,6 +37,7 @@ package eventsystem;
 
 import eventsystem.events.TimerEvent;
 import eventsystem.listener.TimerEventListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,6 +75,10 @@ public class TimerHandler {
     //==========================================================================
     private HashMap<TimerEventListener, Float> timerEventListeners =
             new HashMap<TimerEventListener, Float>();
+    private ArrayList<TimerEventListener> removedEventListeners =
+            new ArrayList<TimerEventListener>();
+    private ArrayList<TimerEventListener> addedEventListeners =
+            new ArrayList<TimerEventListener>();
 
     //==========================================================================
     //===   Methods
@@ -84,6 +89,17 @@ public class TimerHandler {
      */
     private void updateTimerEvents(float tpf) {
         TimerEvent t = new TimerEvent(this, tpf);
+
+
+        for (TimerEventListener l : addedEventListeners) {
+            timerEventListeners.put(l, 0f);
+        }
+        addedEventListeners.clear();
+        for (TimerEventListener l : removedEventListeners) {
+            timerEventListeners.remove(l);
+        }
+        removedEventListeners.clear();
+
         for (Map.Entry<TimerEventListener, Float> entry : timerEventListeners.entrySet()) {
             // get us the times called and the listener itself
             float time = entry.getValue();
@@ -98,6 +114,7 @@ public class TimerHandler {
                 entry.setValue(0f);
             }
         }
+
     }
 
     /**
@@ -107,13 +124,13 @@ public class TimerHandler {
     void update(float tpf) {
         updateTimerEvents(tpf);
     }
-    
+
     /**
      * Adds a TimerEventListener.
      * @param l the desired listener
      */
     void addTimerEventListener(TimerEventListener l) {
-        timerEventListeners.put(l, 0f);
+        addedEventListeners.add(l);
     }
 
     /**
@@ -121,6 +138,6 @@ public class TimerHandler {
      * @param l the desired listener
      */
     void removeTimerEventListener(TimerEventListener l) {
-        timerEventListeners.remove(l);
+        removedEventListeners.add(l);
     }
 }

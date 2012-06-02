@@ -41,8 +41,10 @@ import eventsystem.listener.MouseInputListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import entities.Creep;
 import entities.base.AbstractEntity;
 import eventsystem.listener.CollisionListener;
+import eventsystem.listener.CreepListener;
 import eventsystem.listener.EntityListener;
 import eventsystem.listener.TimerEventListener;
 
@@ -85,6 +87,7 @@ public class EventManager {
     private InputHandler inputHandler = InputHandler.getInstance();
     private EntityHandler enitiyHandler = EntityHandler.getInstance();
     private CollisionHandler collisionHandler = CollisionHandler.getInstance();
+    private CreepHandler creepHandler = CreepHandler.getInstance();
     //==========================================================================
     //===   Methods
     //==========================================================================
@@ -188,12 +191,30 @@ public class EventManager {
     }
 
     /**
-     * Adds a EntityListener any entity-event.
+     * Removes a EntityListener from its entity-events.
      * @param entityListener the listener
      */
     public void removeEntityListener(EntityListener entityListener, AbstractEntity... entitys) {
 
         enitiyHandler.removeEntityListener(entityListener);
+    }
+
+    /**
+     * Adds a CreepListener for any entity-event.
+     * @param creepListener the listener
+     */
+    public void addCreepListener(CreepListener creepListener, Creep... creeps) {
+
+        creepHandler.addCreepListener(creepListener, creeps);
+    }
+
+    /**
+     * Removes a CreepListener from its creep-events.
+     * @param creepListener the listener
+     */
+    public void removeCreepListener(CreepListener creepListener, Creep... creeps) {
+
+        creepHandler.removeCreepListener(creepListener);
     }
 
     /**

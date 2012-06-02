@@ -56,7 +56,6 @@ public class Collider3D {
      * The hidden constructor of Collider3D.
      */
     private Collider3D() {
-        game.getRootNode().attachChild(collisionNode);
     }
 
     /**
@@ -76,13 +75,47 @@ public class Collider3D {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private Node collisionNode = new Node("Collision3DNode");
+    private Node collisionNode;
     private CollisionResults collisionResults;
     private BoundingVolume currentCollidable;
     private MazeTDGame game = MazeTDGame.getInstance();
+    private boolean initialized;
     //==========================================================================
     //===   Methods
     //==========================================================================
+
+    /**
+     * Initializes the class if not already done or it was destroyed.
+     */
+    public void initialize() {
+        if (initialized) {
+            return;
+        }
+        collisionNode = new Node("Collision3DNode");
+        game.getRootNode().attachChild(collisionNode);
+        initialized = true;
+    }
+
+    /**
+     * Destroys the class, removes all resources from jme3.
+     */
+    public void destroy() {
+        if (!initialized) {
+            return;
+        }
+        collisionNode.detachAllChildren();
+        game.getRootNode().detachChild(collisionNode);
+        collisionNode = null;
+        initialized = false;
+    }
+
+    /**
+     * Checks if the class was already initialized.
+     * @return true if initialize false otherwise
+     */
+    public boolean isInitialized() {
+        return initialized;
+    }
 
     /**
      * Adds a node to the collisionalbe 3d objects.
@@ -110,7 +143,7 @@ public class Collider3D {
         for (Spatial s : collisionNode.getChildren()) {
             s.collideWith(boundingVolume, collisionResults);
         }
-        
+
         if (collisionResults.size() > 0) {
             if (boundingVolume instanceof Collidable3D) {
                 ((Collidable3D) boundingVolume).onCollision3D(collisionResults);

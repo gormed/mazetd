@@ -40,26 +40,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.vecmath.Point2i;
 import logic.Grid;
 import logic.Grid.FieldInfo;
+import mazetd.MazeTDGame;
 
 /**
  *
  * @author Hady Khalifa
  */
 public class Pathfinder {
-
     //==========================================================================
-    //===   Private Fields
+    //===   Singleton
     //==========================================================================
-    private Queue<MapSquare> path;
-    private Grid grid = Grid.getInstance();
 
     /**
      * Constructor Pathfinder
      */
     private Pathfinder() {
-                path = createMainPath();
     }
 
     /**
@@ -69,11 +72,7 @@ public class Pathfinder {
     public static Pathfinder getInstance() {
         return PathfinderHolder.INSTANCE;
     }
-    
-    public void setMainPath(Queue<MapSquare> path){
-        this.path = path;
-    }
-    
+
     /**
      * 
      */
@@ -81,11 +80,70 @@ public class Pathfinder {
 
         private static final Pathfinder INSTANCE = new Pathfinder();
     }
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
+    private Queue<MapSquare> path;
+    private Grid grid = Grid.getInstance();
+    private boolean gridChanged = false;
+    private MapSquare changedSquare;
+    private Point2i start = new Point2i(0, Grid.getInstance().getTotalHeight() / 2);
+    private Point2i end = new Point2i(Grid.getInstance().getTotalWidth()-1, Grid.getInstance().getTotalHeight() / 2);
 
-    public Queue<MapSquare> getMainPath(){
-        return path;
+    //==========================================================================
+    //===   Methods
+    //==========================================================================
+    public void initialize() {
+        path = createMainPath();
     }
-    
+
+    public void update(float tpf) {
+        if (gridChanged) {
+            if (getMainPath().contains(changedSquare)) {
+
+                Future fut = MazeTDGame.getInstance().enqueue(new Callable() {
+
+                    @Override
+                    public Object call()
+                            throws Exception {
+
+                        return createMainPath();
+                    }
+                });
+                try {
+                    setMainPath((Queue<MapSquare>) fut.get());
+                    gridChanged = false;
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ExecutionException ex) {
+                    Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        }
+    }
+
+    public void setMainPath(Queue<MapSquare> path) {
+        this.path = path;
+    }
+
+    public void setChangedMapSquare(MapSquare square) {
+        changedSquare = square;
+        gridChanged = true;
+    }
+
+    public Queue<MapSquare> getMainPath() {
+        return new LinkedList<MapSquare>(path);
+    }
+
+    public FieldInfo getStartField() {
+        return grid.getFieldInfo(start.x, start.y);
+    }
+
+    public FieldInfo getEndField() {
+        return grid.getFieldInfo(end.x, end.y);
+    }
+
     /**
      * 
      *      
@@ -97,23 +155,23 @@ public class Pathfinder {
         Queue<MapSquare> tempPath = new LinkedList();
         FieldInfo field = null;
         try {
-            field = findPath(grid,grid.getFieldInfo(0, 10),grid.getFieldInfo(20, 10));
+            field = findPath(grid, getStartField(), getEndField());
         } catch (RuntimeException e) {
             System.out.println("fehler Pathfinder-> findPath()");
         }
 
-        while (field.getParent() != null) {
+        while (!field.getParent().equals(getStartField())) {
             tempPath.add(field.getSquare());
             field = field.getParent();
         }
 
 
-        Collections.reverse((LinkedList)tempPath);
+        Collections.reverse((LinkedList) tempPath);
 
         return tempPath;
     }
-    
-     /**
+
+    /**
      * 
      * Ermittelt den Kürzesten Pfad zwischen 2 Feldern;
      * 
@@ -124,18 +182,18 @@ public class Pathfinder {
         Queue<MapSquare> tempPath = new LinkedList();
         FieldInfo field = null;
         try {
-            field = findPath(grid,start,grid.getFieldInfo(20, 10));
+            field = findPath(grid, start, getEndField());
         } catch (RuntimeException e) {
             System.out.println("fehler Pathfinder-> findPath()");
         }
 
-        while (!field.getParent().equals(start)) {
+        while (field != null && !field.getParent().equals(start)) {
             tempPath.add(field.getSquare());
             field = field.getParent();
         }
 
 
-        Collections.reverse((LinkedList)tempPath);
+        Collections.reverse((LinkedList) tempPath);
 
         return tempPath;
     }
