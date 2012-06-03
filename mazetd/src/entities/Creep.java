@@ -63,7 +63,6 @@ import eventsystem.port.ScreenRayCast3D;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Random;
-import logic.Level;
 import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
@@ -87,9 +86,10 @@ public class Creep extends CollidableEntity {
     public static final float CREEP_GROUND_RADIUS = 0.25f;
     public static final float CREEP_HEIGHT = 0.5f;
     public static final int CREEP_MAX_HP = 100;
-    public static final float CREEP_MIN_DISTANCE = 0.1f;
+    public static final float CREEP_MIN_DISTANCE = 0.5f;
     private static final int CREEP_SAMPLES = 10;
     public static final float CREEP_TOP_RADIUS = 0.1f;
+    private static final float CREEP_BASE_DAMAGE_INTERVAL = 1f;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -97,7 +97,7 @@ public class Creep extends CollidableEntity {
     private Geometry geometry;
     private Material material;
     private Vector3f position;
-    private Vector3f target;
+    private Vector3f destination;
     private boolean deacying = false;
     private float decayTime = 0;
     private ClickableGeometry debugGeometry;
@@ -106,13 +106,16 @@ public class Creep extends CollidableEntity {
     private float healthPoints = CREEP_MAX_HP;
     private float maxHealthPoints = CREEP_MAX_HP;
     private Tower attacker;
-    private Tower attacking;
-    private float damage = CREEP_BASE_DAMAGE;
+    private Tower target;
     private HashSet<OrbEffect> orbEffects = new HashSet<OrbEffect>();
     private float speed = CREEP_BASE_SPEED;
     private boolean moving = true;
+    private boolean attacking = false;
     private int goldDrop = 0;
     private float orbDropRate = CREEP_BASE_ORB_DROP;
+    private float damage = CREEP_BASE_DAMAGE;
+    private float damageInterval = CREEP_BASE_DAMAGE_INTERVAL;
+    private float intervalCounter = 0;
     // Pathfinding
     private Queue<Map.MapSquare> path;
     private MapSquare currentSquare;
@@ -140,25 +143,6 @@ public class Creep extends CollidableEntity {
     }
 
     @Override
-    protected void update(float tpf) {
-        if (deacying) {
-
-            decayTime += tpf;
-            if (decayTime > CREEP_DECAY) {
-                rotten();
-            }
-        }
-        // if moving do this part
-        moveUpdate(tpf);
-
-        if (debugPathToggle) {
-            for (MapSquare s : path) {
-                s.setCreepPathDebug(moving);
-            }
-        }
-    }
-
-    @Override
     public void onCollision(CollisionResults collisionResults) {
     }
 
@@ -171,6 +155,91 @@ public class Creep extends CollidableEntity {
         createDebugGeometry(game);
 
         return collidableEntityNode;
+    }
+
+    @Override
+    protected void update(float tpf) {
+        // if dead and therfore decaying
+        if (deacying) {
+            decayTime += tpf;
+            if (decayTime > CREEP_DECAY) {
+                // finally destroy
+                rotten();
+            }
+            return;
+        }
+        // if moving do this part
+        moveUpdate(tpf);
+        // if attacking this
+        attackUpdate(tpf);
+        // Path debugging
+        if (Pathfinder.DEBUG_PATH) {
+            if (debugPathToggle) {
+                for (MapSquare s : path) {
+                    s.setCreepPathDebug(moving);
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates the creeps geometry and attaches it to the 
+     * collidableEntityNode.
+     * @param game the MazeTDGame reference
+     */
+    private void createCreepGeometry(MazeTDGame game) {
+        // Material
+        material = new Material(
+                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        material.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
+        material.setColor("Specular", ColorRGBA.White);
+        material.setColor("Ambient", ColorRGBA.Black);   // ... color of this object
+        material.setColor("Diffuse", ColorRGBA.Gray);   // ... color of light being reflected
+
+        // Geometry
+        float[] angles = {(float) Math.PI / 2, 0, 0};
+
+        Cylinder c = new Cylinder(
+                CREEP_SAMPLES,
+                CREEP_SAMPLES,
+                CREEP_GROUND_RADIUS,
+                CREEP_TOP_RADIUS,
+                CREEP_HEIGHT,
+                true, false);
+
+        geometry = new Geometry("Creep_Geometry_" + name, c);
+        geometry.setMaterial(material);
+        geometry.setLocalTranslation(0, CREEP_HEIGHT * 0.5f + 0.01f, 0);
+        geometry.setLocalRotation(new Quaternion(angles));
+        geometry.setQueueBucket(Bucket.Inherit);
+
+        collidableEntityNode.attachChild(geometry);
+        collidableEntityNode.setLocalTranslation(position);
+        collidableEntityNode.setShadowMode(ShadowMode.CastAndReceive);
+    }
+
+    private void createGoldEmitter(MazeTDGame game) {
+
+        goldEmitter = new ParticleEmitter("Emitter",
+                ParticleMesh.Type.Triangle, CREEP_GOLD_PARTICLES);
+        Material mat_red = new Material(
+                game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
+        mat_red.setTexture("Texture",
+                game.getAssetManager().loadTexture("Textures/Effects/GoldCoin.png"));
+        goldEmitter.setMaterial(mat_red);
+        goldEmitter.setImagesX(4);
+        goldEmitter.setImagesY(4); // 4x4 texture animation
+        goldEmitter.setEndColor(new ColorRGBA(1f, 1f, 0f, 0f));
+        goldEmitter.setStartColor(new ColorRGBA(1f, 1f, 0f, 1.0f));
+        goldEmitter.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2.5f, 0));
+        goldEmitter.setStartSize(0.15f);
+        goldEmitter.setEndSize(0.175f);
+        goldEmitter.setGravity(0f, 1.7f, 1f);
+        goldEmitter.setLowLife(0.9f);
+        goldEmitter.setHighLife(1.2f);
+        goldEmitter.getParticleInfluencer().setVelocityVariation(0.3f);
+        goldEmitter.preload(game.getRenderManager(), game.getViewPort());
+        goldEmitter.setLocalTranslation(0, CREEP_HEIGHT + 0.2f, 0);
     }
 
     private void createDebugGeometry(MazeTDGame game) {
@@ -239,6 +308,7 @@ public class Creep extends CollidableEntity {
      */
     private void rotten() {
         Collider3D.getInstance().removeCollisonObject(collidableEntityNode);
+        ScreenRayCast3D.getInstance().removeClickableObject(debugGeometry);
         EntityManager.getInstance().removeEntity(id);
     }
 
@@ -253,7 +323,7 @@ public class Creep extends CollidableEntity {
         if (moving) {
             position = collidableEntityNode.getLocalTranslation();
 
-            Vector3f dir = target.subtract(position);
+            Vector3f dir = destination.subtract(position);
             float distance = dir.length();
             dir.normalizeLocal();
             dir.multLocal(speed * tpf);
@@ -268,11 +338,19 @@ public class Creep extends CollidableEntity {
                     // and remove it from the Queue
                     moveTo(path.poll().getLocalTranslation());
                 } else {
+
                     // TODO: handle tower-attacking or greep-enters-goal event
                     // otherwise we are attacking a tower or are at the goal.
+                    CreepHandler.getInstance().invokeCreepAction(
+                            CreepEventType.ReachedEnd, this, null);
+
                     moving = false;
                 }
             } else {
+                if (currentSquare.hasTower()) {
+                    destroyTower(currentSquare.getTower());
+                    moving = false;
+                }
                 // if not at the targeted position, move
                 position.addLocal(dir);
             }
@@ -282,63 +360,39 @@ public class Creep extends CollidableEntity {
         }
     }
 
-    /**
-     * Creates the creeps geometry and attaches it to the collidableEntityNode.
-     * @param game the MazeTDGame reference
-     */
-    private void createCreepGeometry(MazeTDGame game) {
-        // Material
-        material = new Material(
-                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-        material.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
-        material.setColor("Specular", ColorRGBA.White);
-        material.setColor("Ambient", ColorRGBA.Black);   // ... color of this object
-        material.setColor("Diffuse", ColorRGBA.Gray);   // ... color of light being reflected
-
-        // Geometry
-        float[] angles = {(float) Math.PI / 2, 0, 0};
-
-        Cylinder c = new Cylinder(
-                CREEP_SAMPLES,
-                CREEP_SAMPLES,
-                CREEP_GROUND_RADIUS,
-                CREEP_TOP_RADIUS,
-                CREEP_HEIGHT,
-                true, false);
-
-        geometry = new Geometry("Creep_Geometry_" + name, c);
-        geometry.setMaterial(material);
-        geometry.setLocalTranslation(0, CREEP_HEIGHT * 0.5f + 0.01f, 0);
-        geometry.setLocalRotation(new Quaternion(angles));
-        geometry.setQueueBucket(Bucket.Inherit);
-
-        collidableEntityNode.attachChild(geometry);
-        collidableEntityNode.setLocalTranslation(position);
-        collidableEntityNode.setShadowMode(ShadowMode.CastAndReceive);
+    private void attackUpdate(float tpf) {
+        if (attacking && target != null && !target.isDead()) {
+            attack(tpf);
+        } else {
+            moving = true;
+            attacking = false;
+            target = null;
+        }
     }
 
-    private void createGoldEmitter(MazeTDGame game) {
+    private void attack(float tpf) {
+        position = collidableEntityNode.getLocalTranslation();
 
-        goldEmitter = new ParticleEmitter("Emitter",
-                ParticleMesh.Type.Triangle, CREEP_GOLD_PARTICLES);
-        Material mat_red = new Material(
-                game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
-        mat_red.setTexture("Texture",
-                game.getAssetManager().loadTexture("Textures/Effects/GoldCoin.png"));
-        goldEmitter.setMaterial(mat_red);
-        goldEmitter.setImagesX(4);
-        goldEmitter.setImagesY(4); // 4x4 texture animation
-        goldEmitter.setEndColor(new ColorRGBA(1f, 1f, 0f, 0f));
-        goldEmitter.setStartColor(new ColorRGBA(1f, 1f, 0f, 1.0f));
-        goldEmitter.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2.5f, 0));
-        goldEmitter.setStartSize(0.15f);
-        goldEmitter.setEndSize(0.175f);
-        goldEmitter.setGravity(0f, 1.7f, 1f);
-        goldEmitter.setLowLife(0.9f);
-        goldEmitter.setHighLife(1.2f);
-        goldEmitter.getParticleInfluencer().setVelocityVariation(0.3f);
-        goldEmitter.preload(game.getRenderManager(), game.getViewPort());
-        goldEmitter.setLocalTranslation(0, CREEP_HEIGHT + 0.2f, 0);
+        Vector3f dir = target.getClickableEntityNode().getLocalTranslation().
+                subtract(position);
+        float distance = dir.length();
+        dir.normalizeLocal();
+        dir.multLocal(speed * tpf);
+
+        if (distance < Tower.TOWER_SIZE + CREEP_GROUND_RADIUS) {
+            intervalCounter += tpf;
+            if (intervalCounter > damageInterval) {
+                target.applyDamage(damage);
+                intervalCounter = 0;
+            }
+        } else {
+            // if not at the targeted position, move
+            position.addLocal(dir);
+            // apply translation to the geometry
+            collidableEntityNode.setLocalTranslation(position);
+            debugGeometry.setLocalTranslation(position);
+        }
+
     }
 
     /**
@@ -346,9 +400,14 @@ public class Creep extends CollidableEntity {
      * @param target the desired position on the map
      */
     public void moveTo(Vector3f target) {
-        this.target = target;
-        this.target.y = 0;
+        this.destination = target;
+        this.destination.y = 0;
         moving = true;
+    }
+
+    private void destroyTower(Tower target) {
+        this.target = target;
+        this.attacking = true;
     }
 
     /**
@@ -386,6 +445,15 @@ public class Creep extends CollidableEntity {
         stop();
         // drop an orb if chance is high enough
         dropOrb();
+
+        // Path debugging
+        if (Pathfinder.DEBUG_PATH) {
+            if (debugPathToggle) {
+                for (MapSquare s : path) {
+                    s.setCreepPathDebug(false);
+                }
+            }
+        }
     }
 
     private void dropOrb() {
@@ -482,13 +550,17 @@ public class Creep extends CollidableEntity {
      * @param path the new path for the creeps movement
      */
     public void setPath(Queue<MapSquare> path) {
+        if (path == null || path.peek() == null) {
+            return;
+        }
+
         if (Pathfinder.DEBUG_PATH) {
             for (MapSquare s : this.path) {
                 s.setCreepPathDebug(false);
             }
         }
         this.path = path;
-        moveTo(path.poll().getLocalTranslation());
+//        moveTo(path.poll().getLocalTranslation());
     }
 
     public boolean isOnSquare(MapSquare field) {

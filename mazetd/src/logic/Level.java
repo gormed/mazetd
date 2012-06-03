@@ -49,6 +49,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import logic.pathfinding.CreepAI;
 import logic.pathfinding.Pathfinder;
+import mazetd.IsoCameraControl;
 import mazetd.MazeTDGame;
 
 /**
@@ -124,6 +125,8 @@ public class Level {
 
         setupLevelContent();
 
+        game.getIsoCameraControl().lookAtMapSquare(
+                pathfinder.getStartField().getSquare());
         game.getRootNode().attachChild(mainLevelNode);
         initialized = true;
     }
@@ -210,18 +213,32 @@ public class Level {
      * - Liegt der erzeugte Tower auf dem Path wird ein neuer Path generiert 
      *   und allen Creeps übergeben
      * 
-     * @param map 
+     * @param square 
      */
-    public void buildTower(MapSquare map) {
+    public void buildTower(MapSquare square) {
         // add tower
         Tower t = entityManager.createTower(
-                "FirstTower", map.getLocalTranslation());
-        staticLevelElements.attachChild(t.getRangeCollisionNode());
+                "FirstTower", square);
 
-        creepAI.setChangeMapSquare(map, 10000);
+
+        creepAI.setChangeMapSquare(square, Pathfinder.TOWER_WEIGHT);
     }
 
+    /**
+     * Erzeugt ein grafisches Tower-Objekt an der Position des übergebenen Squares
+     * - Liegt der erzeugte Tower auf dem Path wird ein neuer Path generiert 
+     *   und allen Creeps übergeben
+     * 
+     * @param square 
+     */
+    public void removeTower(MapSquare square) {
+        if (square != null && square.getTower() != null) {
+            staticLevelElements.detachChild(
+                    square.getTower().getRangeCollisionNode());
 
+            creepAI.setChangeMapSquare(square, -Pathfinder.TOWER_WEIGHT);
+        }
+    }
 
     /**
      * Retrieves the node where all dynamic elements are stored.

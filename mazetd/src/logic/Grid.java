@@ -36,6 +36,7 @@
 package logic;
 
 import entities.Map.MapSquare;
+import logic.pathfinding.Pathfinder;
 
 /**
  *
@@ -172,7 +173,7 @@ public class Grid {
      * @param yCoord 
      */
     void setTower(int xCoord, int yCoord) {
-        grid[xCoord][yCoord].setWeight(10000);
+        grid[xCoord][yCoord].setWeight(Pathfinder.TOWER_WEIGHT);
         //grid[xCoord][yCoord].getSquare().setColor(ColorRGBA.Red.clone());
 
     }
@@ -183,7 +184,7 @@ public class Grid {
      * @param yCoord 
      */
     void removeTower(int xCoord, int yCoord) {
-        grid[xCoord][yCoord].decrementWeight(10000);
+        grid[xCoord][yCoord].decrementWeight(Pathfinder.TOWER_WEIGHT);
 
     }
 

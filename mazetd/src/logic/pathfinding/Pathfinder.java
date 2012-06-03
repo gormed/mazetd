@@ -51,6 +51,8 @@ import logic.Grid.FieldInfo;
 public class Pathfinder {
 
     public static boolean DEBUG_PATH = true;
+    public static int TOWER_WEIGHT = 10000;
+    public static int NORMAL_WEIGHT = 1;
     //==========================================================================
     //===   Singleton
     //==========================================================================
@@ -98,7 +100,7 @@ public class Pathfinder {
 
     public void update(float tpf) {
         if (gridChanged) {
-            changedSquare.getFieldInfo().setWeight(changedWeight);
+            changedSquare.getFieldInfo().incrementWeight(changedWeight);
             if (getMainPath().contains(changedSquare)) {
                 lastPath = path;
                 path = createMainPath();

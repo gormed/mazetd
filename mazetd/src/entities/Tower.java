@@ -53,9 +53,11 @@ import entities.base.ClickableEntity;
 import entities.base.EntityManager;
 import entities.nodes.CollidableEntityNode;
 import eventsystem.port.Collider3D;
+import eventsystem.port.ScreenRayCast3D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import logic.Level;
 import mazetd.MazeTDGame;
 
 /**
@@ -71,35 +73,42 @@ public class Tower extends ClickableEntity {
     public static final float TOWER_BASE_DAMAGE_INTERVAL = 1.2f;
     public static final int TOWER_BASE_DAMAGE = 5;
     public static final int TOWER_BASE_RANGE = 3;
+    public static final int TOWER_DECAY = 2;
     public static final int TOWER_HP = 500;
     public static final float TOWER_RANGE_RADIUS_HEIGHT = 0.15f;
     private static final float RANGE_CYLINDER_HEIGHT = 0.01f;
     private static final int TOWER_SAMPLES = 15;
-    private static final float TOWER_HEIGHT = 1.0f;
-    private static final float TOWER_SIZE = 0.3f;
+    public static final float TOWER_HEIGHT = 1.0f;
+    public static final float TOWER_SIZE = 0.3f;
     private static final float ROOF_SIZE = 0.35f;
     private static final MazeTDGame GAME = MazeTDGame.getInstance();
     private static Tower hoveredTower = null;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    //visual
     private Geometry roofGeometry;
-    private int towerRange = TOWER_BASE_RANGE;
     private Geometry wallGeometry;
+    private Geometry collisionCylinder;
     private Material roofMaterial;
     private Material wallMaterial;
     private Material collisionMaterial;
     private ColorRGBA projectileColor = new ColorRGBA(0.5f, 0.5f, 0.5f, 1f);
     private Vector3f position;
+    private boolean deacying = false;
+    private float decayTime = 0;
+    //logic
+    private int towerRange = TOWER_BASE_RANGE;
     private Creep target;
+    private Map.MapSquare square;
     private float healthPoints = TOWER_HP;
-    private Node attackRangeCollisionNode;
-    private Geometry collisionCylinder;
+    private float maxHealthPoints = TOWER_HP;
     private float damage = TOWER_BASE_DAMAGE;
     private float damageInterval = TOWER_BASE_DAMAGE_INTERVAL;
     private float intervalCounter = 0;
-    private boolean hovered = false;
-    private ColorRGBA fadeColor = projectileColor.clone();
+    //jme3
+    private Node attackRangeCollisionNode;
+    //particle
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -109,18 +118,21 @@ public class Tower extends ClickableEntity {
      * @param name the name of the tower
      * @param position the desired position
      */
-    public Tower(String name, Vector3f position) {
+    public Tower(String name, Map.MapSquare square) {
         super(name);
-        this.position = position;
+        this.square = square;
     }
 
     @Override
     public Node createNode(MazeTDGame game) {
         super.createNode(game);
 
+        // apply map square
+        Vector3f pos = square.getLocalTranslation();
+        this.position = new Vector3f(pos.x, 0, pos.z);
+        square.setTower(this);
+
         // Materials
-
-
         roofMaterial = new Material(
                 game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         roofMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
@@ -180,8 +192,48 @@ public class Tower extends ClickableEntity {
         return clickableEntityNode;
     }
 
+    /**
+     * Creates the bounding-volume for the range-checks.
+     * @param game the MazeTDGame singleton
+     */
+    private void createCollision(MazeTDGame game) {
+
+        Cylinder c = new Cylinder(
+                TOWER_SAMPLES,
+                TOWER_SAMPLES,
+                towerRange,
+                RANGE_CYLINDER_HEIGHT,
+                true);
+
+        collisionMaterial = new Material(game.getAssetManager(), 
+                "Common/MatDefs/Misc/Unshaded.j3md");
+        collisionMaterial.setColor("Color", new ColorRGBA(1, 0, 0, 0.075f));
+        collisionMaterial.getAdditionalRenderState().setBlendMode(BlendMode.AlphaAdditive);
+
+        float[] angles = {(float) Math.PI / 2, 0, 0};
+
+        collisionCylinder = new Geometry("CollisionCylinderGeometry", c);
+        collisionCylinder.setMaterial(collisionMaterial);
+        collisionCylinder.setLocalTranslation(0, TOWER_RANGE_RADIUS_HEIGHT, 0);
+        collisionCylinder.setLocalRotation(new Quaternion(angles));
+        collisionCylinder.setQueueBucket(Bucket.Transparent);
+
+        attackRangeCollisionNode =
+                new Node("AttackCollisionCylinderNode");
+        attackRangeCollisionNode.setLocalTranslation(position);
+        attackRangeCollisionNode.attachChild(collisionCylinder);
+    }
+
     @Override
     protected void update(float tpf) {
+        // if dead and therfore decaying
+        if (deacying) {
+            decayTime += tpf;
+            if (decayTime > TOWER_DECAY) {
+                // finally destroy
+                destroyed();
+            }
+        }
         // TODO: fix collision
         if (target == null) {
             // if there is no target atm search for it
@@ -244,6 +296,30 @@ public class Tower extends ClickableEntity {
         }
     }
 
+    /**
+     * Damages a tower by <code>amount</code> points.
+     * @param amount the amount of received damaged
+     */
+    void applyDamage(float amount) {
+        this.healthPoints -= amount;
+        if (isDead() && ! deacying) {
+            onDestroy();
+        }
+    }
+
+    private void onDestroy() {
+        deacying = true;
+        roofMaterial.setColor("Ambient", ColorRGBA.Red);
+        wallMaterial.setColor("Ambient", ColorRGBA.Red);
+    }
+
+    private void destroyed() {
+        EntityManager.getInstance().removeEntity(id);
+        ScreenRayCast3D.getInstance().removeClickableObject(clickableEntityNode);
+        Level.getInstance().removeTower(square);
+        square.setTower(null);
+        
+    }
     /**
      * Checks if a creep entered the range of the tower and sets target 
      * if found a creep.
@@ -320,37 +396,6 @@ public class Tower extends ClickableEntity {
     }
 
     /**
-     * Creates the bounding-volume for the range-checks.
-     * @param game the MazeTDGame singleton
-     */
-    private void createCollision(MazeTDGame game) {
-
-        Cylinder c = new Cylinder(
-                TOWER_SAMPLES,
-                TOWER_SAMPLES,
-                towerRange,
-                RANGE_CYLINDER_HEIGHT,
-                true);
-
-        collisionMaterial = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        collisionMaterial.setColor("Color", new ColorRGBA(1, 0, 0, 0.075f));
-        collisionMaterial.getAdditionalRenderState().setBlendMode(BlendMode.AlphaAdditive);
-
-        float[] angles = {(float) Math.PI / 2, 0, 0};
-
-        collisionCylinder = new Geometry("CollisionCylinderGeometry", c);
-        collisionCylinder.setMaterial(collisionMaterial);
-        collisionCylinder.setLocalTranslation(0, TOWER_RANGE_RADIUS_HEIGHT, 0);
-        collisionCylinder.setLocalRotation(new Quaternion(angles));
-        collisionCylinder.setQueueBucket(Bucket.Transparent);
-
-        attackRangeCollisionNode =
-                new Node("AttackCollisionCylinderNode");
-        attackRangeCollisionNode.setLocalTranslation(position);
-        attackRangeCollisionNode.attachChild(collisionCylinder);
-    }
-
-    /**
      * Gets the collison node and bounding-volume for range checks.
      * @return the node containing the bv
      */
@@ -365,7 +410,25 @@ public class Tower extends ClickableEntity {
     void setTarget(Creep target) {
         this.target = target;
     }
+
+    public boolean isDead() {
+        return healthPoints <= 0;
+    }
+
+    public float getHealthPoints() {
+        return healthPoints;
+    }
+
+    public float getMaxHealthPoints() {
+        return maxHealthPoints;
+    }
+
+    public void setMaxHealthPoints(float maxHealthPoints) {
+        this.healthPoints = maxHealthPoints;
+        this.maxHealthPoints = maxHealthPoints;
+    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+
 }

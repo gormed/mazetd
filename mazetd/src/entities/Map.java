@@ -53,6 +53,7 @@ import entities.base.EntityManager;
 import eventsystem.EventManager;
 import eventsystem.events.TimerEvent;
 import eventsystem.listener.TimerEventListener;
+import gui.elements.BuildTowerHUD;
 import java.util.HashMap;
 import java.util.HashSet;
 import logic.Grid;
@@ -98,9 +99,9 @@ public class Map extends Node {
     //===   Static Fields and Methods
     //==========================================================================
     /** default color of a square */
-    private static ColorRGBA SQUARE_COLOR = new ColorRGBA(0, 1, 0, 0.0f);
+    public static ColorRGBA SQUARE_COLOR = new ColorRGBA(0, 1, 0, 0.0f);
     /** default size of a square */
-    private static float SQUARE_SIZE = 0.9f;
+    public static float SQUARE_SIZE = 0.9f;
     /** running id of the squares */
     private static int runningSquareID = 0;
 
@@ -124,6 +125,7 @@ public class Map extends Node {
     private Grid grid = Grid.getInstance();
     private EntityManager entityManager = EntityManager.getInstance();
     private HashSet<MapSquare> mapSquares = new HashSet<MapSquare>();
+    private BuildTowerHUD buildTowerHUD = BuildTowerHUD.getInstance();
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -137,11 +139,21 @@ public class Map extends Node {
         decorativeMapElemetns = new Node("DorativeMapElemetns");
         clickableMapElements = new Node("ClickableMapElements");
 
+        buildTowerHUD.initialize();
+
         createGround();
         createSquares();
 
         this.attachChild(decorativeMapElemetns);
         ScreenRayCast3D.getInstance().addClickableObject(clickableMapElements);
+    }
+
+    public void destroy() {
+        decorativeMapElemetns.detachAllChildren();
+        clickableMapElements.detachAllChildren();
+        this.detachChild(decorativeMapElemetns);
+        ScreenRayCast3D.getInstance().removeClickableObject(clickableMapElements);
+        buildTowerHUD.destroy();
     }
 
     /**
@@ -234,6 +246,7 @@ public class Map extends Node {
         private boolean creepOn;
         private ColorRGBA fadeColor = SQUARE_COLOR.clone();
         private FieldInfo field;
+        private Tower tower;
         //==========================================================================
         //===   Methods & Constructor
         //==========================================================================
@@ -255,14 +268,19 @@ public class Map extends Node {
             return geometry;
         }
 
+        public void squareClicked() {
+            buildTowerHUD.show(this);
+        }
+
         /**
          * TODO: Hady
          */
-        private void buildTowerOnField() {
-            if (this.getFieldInfo().getWeight() < 10000 && 
-                    !isCreepOnField(this.getFieldInfo(), 
+        public void buildTowerOnField() {
+            if (this.getFieldInfo().getWeight() < Pathfinder.TOWER_WEIGHT
+                    && !isCreepOnField(this.getFieldInfo(),
                     entityManager.getCreepHashMap())) {
                 Level.getInstance().buildTower(this);
+                buildTowerHUD.hide();
             }
         }
 
@@ -298,7 +316,7 @@ public class Map extends Node {
                     // TODO: implement handling if a square is clicked
                     System.out.println(name + " clicked!");
                     System.out.println(field.toString());
-                    buildTowerOnField();
+                    squareClicked();
                 }
 
                 @Override
@@ -310,18 +328,25 @@ public class Map extends Node {
                 @Override
                 public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
                     hovered = false;
+//                    buildTowerHUD.hide();
                 }
             };
 
             // assign material
-            material = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+            material = new Material(game.getAssetManager(),
+                    "Common/MatDefs/Light/Lighting.j3md");
             material.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
             material.setColor("Specular", ColorRGBA.White);
             material.setColor("Ambient", SQUARE_COLOR);   // ... color of this object
             material.setColor("Diffuse", SQUARE_COLOR);   // ... color of light being reflected
-            material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+
+//            material = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+//            material.setColor("Color", SQUARE_COLOR);
+//            material.setColor("GlowColor", SQUARE_COLOR);
+            material.getAdditionalRenderState().setBlendMode(BlendMode.AlphaAdditive);
+
             geometry.setMaterial(material);
-            geometry.setQueueBucket(Bucket.Transparent);
+            geometry.setQueueBucket(Bucket.Translucent);
 
             float[] angles = {3 * (float) Math.PI / 2, 0, 0};
 
@@ -351,6 +376,18 @@ public class Map extends Node {
             return new Vector2f(pos3d.x, pos3d.z);
         }
 
+        public boolean hasTower() {
+            return tower != null;
+        }
+
+        public Tower getTower() {
+            return tower;
+        }
+
+        void setTower(Tower t) {
+            this.tower = t;
+        }
+
         @Override
         public void onTimedEvent(TimerEvent t) {
             if (hovered && fadeColor.a < MAX_ALPHA_FADE) {
@@ -359,12 +396,13 @@ public class Map extends Node {
                 //fadeColor.clamp();
 
             } else if (!hovered && fadeColor.a >= 0.0f) {
-                if (creepOn)
+                if (creepOn) {
                     creepOn = false;
+                }
                 fadeColor.a -= 0.01f;
             }
 
-            if (field.getWeight() < 10000) {
+            if (field.getWeight() < Pathfinder.TOWER_WEIGHT) {
                 material.setColor("Ambient", fadeColor);   // ... color of this object
                 material.setColor("Diffuse", fadeColor);   // ... color of light being reflected
             } else {
@@ -372,7 +410,7 @@ public class Map extends Node {
                 material.setColor("Diffuse", ColorRGBA.BlackNoAlpha);   // ... color of light being reflected
             }
             if (creepOn) {
-                
+
                 material.setColor("Ambient", ColorRGBA.Red);   // ... color of this object
                 material.setColor("Diffuse", ColorRGBA.Red);   // ... color of light being reflected
 

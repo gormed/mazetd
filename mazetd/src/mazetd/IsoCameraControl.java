@@ -43,6 +43,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
+import entities.Map.MapSquare;
 
 /**
  *
@@ -120,8 +121,9 @@ public class IsoCameraControl implements ActionListener {
      * @param tpf the timegap in seconds since the last frame
      */
     public void updateCamera(float tpf) {
-        if (!enabled)
+        if (!enabled) {
             return;
+        }
         Vector2f mouse = inputManager.getCursorPosition();
 
         Vector3f loc = cam.getLocation();
@@ -158,6 +160,12 @@ public class IsoCameraControl implements ActionListener {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public void lookAtMapSquare(MapSquare square) {
+        if (square != null) {
+            cam.setLocation(new Vector3f(square.getLocalTranslation().x, CAMERA_HEIGHT, -CAMERA_HEIGHT / 2f));
+        }
     }
 
     /**

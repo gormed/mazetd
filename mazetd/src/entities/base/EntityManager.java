@@ -40,6 +40,7 @@ import eventsystem.port.ScreenRayCast3D;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entities.Creep;
+import entities.Map.MapSquare;
 import entities.Orb;
 import entities.Tower;
 import eventsystem.CreepHandler;
@@ -48,6 +49,7 @@ import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.port.Collider3D;
 import java.util.HashMap;
 import java.util.Map;
+import logic.Level;
 import mazetd.MazeTDGame;
 
 /**
@@ -147,14 +149,15 @@ public class EntityManager {
      * @param position the towers position
      * @return the tower just created
      */
-    public Tower createTower(String name, Vector3f position) {
-        Tower t = new Tower(name, position);
+    public Tower createTower(String name, MapSquare square) {
+        Tower t = new Tower(name, square);
 
         addEntity(t);
         towerHashMap.put(t.getEntityId(), t);
         Node geometryNode = t.createNode(game);
         rayCast3D.addClickableObject(geometryNode);
-
+        Level.getInstance().getStaticLevelElements().attachChild(
+                t.getRangeCollisionNode());
         return t;
     }
 

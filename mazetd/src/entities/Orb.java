@@ -42,12 +42,12 @@ import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
 import entities.base.ClickableEntity;
 import entities.base.EntityManager;
-import eventsystem.port.Collider3D;
 import eventsystem.port.ScreenRayCast3D;
 import mazetd.MazeTDGame;
 
@@ -308,13 +308,14 @@ public class Orb extends ClickableEntity {
             material.setColor("Color", color);
             material.setColor("GlowColor", color);
             material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-
+            
             Sphere s = new Sphere(ORB_SAMPLES, ORB_SAMPLES, ORB_SIZE);
 
             geometry = new Geometry("element_orb_geometry", s);
             geometry.setMaterial(material);
             geometry.setLocalTranslation(0, HEIGHT_OVER_GROUND, 0);
             geometry.setQueueBucket(Bucket.Transparent);
+            geometry.setShadowMode(ShadowMode.CastAndReceive);
         }
     }
 }
