@@ -105,7 +105,7 @@ public class ScreenRayCast3D implements MouseInputListener {
     private Clickable3D lastHovered = null;
     private MazeTDGame game = MazeTDGame.getInstance();
     private InputManager inputManager = MazeTDGame.getInstance().getInputManager();
-    ;
+    private Vector3f lastWorldHit;
     private Camera cam = MazeTDGame.getInstance().getCamera();
     private Vector2f lastMousePosition = Vector2f.ZERO.clone();
     private boolean initialized;
@@ -172,6 +172,10 @@ public class ScreenRayCast3D implements MouseInputListener {
         return lastHovered;
     }
 
+    public Vector3f getLastWorldHit() {
+        return lastWorldHit;
+    }
+
     /**
      * Adds a node to the clickable 3d objects.
      * @param object that will be clickable
@@ -224,6 +228,7 @@ public class ScreenRayCast3D implements MouseInputListener {
             Vector2f click2d = inputManager.getCursorPosition();
             Vector3f click3d = cam.getWorldCoordinates(
                     new Vector2f(click2d.x, click2d.y), 0f).clone();
+            lastWorldHit = click3d.clone();
             Vector3f dir = cam.getWorldCoordinates(
                     new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
             Ray ray = new Ray(click3d, dir);
@@ -341,6 +346,7 @@ public class ScreenRayCast3D implements MouseInputListener {
             Vector2f click2d = inputManager.getCursorPosition();
             Vector3f click3d = cam.getWorldCoordinates(
                     new Vector2f(click2d.x, click2d.y), 0f).clone();
+            lastWorldHit = click3d.clone();
             Vector3f dir = cam.getWorldCoordinates(
                     new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
             Ray ray = new Ray(click3d, dir);

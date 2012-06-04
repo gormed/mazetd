@@ -38,11 +38,13 @@ package gui.elements;
 import com.jme3.collision.CollisionResult;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
@@ -52,6 +54,9 @@ import com.jme3.scene.shape.Quad;
 import entities.Map;
 import entities.Map.MapSquare;
 import entities.geometry.ClickableGeometry;
+import eventsystem.EventManager;
+import eventsystem.events.TimerEvent;
+import eventsystem.listener.TimerEventListener;
 import eventsystem.port.ScreenRayCast3D;
 import mazetd.MazeTDGame;
 
@@ -59,9 +64,10 @@ import mazetd.MazeTDGame;
  *
  * @author Hans Ferchland
  */
-public class BuildTowerHUD {
+public class BuildTowerHUD implements TimerEventListener {
 
-    public static final float SIGN_SIZE = 0.5f;
+    public static final float ICON_FADE_DIST = 0.25f;
+    public static final float SIGN_SIZE = 0.7f;
     //==========================================================================
     //===   Singleton
     //==========================================================================
@@ -93,8 +99,12 @@ public class BuildTowerHUD {
     private Material material;
     private Node translationNode;
     private boolean initialized = false;
+    private float period = 0f;
+    private float scale = 0.0f;
     private MazeTDGame game = MazeTDGame.getInstance();
     private MapSquare currentSquare;
+    private Vector3f clickPosition;
+    private Camera cam = MazeTDGame.getInstance().getCamera();
     //==========================================================================
     //===   Methods
     //==========================================================================
@@ -121,14 +131,17 @@ public class BuildTowerHUD {
 
             @Override
             public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
-                
+                if (currentSquare != null) {
+                    currentSquare.setHovered(true);
+                }
             }
 
             @Override
             public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
-                
+                if (currentSquare != null) {
+                    currentSquare.setHovered(false);
+                }
             }
-            
         };
 
 
@@ -138,9 +151,9 @@ public class BuildTowerHUD {
                 loadTexture("Textures/HUD/TowerIcon.png"));
         material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         geometry.setMaterial(material);
-        geometry.setCullHint(CullHint.Always);
+        geometry.setCullHint(CullHint.Never);
         geometry.setQueueBucket(Bucket.Translucent);
-        geometry.setShadowMode(ShadowMode.Off);
+        //geometry.setShadowMode(ShadowMode.Off);
         //float[] angles = {3 * (float) Math.PI / 2, 0, 0};
 
         //geometry.setLocalRotation(new Quaternion(angles));
@@ -148,38 +161,61 @@ public class BuildTowerHUD {
 
         translationNode = new Node("HUD_Translation");
         translationNode.attachChild(geometry);
-        ScreenRayCast3D.getInstance().addClickableObject(translationNode);
+
     }
-    
+
     private void orientate() {
-        Vector3f camPos = game.getCamera().getLocation().clone();
-        Vector3f position = new Vector3f(-SIGN_SIZE / 2, 0, SIGN_SIZE / 2);
+        Vector3f position = new Vector3f(SIGN_SIZE / 2, .15f, -SIGN_SIZE / 2);
 
-        Vector3f up = game.getCamera().getUp().clone();
-        Vector3f dir = game.getCamera().getDirection().clone().negateLocal();//camPos.subtract(position);
 
-        Vector3f left = game.getCamera().getLeft().clone();
+        Vector3f up = cam.getUp().clone();
+        Vector3f dir = cam.getDirection().clone().negateLocal();//camPos.subtract(position);
+
+        Vector3f left = cam.getLeft().clone();
         dir.normalizeLocal();
         left.normalizeLocal();
         left.negateLocal();
 
         Quaternion look = new Quaternion();
         look.fromAxes(left, up, dir);
-        
-//        Vector3f camDir = game.getCamera().getDirection().clone();
-//        Vector3f left = game.getCamera().getLeft().clone();
-//        camDir.normalizeLocal().negateLocal();
-//        left.negateLocal();
-//        
-//        Vector3f up = left.cross(camDir);
-//        up.normalizeLocal();
-//        
-//        Quaternion look = new Quaternion();
-//        look.fromAxes(left, up, camDir);
-        
-//        Vector3f position = geometry.getLocalTranslation();
-        
+
         geometry.setLocalTransform(new Transform(position, look));
+
+//        float[] angles = {3 * (float) Math.PI / 2, (float) Math.PI, 0};
+//        Quaternion look = new Quaternion(angles);
+//        geometry.setLocalTransform(new Transform(position, look));
+
+    }
+
+    @Override
+    public void onTimedEvent(TimerEvent t) {
+        if (clickPosition != null) {
+            Vector3f mouse = ScreenRayCast3D.getInstance().getLastWorldHit().clone();
+            mouse.y = 0;
+
+            float dist = mouse.subtract(clickPosition).length();
+
+            material.setColor("Color", new ColorRGBA(1, 1, 1, 1 - dist / ICON_FADE_DIST));
+
+            if (Math.abs(dist) > ICON_FADE_DIST) {
+                geometry.setCullHint(CullHint.Always);
+                hide();
+            } else {
+                Vector3f square = currentSquare.getLocalTranslation();
+                scale += t.getTimeGap();
+                float s = 1 + (0.05f * (float) Math.sin(Math.PI * 2 * scale * 0.5f));
+                translationNode.setLocalScale(s, s, s);
+                Vector3f pos = new Vector3f(square.x, 0, square.z-0.025f);
+                translationNode.setLocalTranslation(pos);
+                geometry.setCullHint(CullHint.Never);
+                orientate();
+            }
+        }
+    }
+
+    @Override
+    public float getPeriod() {
+        return period;
     }
 
     public void destroy() {
@@ -187,24 +223,28 @@ public class BuildTowerHUD {
             return;
         }
 
+        EventManager.getInstance().removeTimerEventListener(this);
         ScreenRayCast3D.getInstance().removeClickableObject(translationNode);
         initialized = false;
     }
 
     public void show(MapSquare square) {
         if (initialized && square != null) {
-            Vector3f s = square.getLocalTranslation();
-            orientate();
-            translationNode.setLocalTranslation(s.x + Map.SQUARE_SIZE/2 + SIGN_SIZE/10, 0.1f, s.z - Map.SQUARE_SIZE/2);
-            geometry.setCullHint(CullHint.Never);
+            EventManager.getInstance().addTimerEventListener(this);
+            clickPosition = ScreenRayCast3D.getInstance().getLastWorldHit().clone();
+            ScreenRayCast3D.getInstance().addClickableObject(translationNode);
+            clickPosition.y = 0;
             currentSquare = square;
         }
     }
-    
+
     public void hide() {
         if (initialized) {
-           geometry.setCullHint(CullHint.Always); 
-           currentSquare = null;
+            currentSquare.setHovered(false);
+            EventManager.getInstance().removeTimerEventListener(this);
+            ScreenRayCast3D.getInstance().removeClickableObject(translationNode);
+            currentSquare = null;
+            clickPosition = null;
         }
     }
     //==========================================================================

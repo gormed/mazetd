@@ -387,6 +387,10 @@ public class Map extends Node {
         void setTower(Tower t) {
             this.tower = t;
         }
+        
+        public void setHovered(boolean value) {
+            hovered = value;
+        }
 
         @Override
         public void onTimedEvent(TimerEvent t) {
