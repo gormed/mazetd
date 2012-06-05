@@ -106,6 +106,10 @@ public class Tower extends ClickableEntity {
     private float damage = TOWER_BASE_DAMAGE;
     private float damageInterval = TOWER_BASE_DAMAGE_INTERVAL;
     private float intervalCounter = 0;
+    private Orb firstOrb;
+    private Orb secondOrb;
+    private Orb thirdOrb;
+    private Node orbNode = new Node("OrbNode");
     //jme3
     private Node attackRangeCollisionNode;
     //particle
@@ -205,7 +209,7 @@ public class Tower extends ClickableEntity {
                 RANGE_CYLINDER_HEIGHT,
                 true);
 
-        collisionMaterial = new Material(game.getAssetManager(), 
+        collisionMaterial = new Material(game.getAssetManager(),
                 "Common/MatDefs/Misc/Unshaded.j3md");
         collisionMaterial.setColor("Color", new ColorRGBA(1, 0, 0, 0.075f));
         collisionMaterial.getAdditionalRenderState().setBlendMode(BlendMode.AlphaAdditive);
@@ -251,6 +255,7 @@ public class Tower extends ClickableEntity {
         } else if (target.isDead()) {
             target = null;
         }
+        updateOrbs(tpf);
     }
 
     @Override
@@ -271,6 +276,18 @@ public class Tower extends ClickableEntity {
     public void onMouseLeft() {
         hoveredTower = null;
         attackRangeCollisionNode.setCullHint(CullHint.Always);
+    }
+
+    private void updateOrbs(float tpf) {
+        if (firstOrb != null) {
+            firstOrb.update(tpf);
+        }
+        if (secondOrb != null) {
+            secondOrb.update(tpf);
+        }
+        if (thirdOrb != null) {
+            thirdOrb.update(tpf);
+        }
     }
 
     /**
@@ -302,7 +319,7 @@ public class Tower extends ClickableEntity {
      */
     void applyDamage(float amount) {
         this.healthPoints -= amount;
-        if (isDead() && ! deacying) {
+        if (isDead() && !deacying) {
             onDestroy();
         }
     }
@@ -318,8 +335,9 @@ public class Tower extends ClickableEntity {
         ScreenRayCast3D.getInstance().removeClickableObject(clickableEntityNode);
         Level.getInstance().removeTower(square);
         square.setTower(null);
-        
+
     }
+
     /**
      * Checks if a creep entered the range of the tower and sets target 
      * if found a creep.
@@ -427,8 +445,26 @@ public class Tower extends ClickableEntity {
         this.healthPoints = maxHealthPoints;
         this.maxHealthPoints = maxHealthPoints;
     }
+
+    public void attachOrb(Orb.ElementType type) {
+        Vector3f pos = position.add(new Vector3f(0, TOWER_HEIGHT + ROOF_SIZE + 0.1f, 0));
+        if (firstOrb == null) {
+            firstOrb = new Orb(name + "Orb_1", pos.add(new Vector3f(TOWER_SIZE, 0, -TOWER_SIZE/2)), type);
+            Level.getInstance().getDynamicLevelElements().attachChild(firstOrb.createNode(GAME));
+            return;
+        }
+        if (secondOrb == null) {
+            secondOrb = new Orb(name + "Orb_2", pos.add(new Vector3f(-TOWER_SIZE, 0, -TOWER_SIZE/2)), type);
+            Level.getInstance().getDynamicLevelElements().attachChild(secondOrb.createNode(GAME));
+            return;
+        }
+        if (thirdOrb == null) {
+            thirdOrb = new Orb(name + "Orb_3", pos.add(new Vector3f(0, 0, TOWER_SIZE)), type);
+            Level.getInstance().getDynamicLevelElements().attachChild(thirdOrb.createNode(GAME));
+            return;
+        }
+    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
-
 }

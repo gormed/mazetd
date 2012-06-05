@@ -143,9 +143,13 @@ public class Level {
         waveManager.loadWaves(testWaves());
         waveManager.initialize();
 
-        Orb o = entityManager.createOrb(
-                "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);
+//        Orb o = entityManager.createOrb(
+//                "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);
 
+        Tower t = buildTower(Pathfinder.getInstance().getStartField().getSquare());
+        t.attachOrb(Orb.ElementType.RED);
+        t.attachOrb(Orb.ElementType.GREEN);
+        t.attachOrb(Orb.ElementType.YELLOW);
 //        Creep c = entityManager.createCreep("FirstCreep",
 //                Pathfinder.getInstance().getStartField().getSquare().getLocalTranslation(),
 //                100, 100);
@@ -215,13 +219,12 @@ public class Level {
      * 
      * @param square 
      */
-    public void buildTower(MapSquare square) {
+    public Tower buildTower(MapSquare square) {
         // add tower
         Tower t = entityManager.createTower(
                 "FirstTower", square);
-
-
         creepAI.setChangeMapSquare(square, Pathfinder.TOWER_WEIGHT);
+        return t;
     }
 
     /**

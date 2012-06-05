@@ -90,6 +90,7 @@ public class Orb extends ClickableEntity {
     private float height = 0.4f;
     private boolean deacying = false;
     private float decayTime = 0;
+    private Tower attachedTower;
     // Particle
     private ParticleEmitter explodesEmitter;
 
