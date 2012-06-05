@@ -35,7 +35,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import entities.Map;
 import entities.Map.MapSquare;
@@ -49,7 +48,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import logic.pathfinding.CreepAI;
 import logic.pathfinding.Pathfinder;
-import mazetd.IsoCameraControl;
 import mazetd.MazeTDGame;
 
 /**
@@ -146,10 +144,11 @@ public class Level {
 //        Orb o = entityManager.createOrb(
 //                "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);
 
-        Tower t = buildTower(Pathfinder.getInstance().getStartField().getSquare());
-        t.attachOrb(Orb.ElementType.RED);
-        t.attachOrb(Orb.ElementType.GREEN);
-        t.attachOrb(Orb.ElementType.YELLOW);
+//        Tower t = buildTower(Pathfinder.getInstance().getStartField().getSquare());
+//        t.placeOrb(Orb.ElementType.RED);
+//        t.placeOrb(Orb.ElementType.GREEN);
+//        t.placeOrb(Orb.ElementType.YELLOW);
+        
 //        Creep c = entityManager.createCreep("FirstCreep",
 //                Pathfinder.getInstance().getStartField().getSquare().getLocalTranslation(),
 //                100, 100);

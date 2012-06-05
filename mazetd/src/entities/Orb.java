@@ -219,6 +219,12 @@ public class Orb extends ClickableEntity {
                 return Element.getBlueElement();
         }
     }
+
+    public ElementType getElementType() {
+        return type;
+    }
+    
+    
     //==========================================================================
     //===   Inner Classes
     //==========================================================================

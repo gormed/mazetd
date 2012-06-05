@@ -71,7 +71,7 @@ import mazetd.MazeTDGame;
  * A creep can walk to a given position, can be hit by a projectile, can have 
  * orb effects on it and can destroy a tower.
  * @author Hans Ferchland
- * @version 0.1f
+ * @version 0.3
  */
 public class Creep extends CollidableEntity {
     //==========================================================================

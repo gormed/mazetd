@@ -40,6 +40,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
@@ -63,7 +64,7 @@ import mazetd.MazeTDGame;
 /**
  * The class Tower for a basical tower in MazeTD.
  * @author Hady Khalifa & Hans Ferchland
- * @version 0.5
+ * @version 0.6
  */
 public class Tower extends ClickableEntity {
 
@@ -75,6 +76,7 @@ public class Tower extends ClickableEntity {
     public static final int TOWER_BASE_RANGE = 3;
     public static final int TOWER_DECAY = 2;
     public static final int TOWER_HP = 500;
+    public static final float TOWER_ORB_ROTATION_SPEED = 0.5f;
     public static final float TOWER_RANGE_RADIUS_HEIGHT = 0.15f;
     private static final float RANGE_CYLINDER_HEIGHT = 0.01f;
     private static final int TOWER_SAMPLES = 15;
@@ -109,7 +111,9 @@ public class Tower extends ClickableEntity {
     private Orb firstOrb;
     private Orb secondOrb;
     private Orb thirdOrb;
-    private Node orbNode = new Node("OrbNode");
+    private Node orbNodePos;
+    private Node orbNodeRot;
+    private float orbRotation = 0;
     //jme3
     private Node attackRangeCollisionNode;
     //particle
@@ -130,7 +134,24 @@ public class Tower extends ClickableEntity {
     @Override
     public Node createNode(MazeTDGame game) {
         super.createNode(game);
+        createGeometry(game);
+        // create collision for tower attacking range
+        createCollision(game);
 
+        orbNodePos = new Node("OrbNodeRos");
+        orbNodeRot = new Node("OrbNodeRot");
+        orbNodePos.setLocalTranslation(position);
+        orbNodePos.attachChild(orbNodeRot);
+        Level.getInstance().getDynamicLevelElements().attachChild(orbNodePos);
+
+        return clickableEntityNode;
+    }
+
+    /**
+     * Creates the towers material and geometry.
+     * @param game the game reference
+     */
+    private void createGeometry(MazeTDGame game) {
         // apply map square
         Vector3f pos = square.getLocalTranslation();
         this.position = new Vector3f(pos.x, 0, pos.z);
@@ -190,10 +211,7 @@ public class Tower extends ClickableEntity {
         // apply position to main node
         clickableEntityNode.setLocalTranslation(position);
         clickableEntityNode.setShadowMode(ShadowMode.CastAndReceive);
-        // create collision for tower attacking range
-        createCollision(game);
 
-        return clickableEntityNode;
     }
 
     /**
@@ -279,6 +297,12 @@ public class Tower extends ClickableEntity {
     }
 
     private void updateOrbs(float tpf) {
+        orbRotation += tpf * TOWER_ORB_ROTATION_SPEED;
+        float[] angles = {0, orbRotation, 0};
+        Quaternion q = new Quaternion(angles);
+        orbNodeRot.setLocalRotation(q);
+        orbNodePos.setLocalTranslation(position);
+
         if (firstOrb != null) {
             firstOrb.update(tpf);
         }
@@ -334,6 +358,8 @@ public class Tower extends ClickableEntity {
         EntityManager.getInstance().removeEntity(id);
         ScreenRayCast3D.getInstance().removeClickableObject(clickableEntityNode);
         Level.getInstance().removeTower(square);
+
+        Level.getInstance().getDynamicLevelElements().detachChild(orbNodePos);
         square.setTower(null);
 
     }
@@ -446,22 +472,83 @@ public class Tower extends ClickableEntity {
         this.maxHealthPoints = maxHealthPoints;
     }
 
-    public void attachOrb(Orb.ElementType type) {
-        Vector3f pos = position.add(new Vector3f(0, TOWER_HEIGHT + ROOF_SIZE + 0.1f, 0));
+    /**
+     * Places an orb at the next free position (max. three orbs.
+     * @param type the desired orb-type to add
+     */
+    public void placeOrb(Orb.ElementType type) {
         if (firstOrb == null) {
-            firstOrb = new Orb(name + "Orb_1", pos.add(new Vector3f(TOWER_SIZE, 0, -TOWER_SIZE/2)), type);
-            Level.getInstance().getDynamicLevelElements().attachChild(firstOrb.createNode(GAME));
+            firstOrb = createTowerOrb(type);
+            orbNodeRot.attachChild(firstOrb.createNode(GAME));
             return;
         }
         if (secondOrb == null) {
-            secondOrb = new Orb(name + "Orb_2", pos.add(new Vector3f(-TOWER_SIZE, 0, -TOWER_SIZE/2)), type);
-            Level.getInstance().getDynamicLevelElements().attachChild(secondOrb.createNode(GAME));
+            secondOrb = createTowerOrb(type);
+            orbNodeRot.attachChild(secondOrb.createNode(GAME));
             return;
         }
         if (thirdOrb == null) {
-            thirdOrb = new Orb(name + "Orb_3", pos.add(new Vector3f(0, 0, TOWER_SIZE)), type);
-            Level.getInstance().getDynamicLevelElements().attachChild(thirdOrb.createNode(GAME));
+            thirdOrb = createTowerOrb(type);
+            orbNodeRot.attachChild(thirdOrb.createNode(GAME));
             return;
+        }
+    }
+
+    /**
+     * Created an orb for the tower.
+     * @param type
+     * @return 
+     */
+    private Orb createTowerOrb(Orb.ElementType type) {
+        return new Orb(
+                name + "Orb_1",
+                new Vector3f(
+                TOWER_SIZE,
+                TOWER_HEIGHT + ROOF_SIZE + 0.1f,
+                -TOWER_SIZE / 2),
+                type);
+    }
+
+    /**
+     * Replaces a tower orb by its number and a new orb-type to use instead.
+     * @param replaceType the type of orb to use instead the current one at 
+     * position orbNumber
+     * @param orbNumber the number of orb to replace range from 0-2 incl.
+     * @return the removed orb-type if the orb was replaced and the 
+     * given replacement type otherwise
+     */
+    public Orb.ElementType replaceOrb(Orb.ElementType replaceType, int orbNumber) {
+        switch (orbNumber) {
+            case 0:
+                if (firstOrb != null) {
+                    Orb.ElementType type = firstOrb.getElementType();
+                    orbNodeRot.detachChild(firstOrb.getClickableEntityNode());
+                    firstOrb = createTowerOrb(replaceType);
+                    orbNodeRot.attachChild(firstOrb.createNode(GAME));
+                    return type;
+                }
+                return replaceType;
+            case 1:
+                if (secondOrb != null) {
+                    Orb.ElementType type = secondOrb.getElementType();
+                    orbNodeRot.detachChild(secondOrb.getClickableEntityNode());
+                    secondOrb = createTowerOrb(replaceType);
+                    orbNodeRot.attachChild(secondOrb.createNode(GAME));
+                    return type;
+                }
+                return replaceType;
+            case 2:
+                if (thirdOrb != null) {
+                    Orb.ElementType type = thirdOrb.getElementType();
+                    orbNodeRot.detachChild(thirdOrb.getClickableEntityNode());
+                    thirdOrb = createTowerOrb(replaceType);
+                    orbNodeRot.attachChild(thirdOrb.createNode(GAME));
+                    return type;
+                }
+                return replaceType;
+            default:
+
+                return replaceType;
         }
     }
     //==========================================================================
