@@ -186,7 +186,7 @@ public class Pathfinder {
      * @return  Queue aus MapSquares in der Richtigen Reihenfolge zum begehen
      */
     public Queue<MapSquare> createMainPath() {
-        Queue<MapSquare> tempPath = new LinkedList();
+        Queue<MapSquare> tempPath = new LinkedList<MapSquare>();
         FieldInfo field = null;
         try {
             field = findPath(grid, getStartField(), getEndField());
@@ -215,7 +215,7 @@ public class Pathfinder {
      * @return 
      */
     public Queue<MapSquare> createCreepPath(FieldInfo creepPos) {
-        Queue<MapSquare> tempPath = new LinkedList();
+        Queue<MapSquare> tempPath = new LinkedList<MapSquare>();
         FieldInfo field = null;
         try {
             field = findPath(grid, creepPos, getEndField());
@@ -252,15 +252,15 @@ public class Pathfinder {
      * @return Feld - der Pfad kann von diesem Feld aus seinen Vorgaengern erstellt werden
      */
     private FieldInfo findPath(Grid grid, FieldInfo start, FieldInfo goal) {
-        ArrayList<FieldInfo> openList = new ArrayList();
-        ArrayList<FieldInfo> closedList = new ArrayList();
+        ArrayList<FieldInfo> openList = new ArrayList<FieldInfo>();
+        ArrayList<FieldInfo> closedList = new ArrayList<FieldInfo>();
 
         FieldInfo u = grid.getFieldInfo(start.getXCoord(), start.getYCoord());
         openList.add(u);
         while (!openList.isEmpty()) {  //...und los
             FieldInfo q = getLeastWeight(openList);  //Field aus openList mit besten Aussichten ist q
             openList.remove(q);  //Dieser wird aus der openList entfernt, um ihn nicht noch einmal zu benutzen
-            ArrayList<FieldInfo> successors = new ArrayList();
+            ArrayList<FieldInfo> successors = new ArrayList<FieldInfo>();
             int qx = q.getXCoord();
             int qy = q.getYCoord();
             try {

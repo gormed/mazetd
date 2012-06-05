@@ -38,7 +38,7 @@ package entities.base.low;
 import entities.nodes.ClickableEntityNode;
 
 /**
- * The inteface clickable for clickable entities.
+ * The inteface SimpleClickable for clickable entities.
  * @author Hans Ferchland
  */
 public interface SimpleClickable {

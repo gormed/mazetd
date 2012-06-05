@@ -42,18 +42,22 @@ import com.jme3.effect.ParticleMesh;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Cylinder;
+import com.jme3.scene.shape.Quad;
 import entities.Map.MapSquare;
 import entities.Orb.ElementType;
 import entities.base.CollidableEntity;
 import entities.base.EntityManager;
-import entities.effects.OrbEffect;
+import entities.effects.AbstractOrbEffect;
 import entities.geometry.ClickableGeometry;
 import entities.nodes.CollidableEntityNode;
 import eventsystem.CreepHandler;
@@ -102,12 +106,13 @@ public class Creep extends CollidableEntity {
     private float decayTime = 0;
     private ClickableGeometry debugGeometry;
     private boolean debugPathToggle = false;
+    private HealthBar healthBar;
     // logic
     private float healthPoints = CREEP_MAX_HP;
     private float maxHealthPoints = CREEP_MAX_HP;
     private Tower attacker;
     private Tower target;
-    private HashSet<OrbEffect> orbEffects = new HashSet<OrbEffect>();
+    private HashSet<AbstractOrbEffect> orbEffects = new HashSet<AbstractOrbEffect>();
     private float speed = CREEP_BASE_SPEED;
     private boolean moving = true;
     private boolean attacking = false;
@@ -154,11 +159,15 @@ public class Creep extends CollidableEntity {
         createGoldEmitter(game);
         createDebugGeometry(game);
 
+        healthBar = new HealthBar(this);
+
         return collidableEntityNode;
     }
 
     @Override
     protected void update(float tpf) {
+        // update the bar
+        healthBar.update(tpf);
         // if dead and therfore decaying
         if (deacying) {
             decayTime += tpf;
@@ -168,6 +177,8 @@ public class Creep extends CollidableEntity {
             }
             return;
         }
+        // update the orb-effects on this creep
+        orbEffectUpdate(tpf);
         // if moving do this part
         moveUpdate(tpf);
         // if attacking this
@@ -360,6 +371,10 @@ public class Creep extends CollidableEntity {
         }
     }
 
+    /**
+     * Updates the unit if in attacking state.
+     * @param tpf the time-gap
+     */
     private void attackUpdate(float tpf) {
         if (attacking && target != null && !target.isDead()) {
             attack(tpf);
@@ -367,6 +382,16 @@ public class Creep extends CollidableEntity {
             moving = true;
             attacking = false;
             target = null;
+        }
+    }
+
+    /**
+     * Updates the orb-effects on this creep.
+     * @param tpf the time-gap
+     */
+    private void orbEffectUpdate(float tpf) {
+        for (AbstractOrbEffect e : orbEffects) {
+            e.update(tpf);
         }
     }
 
@@ -422,7 +447,7 @@ public class Creep extends CollidableEntity {
      * Damages a creep by <code>amount</code> points.
      * @param amount the amount of received damaged
      */
-    void applyDamge(float amount) {
+    public void applyDamge(float amount) {
         this.healthPoints -= amount;
         if (isDead() && !deacying) {
             // visualize the death
@@ -522,7 +547,7 @@ public class Creep extends CollidableEntity {
      * Gets the effects this creep is suffering.
      * @return the set of effects the creep is suffering, null if list is empty.
      */
-    public HashSet<OrbEffect> getOrbEffects() {
+    public HashSet<AbstractOrbEffect> getOrbEffects() {
         if (orbEffects.isEmpty()) {
             return null;
         }
@@ -533,15 +558,17 @@ public class Creep extends CollidableEntity {
      * Adds an effect to the creep.
      * @param effect the effect to add
      */
-    public void addOrbEffect(OrbEffect effect) {
+    public void addOrbEffect(AbstractOrbEffect effect) {
         orbEffects.add(effect);
+        effect.onStart(this);
     }
 
     /**
      * Removes an effect from the creep.
      * @param effect the effect to remove
      */
-    public void removeOrbEffect(OrbEffect effect) {
+    public void removeOrbEffect(AbstractOrbEffect effect) {
+        effect.onEnd(this);
         orbEffects.remove(effect);
     }
 
@@ -632,4 +659,96 @@ public class Creep extends CollidableEntity {
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+
+    private class HealthBar extends Node {
+
+        public static final float BAR_HEIGHT = 0.1f;
+        public static final float BAR_WIDTH = 0.5f;
+        public static final float FRAME_HEIGHT = 0.12f;
+        public static final float FRAME_WIDTH = 0.52f;
+        private Material barMaterial;
+        private Material frameMaterial;
+        private Geometry barGeometry;
+        private Geometry frameGeometry;
+        private Creep creep;
+        private Camera cam;
+
+        public HealthBar(Creep creep) {
+            super();
+            this.creep = creep;
+            createBar();
+        }
+
+        public void update(float tpf) {
+            if (creep != null && creep.isDead()) {
+                this.detachAllChildren();
+                creep.collidableEntityNode.detachChild(this);
+                return;
+            }
+            orientate();
+            barGeometry.setLocalScale(creep.healthPoints / creep.maxHealthPoints, 1, 1);
+        }
+
+        private void orientate() {
+            Vector3f barOffset = 
+                    new Vector3f(BAR_WIDTH / 2, 0.01f, -BAR_HEIGHT / 2);
+            Vector3f frameOffset = 
+                    new Vector3f(FRAME_WIDTH / 2, 0, -BAR_HEIGHT / 2);
+
+            Vector3f up = cam.getUp().clone();
+            Vector3f dir = cam.getDirection().
+                    clone().negateLocal().normalizeLocal();
+            Vector3f left = cam.getLeft().
+                    clone().normalizeLocal().negateLocal();
+
+            Quaternion look = new Quaternion();
+            look.fromAxes(left, up, dir);
+
+            frameGeometry.setLocalTransform(new Transform(frameOffset, look));
+            barGeometry.setLocalTransform(new Transform(barOffset, look));
+        }
+
+        private void createBar() {
+            MazeTDGame game = MazeTDGame.getInstance();
+            cam = game.getCamera();
+
+            // Material
+            barMaterial = new Material(
+                    game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+            barMaterial.setBoolean("UseMaterialColors", true);
+            barMaterial.setColor("Specular", ColorRGBA.White.clone());
+            barMaterial.setColor("Ambient", ColorRGBA.Green.clone());
+            barMaterial.setColor("Diffuse", ColorRGBA.Gray.clone());
+
+            frameMaterial = new Material(
+                    game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+            frameMaterial.setBoolean("UseMaterialColors", true);
+            frameMaterial.setColor("Specular", ColorRGBA.White.clone());
+            frameMaterial.setColor("Ambient", ColorRGBA.Black.clone());
+            frameMaterial.setColor("Diffuse", ColorRGBA.Gray.clone());
+
+            // Geometry
+
+            Quad frame = new Quad(FRAME_WIDTH, FRAME_HEIGHT);
+
+            frameGeometry = new Geometry("frameGeometry", frame);
+            frameGeometry.setMaterial(frameMaterial);
+            frameGeometry.setCullHint(CullHint.Inherit);
+            frameGeometry.setShadowMode(ShadowMode.Off);
+
+            Quad bar = new Quad(BAR_WIDTH, BAR_HEIGHT);
+
+            barGeometry = new Geometry("frameGeometry", bar);
+            barGeometry.setMaterial(barMaterial);
+            barGeometry.setCullHint(CullHint.Inherit);
+            barGeometry.setShadowMode(ShadowMode.Off);
+
+            this.attachChild(barGeometry);
+            this.attachChild(frameGeometry);
+            creep.collidableEntityNode.attachChild(this);
+
+            this.setLocalTranslation(0, CREEP_HEIGHT + 0.4f, 0);
+            orientate();
+        }
+    }
 }

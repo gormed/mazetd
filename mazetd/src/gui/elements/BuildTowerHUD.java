@@ -118,6 +118,13 @@ public class BuildTowerHUD implements TimerEventListener {
     }
 
     private void createHUD(MazeTDGame game) {
+
+        material = new Material(game.getAssetManager(),
+                "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setTexture("ColorMap", game.getAssetManager().
+                loadTexture("Textures/HUD/TowerIcon.png"));
+        material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+
         Quad q = new Quad(SIGN_SIZE, SIGN_SIZE);
 
         geometry = new ClickableGeometry("HUD_Geometry", q) {
@@ -144,46 +151,27 @@ public class BuildTowerHUD implements TimerEventListener {
             }
         };
 
-
-        material = new Material(game.getAssetManager(),
-                "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setTexture("ColorMap", game.getAssetManager().
-                loadTexture("Textures/HUD/TowerIcon.png"));
-        material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         geometry.setMaterial(material);
         geometry.setCullHint(CullHint.Never);
         geometry.setQueueBucket(Bucket.Translucent);
-        //geometry.setShadowMode(ShadowMode.Off);
-        //float[] angles = {3 * (float) Math.PI / 2, 0, 0};
-
-        //geometry.setLocalRotation(new Quaternion(angles));
-        //geometry.setLocalTranslation(-SIGN_SIZE / 2, 0, SIGN_SIZE / 2);
 
         translationNode = new Node("HUD_Translation");
         translationNode.attachChild(geometry);
-
     }
 
     private void orientate() {
         Vector3f position = new Vector3f(SIGN_SIZE / 2, .15f, -SIGN_SIZE / 2);
 
-
         Vector3f up = cam.getUp().clone();
-        Vector3f dir = cam.getDirection().clone().negateLocal();//camPos.subtract(position);
-
-        Vector3f left = cam.getLeft().clone();
-        dir.normalizeLocal();
-        left.normalizeLocal();
-        left.negateLocal();
+        Vector3f dir = cam.getDirection().
+                clone().negateLocal().normalizeLocal();
+        Vector3f left = cam.getLeft().
+                clone().normalizeLocal().negateLocal();
 
         Quaternion look = new Quaternion();
         look.fromAxes(left, up, dir);
 
         geometry.setLocalTransform(new Transform(position, look));
-
-//        float[] angles = {3 * (float) Math.PI / 2, (float) Math.PI, 0};
-//        Quaternion look = new Quaternion(angles);
-//        geometry.setLocalTransform(new Transform(position, look));
 
     }
 
@@ -205,7 +193,7 @@ public class BuildTowerHUD implements TimerEventListener {
                 scale += t.getTimeGap();
                 float s = 1 + (0.05f * (float) Math.sin(Math.PI * 2 * scale * 0.5f));
                 translationNode.setLocalScale(s, s, s);
-                Vector3f pos = new Vector3f(square.x, 0, square.z-0.025f);
+                Vector3f pos = new Vector3f(square.x, 0, square.z - 0.025f);
                 translationNode.setLocalTranslation(pos);
                 geometry.setCullHint(CullHint.Never);
                 orientate();

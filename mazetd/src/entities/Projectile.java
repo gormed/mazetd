@@ -46,7 +46,8 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
 import entities.base.AbstractEntity;
 import entities.base.EntityManager;
-import entities.effects.OrbEffect;
+import entities.effects.AbstractOrbEffect;
+import entities.effects.OrbEffectType;
 import logic.Level;
 import mazetd.MazeTDGame;
 
@@ -73,8 +74,7 @@ class Projectile extends AbstractEntity {
     private float damage;
     private Material material;
     private final ColorRGBA color;
-    private float initialDistance = 0;
-    private OrbEffect orbEffect;
+    private AbstractOrbEffect[] orbEffects = new AbstractOrbEffect[3];
     private boolean decays = false;
     private float fadeCounter = 0;
     // floating Particles
@@ -87,18 +87,24 @@ class Projectile extends AbstractEntity {
 
     /**
      * The constructor of a Projectile that is fired to <code>target</code>
-     * creep from given position: <code>position</code>.
-     * @param name
-     * @param position
-     * @param target 
+     * creep from given position: <code>position</code> and will apply up to 3
+     * different orb-effects.
+     * 
+     * @param name the desired name
+     * @param position the desired start position of the projectile
+     * @param target the target creep to attack
+     * @param damage the base-damage on hit
+     * @param color the color of the projectile an particles
+     * @param effects the list of max. 3 orb effects to apply on the 
+     * creep-target on hit
      */
-    public Projectile(String name, Vector3f position, Creep target, float damage, ColorRGBA color) {
+    public Projectile(String name, Vector3f position, Creep target, float damage, ColorRGBA color, AbstractOrbEffect... effects) {
         super(name);
         this.target = target;
         this.position = position;
         this.damage = damage;
         this.color = color;
-        this.initialDistance = target.getPosition().subtract(position).length();
+        this.orbEffects = effects;
     }
 
     @Override
@@ -237,24 +243,11 @@ class Projectile extends AbstractEntity {
      * @param tpf the time-gap
      */
     private void move(float tpf) {
-
-
-//            float currentDistance =
-//                    target.getPosition().subtract(position).length();
-//            float percentage =
-//                    (initialDistance - currentDistance) / initialDistance;
-
         position = geometryNode.getLocalTranslation();
-
         Vector3f dir = target.getPosition().subtract(position);
         dir.normalizeLocal();
         dir.multLocal(speed * tpf);
         position.addLocal(dir);
-        // TODO: add curved flying
-//            if (percentage < 0.9f) {
-//                Math.min(0.1f + percentage, 1f);
-//                projectilePos.y += Math.sin((percentage) * Math.PI * 2f) * tpf * 1f;
-//            }
         geometryNode.setLocalTranslation(position);
     }
 
@@ -265,8 +258,23 @@ class Projectile extends AbstractEntity {
     private void onHit() {
         System.out.println(target.getName() + " recieved " + damage + " damage!");
         target.applyDamge(damage);
+        if (!target.isDead()) {
+            applyOrbEffects();
+        }
         decays = true;
 
+    }
+
+    /**
+     * Applys the list of orb effects to the target on hit.
+     */
+    private void applyOrbEffects() {
+        if (orbEffects.length == 0) {
+            return;
+        }
+        for (AbstractOrbEffect e : orbEffects) {
+            target.addOrbEffect(e);
+        }
     }
 
     /**
@@ -289,32 +297,5 @@ class Projectile extends AbstractEntity {
             emitImpactParitcles();
             onHit();
         }
-
-        /**
-        CollisionResults collisionResults =
-        Collider3D.getInstance().objectCollides(geometryNode.getWorldBound());
-        // if there are creeps
-        if (collisionResults != null) {
-        Node n;
-        // find each and
-        for (CollisionResult result : collisionResults) {
-        n = result.getGeometry().getParent();
-        // check if collidable entity
-        if (n instanceof CollidableEntityNode) {
-        CollidableEntityNode col = (CollidableEntityNode) n;
-        AbstractEntity e = col.getEntity();
-        // check if creep entity
-        if (e instanceof Creep) {
-        Creep c = (Creep) e;
-        if (c.equals(target)) {
-        onHit();
-        emitParitcles(position);
-        }
-        }
-        }
-        }
-        
-        }
-         */
     }
 }
