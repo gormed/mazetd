@@ -58,12 +58,13 @@ import mazetd.MazeTDGame;
  */
 class Projectile extends AbstractEntity {
     //==========================================================================
-    //===   COnstants
+    //===   Constants
     //==========================================================================
 
     public static final float PROJECTILE_BASE_SPEED = 3.f;
     public static final float MAX_FADE = 0.8f;
-    public static final int PROJECTILE_IMPACT_PARTICLES = 5;
+    public static int FLOATING_PARTICLE_COUNT = 10;
+    public static int IMPACT_PARTICLE_COUNT = 5;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -139,7 +140,7 @@ class Projectile extends AbstractEntity {
     private void createFloatingParticleEmitter(MazeTDGame game) {
         /** Uses Texture from jme3-test-data library! */
         floatingEmitter = new ParticleEmitter(
-                "Emitter", ParticleMesh.Type.Triangle, 30);
+                "Emitter", ParticleMesh.Type.Triangle, FLOATING_PARTICLE_COUNT);
         Material mat_red = new Material(
                 game.getAssetManager(),
                 "Common/MatDefs/Misc/Particle.j3md");
@@ -173,8 +174,9 @@ class Projectile extends AbstractEntity {
     private void createImpactParticleEmitter(MazeTDGame game) {
         /** Explosion effect. Uses Texture from jme3-test-data library! */
         impactEmitter = new ParticleEmitter(
-                "impactEmitter", ParticleMesh.Type.Triangle, PROJECTILE_IMPACT_PARTICLES);
-        Material impactEmitter_mat = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
+                "impactEmitter", ParticleMesh.Type.Triangle, IMPACT_PARTICLE_COUNT);
+        Material impactEmitter_mat = new Material(game.getAssetManager(),
+                "Common/MatDefs/Misc/Particle.j3md");
         impactEmitter_mat.setTexture("Texture", game.getAssetManager().loadTexture(
                 "Textures/Effects/Debris.png"));
         impactEmitter.setMaterial(impactEmitter_mat);
@@ -203,12 +205,12 @@ class Projectile extends AbstractEntity {
     private void createGeometry(MazeTDGame game) {
         Sphere s = new Sphere(5, 5, 0.1f);
 
-        material = new Material(
-                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-        material.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
-        material.setColor("Specular", ColorRGBA.White);
-        material.setColor("Ambient", color);   // ... color of this object
-        material.setColor("Diffuse", color);   // ... color of light being reflected
+        material = new Material(game.getAssetManager(),
+                    "Common/MatDefs/Misc/Unshaded.j3md");
+//        material.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
+//        material.setColor("Specular", ColorRGBA.White);
+        material.setColor("Color", color);   // ... color of this object
+//        material.setColor("Diffuse", color);   // ... color of light being reflected
 
         geometry = new Geometry("ProjectileGeometry", s);
         geometry.setMaterial(material);
@@ -273,7 +275,9 @@ class Projectile extends AbstractEntity {
             return;
         }
         for (AbstractOrbEffect e : orbEffects) {
-            target.addOrbEffect(e);
+            if (e != null) {
+                target.addOrbEffect(e);
+            }
         }
     }
 

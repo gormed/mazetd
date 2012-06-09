@@ -48,6 +48,9 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
 import entities.base.ClickableEntity;
 import entities.base.EntityManager;
+import entities.effects.AbstractOrbEffect;
+import entities.effects.OrbEffectType;
+import entities.effects.PoisonOrbEffect;
 import eventsystem.port.ScreenRayCast3D;
 import mazetd.MazeTDGame;
 
@@ -91,6 +94,7 @@ public class Orb extends ClickableEntity {
     private boolean deacying = false;
     private float decayTime = 0;
     private Tower attachedTower;
+    private AbstractOrbEffect orbEffect;
     // Particle
     private ParticleEmitter explodesEmitter;
 
@@ -223,12 +227,37 @@ public class Orb extends ClickableEntity {
     public ElementType getElementType() {
         return type;
     }
+
+    public AbstractOrbEffect createOrbEffect() {
+        switch (type) {
+            case BLUE:
+
+                return null;
+            case GREEN:
+                return new PoisonOrbEffect(OrbEffectType.POISON, 0);
+            case RED:
+                
+                return null;
+            case WHITE:
+                
+                return null;
+            case YELLOW:
+            default:    
+                return null;
+        }
+    }
     
+    AbstractOrbEffect getOrbEffect() {
+        return createOrbEffect();
+    }
     
+    ColorRGBA getOrbColor() {
+        return element.color.clone();
+    }
+
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
-
     /**
      * The class Element discribes the orb-element from the Orb.
      * @author Hans Ferchland
@@ -315,7 +344,7 @@ public class Orb extends ClickableEntity {
             material.setColor("Color", color);
             material.setColor("GlowColor", color);
             material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-            
+
             Sphere s = new Sphere(ORB_SAMPLES, ORB_SAMPLES, ORB_SIZE);
 
             geometry = new Geometry("element_orb_geometry", s);

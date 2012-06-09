@@ -40,7 +40,6 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
@@ -52,6 +51,7 @@ import com.jme3.scene.shape.Cylinder;
 import entities.base.AbstractEntity;
 import entities.base.ClickableEntity;
 import entities.base.EntityManager;
+import entities.effects.AbstractOrbEffect;
 import entities.nodes.CollidableEntityNode;
 import eventsystem.port.Collider3D;
 import eventsystem.port.ScreenRayCast3D;
@@ -330,7 +330,8 @@ public class Tower extends ClickableEntity {
                     position.clone().setY(1.f),
                     target,
                     damage,
-                    projectileColor);
+                    projectileColor,
+                    getOrbEffects());
             p.createNode(GAME);
             EntityManager.getInstance().addEntity(p);
             intervalCounter = 0;
@@ -407,9 +408,9 @@ public class Tower extends ClickableEntity {
                     float dist2 = o2.getPosition().subtract(position).length();
 
                     if (dist1 < dist2) {
-                        return 1;
-                    } else if (dist1 > dist2) {
                         return -1;
+                    } else if (dist1 > dist2) {
+                        return 1;
                     } else {
                         return 0;
                     }
@@ -478,20 +479,37 @@ public class Tower extends ClickableEntity {
      */
     public void placeOrb(Orb.ElementType type) {
         if (firstOrb == null) {
-            firstOrb = createTowerOrb(type);
-            orbNodeRot.attachChild(firstOrb.createNode(GAME));
-            return;
+            firstOrb = createTowerOrb(type, 0);
+        } else if (secondOrb == null) {
+            secondOrb = createTowerOrb(type, 1);
+        } else if (thirdOrb == null) {
+            thirdOrb = createTowerOrb(type, 2);
         }
-        if (secondOrb == null) {
-            secondOrb = createTowerOrb(type);
-            orbNodeRot.attachChild(secondOrb.createNode(GAME));
-            return;
+        calculateProjectileColor();
+    }
+
+    private void calculateProjectileColor() {
+        ColorRGBA[] colors = new ColorRGBA[3];
+        if (firstOrb != null) {
+            colors[0] = firstOrb.getOrbColor();
         }
-        if (thirdOrb == null) {
-            thirdOrb = createTowerOrb(type);
-            orbNodeRot.attachChild(thirdOrb.createNode(GAME));
-            return;
+        if (secondOrb != null) {
+            colors[1] = secondOrb.getOrbColor();
         }
+        if (thirdOrb != null) {
+            colors[2] = thirdOrb.getOrbColor();
+        }
+
+        ColorRGBA newColor = new ColorRGBA(0,0,0,1);
+
+        for (ColorRGBA c : colors) {
+            if (c != null) {
+                newColor.addLocal(c);
+                //newColor.clamp();
+            }
+        }
+        newColor.clamp();
+        projectileColor = newColor;
     }
 
     /**
@@ -499,14 +517,37 @@ public class Tower extends ClickableEntity {
      * @param type
      * @return 
      */
-    private Orb createTowerOrb(Orb.ElementType type) {
-        return new Orb(
-                name + "Orb_1",
-                new Vector3f(
-                TOWER_SIZE,
-                TOWER_HEIGHT + ROOF_SIZE + 0.1f,
-                -TOWER_SIZE / 2),
-                type);
+    private Orb createTowerOrb(Orb.ElementType type, int orbNumber) {
+        Orb o;
+        switch (orbNumber) {
+            case 0:
+                o = new Orb(name + "Orb_1",
+                        new Vector3f(
+                        TOWER_SIZE,
+                        TOWER_HEIGHT + 0.1f,
+                        -TOWER_SIZE / 2),
+                        type);
+                break;
+            case 1:
+                o = new Orb(name + "Orb_2",
+                        new Vector3f(
+                        -TOWER_SIZE,
+                        TOWER_HEIGHT + 0.1f,
+                        -TOWER_SIZE / 2),
+                        type);
+                break;
+            case 2:
+            default:
+                o = new Orb(name + "Orb_3",
+                        new Vector3f(
+                        0,
+                        TOWER_HEIGHT + 0.1f,
+                        TOWER_SIZE),
+                        type);
+                break;
+        }
+        orbNodeRot.attachChild(o.createNode(GAME));
+        return o;
     }
 
     /**
@@ -523,8 +564,9 @@ public class Tower extends ClickableEntity {
                 if (firstOrb != null) {
                     Orb.ElementType type = firstOrb.getElementType();
                     orbNodeRot.detachChild(firstOrb.getClickableEntityNode());
-                    firstOrb = createTowerOrb(replaceType);
+                    firstOrb = createTowerOrb(replaceType, orbNumber);
                     orbNodeRot.attachChild(firstOrb.createNode(GAME));
+                    calculateProjectileColor();
                     return type;
                 }
                 return replaceType;
@@ -532,8 +574,9 @@ public class Tower extends ClickableEntity {
                 if (secondOrb != null) {
                     Orb.ElementType type = secondOrb.getElementType();
                     orbNodeRot.detachChild(secondOrb.getClickableEntityNode());
-                    secondOrb = createTowerOrb(replaceType);
+                    secondOrb = createTowerOrb(replaceType, orbNumber);
                     orbNodeRot.attachChild(secondOrb.createNode(GAME));
+                    calculateProjectileColor();
                     return type;
                 }
                 return replaceType;
@@ -541,8 +584,9 @@ public class Tower extends ClickableEntity {
                 if (thirdOrb != null) {
                     Orb.ElementType type = thirdOrb.getElementType();
                     orbNodeRot.detachChild(thirdOrb.getClickableEntityNode());
-                    thirdOrb = createTowerOrb(replaceType);
+                    thirdOrb = createTowerOrb(replaceType, orbNumber);
                     orbNodeRot.attachChild(thirdOrb.createNode(GAME));
+                    calculateProjectileColor();
                     return type;
                 }
                 return replaceType;
@@ -550,6 +594,21 @@ public class Tower extends ClickableEntity {
 
                 return replaceType;
         }
+    }
+
+    private AbstractOrbEffect[] getOrbEffects() {
+        AbstractOrbEffect[] effects = new AbstractOrbEffect[3];
+
+        if (firstOrb != null) {
+            effects[0] = firstOrb.getOrbEffect();
+        }
+        if (secondOrb != null) {
+            effects[1] = secondOrb.getOrbEffect();
+        }
+        if (thirdOrb != null) {
+            effects[2] = thirdOrb.getOrbEffect();
+        }
+        return effects;
     }
     //==========================================================================
     //===   Inner Classes

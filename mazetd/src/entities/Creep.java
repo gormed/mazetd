@@ -40,6 +40,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
@@ -64,6 +65,7 @@ import eventsystem.CreepHandler;
 import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.port.Collider3D;
 import eventsystem.port.ScreenRayCast3D;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Random;
@@ -390,7 +392,8 @@ public class Creep extends CollidableEntity {
      * @param tpf the time-gap
      */
     private void orbEffectUpdate(float tpf) {
-        for (AbstractOrbEffect e : orbEffects) {
+        HashSet<AbstractOrbEffect> clone = new HashSet<AbstractOrbEffect>(orbEffects);
+        for (AbstractOrbEffect e : clone) {
             e.update(tpf);
         }
     }
@@ -559,6 +562,13 @@ public class Creep extends CollidableEntity {
      * @param effect the effect to add
      */
     public void addOrbEffect(AbstractOrbEffect effect) {
+        for (AbstractOrbEffect e : orbEffects) {
+            if (e.getEffectType() == effect.getEffectType()) {
+                return;
+            }
+        }
+
+        
         orbEffects.add(effect);
         effect.onStart(this);
     }
@@ -656,10 +666,10 @@ public class Creep extends CollidableEntity {
     public float getSpeed() {
         return speed;
     }
+
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
-
     private class HealthBar extends Node {
 
         public static final float BAR_HEIGHT = 0.1f;
@@ -690,9 +700,9 @@ public class Creep extends CollidableEntity {
         }
 
         private void orientate() {
-            Vector3f barOffset = 
+            Vector3f barOffset =
                     new Vector3f(BAR_WIDTH / 2, 0.01f, -BAR_HEIGHT / 2);
-            Vector3f frameOffset = 
+            Vector3f frameOffset =
                     new Vector3f(FRAME_WIDTH / 2, 0, -BAR_HEIGHT / 2);
 
             Vector3f up = cam.getUp().clone();
@@ -713,19 +723,32 @@ public class Creep extends CollidableEntity {
             cam = game.getCamera();
 
             // Material
-            barMaterial = new Material(
-                    game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-            barMaterial.setBoolean("UseMaterialColors", true);
-            barMaterial.setColor("Specular", ColorRGBA.White.clone());
-            barMaterial.setColor("Ambient", ColorRGBA.Green.clone());
-            barMaterial.setColor("Diffuse", ColorRGBA.Gray.clone());
+//            barMaterial = new Material(
+//                    game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+//            barMaterial.setBoolean("UseMaterialColors", true);
+//            barMaterial.setColor("Specular", ColorRGBA.White.clone());
+//            barMaterial.setColor("Ambient", ColorRGBA.Green.clone());
+//            barMaterial.setColor("Diffuse", ColorRGBA.Gray.clone());
+//            barMaterial.getAdditionalRenderState().setBlendMode(BlendMode.PremultAlpha);
+//            
+//            frameMaterial = new Material(
+//                    game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+//            frameMaterial.setBoolean("UseMaterialColors", true);
+//            frameMaterial.setColor("Specular", ColorRGBA.White.clone());
+//            frameMaterial.setColor("Ambient", ColorRGBA.Black.clone());
+//            frameMaterial.setColor("Diffuse", ColorRGBA.Gray.clone());
+//            frameMaterial.getAdditionalRenderState().setBlendMode(BlendMode.PremultAlpha);
 
-            frameMaterial = new Material(
-                    game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-            frameMaterial.setBoolean("UseMaterialColors", true);
-            frameMaterial.setColor("Specular", ColorRGBA.White.clone());
-            frameMaterial.setColor("Ambient", ColorRGBA.Black.clone());
-            frameMaterial.setColor("Diffuse", ColorRGBA.Gray.clone());
+
+            barMaterial = new Material(game.getAssetManager(),
+                    "Common/MatDefs/Misc/Unshaded.j3md");
+            barMaterial.setColor("Color", new ColorRGBA(0, 1, 0, 0.6f));
+            barMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+
+            frameMaterial = new Material(game.getAssetManager(),
+                    "Common/MatDefs/Misc/Unshaded.j3md");
+            frameMaterial.setColor("Color", new ColorRGBA(0, 0, 0, 0.6f));
+            frameMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 
             // Geometry
 
@@ -735,6 +758,7 @@ public class Creep extends CollidableEntity {
             frameGeometry.setMaterial(frameMaterial);
             frameGeometry.setCullHint(CullHint.Inherit);
             frameGeometry.setShadowMode(ShadowMode.Off);
+            frameGeometry.setQueueBucket(Bucket.Translucent);
 
             Quad bar = new Quad(BAR_WIDTH, BAR_HEIGHT);
 
@@ -742,6 +766,7 @@ public class Creep extends CollidableEntity {
             barGeometry.setMaterial(barMaterial);
             barGeometry.setCullHint(CullHint.Inherit);
             barGeometry.setShadowMode(ShadowMode.Off);
+            barGeometry.setQueueBucket(Bucket.Translucent);
 
             this.attachChild(barGeometry);
             this.attachChild(frameGeometry);
