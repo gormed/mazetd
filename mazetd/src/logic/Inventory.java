@@ -28,10 +28,12 @@ public class Inventory {
     private boolean slot1hasOrb;
     private boolean slot2hasOrb;
     private boolean slot3hasOrb;
-    
-    public static final String SLOT1="Slot 1";
-    public static final String SLOT2="Slot 2";
-    public static final String SLOT3="Slot 3";
+       
+    public enum Slot {
+        SLOT1,
+        SLOT2,
+        SLOT3,
+    }
             
 
     
@@ -50,7 +52,7 @@ public class Inventory {
 
     
     }
-    public void addOrbSlot1(String slot,Orb orb) {
+    public void addOrbSlot(Slot slot,Orb orb) {
    
         switch (slot) {
             
@@ -74,7 +76,7 @@ public class Inventory {
    }
 
     
-    public void removeOrb(String slot, Orb orb) {
+    public void removeOrb(Slot slot, Orb orb) {
      switch (slot) {
             case SLOT1:
                towerSlot.remove("Slot 1");
