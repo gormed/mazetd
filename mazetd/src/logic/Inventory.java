@@ -25,9 +25,9 @@ public class Inventory {
     private boolean yellowElement;
     private boolean whiteElement;
     
-    private boolean slot1hasOrb;
-    private boolean slot2hasOrb;
-    private boolean slot3hasOrb;
+    private boolean slot1IsEmpty;
+    private boolean slot2IsEmpty;
+    private boolean slot3IsEmpty;
        
     public enum Slot {
         SLOT1,
@@ -46,9 +46,9 @@ public class Inventory {
     towerSlot.put("Slot 2", null);
     towerSlot.put("Slot 3", null);
     
-    slot1hasOrb=false;
-    slot2hasOrb=false;
-    slot3hasOrb=false;
+    slot1IsEmpty=true;
+    slot2IsEmpty=true;
+    slot3IsEmpty=true;
 
     
     }
@@ -57,19 +57,19 @@ public class Inventory {
         switch (slot) {
             
             case SLOT1:
-               if (slot1hasOrb == false){
+               if (slot1IsEmpty){
                towerSlot.put("Slot 1", orb);
-               slot1hasOrb=true;
+               slot1IsEmpty=false;
                }
             case SLOT2:
-               if (slot2hasOrb == false){
+               if (slot2IsEmpty){
                towerSlot.put("Slot 2", orb);
-               slot2hasOrb=true; 
+               slot2IsEmpty=false; 
                }  
             case SLOT3:
-               if (slot3hasOrb ==false){
+               if (slot3IsEmpty){
                towerSlot.put("Slot 3", orb);
-               slot3hasOrb=true;
+               slot3IsEmpty=false;
                }
             default:
     }
@@ -80,13 +80,13 @@ public class Inventory {
      switch (slot) {
             case SLOT1:
                towerSlot.remove("Slot 1");
-               slot1hasOrb=false;
+               slot1IsEmpty=true;
             case SLOT2:
                towerSlot.remove("Slot 2");
-               slot2hasOrb=false;
+               slot2IsEmpty=true;
             case SLOT3:
                towerSlot.remove("Slot 3");
-               slot3hasOrb=false;
+               slot3IsEmpty=true;
             default:
     }
   }
