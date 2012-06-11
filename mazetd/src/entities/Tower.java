@@ -349,6 +349,11 @@ public class Tower extends ClickableEntity {
         }
     }
 
+    private void demolish() {
+        this.healthPoints = 0;
+        onDestroy();
+    }
+
     private void onDestroy() {
         deacying = true;
         roofMaterial.setColor("Ambient", ColorRGBA.Red);
@@ -477,13 +482,24 @@ public class Tower extends ClickableEntity {
      * Places an orb at the next free position (max. three orbs.
      * @param type the desired orb-type to add
      */
-    public void placeOrb(Orb.ElementType type) {
-        if (firstOrb == null) {
-            firstOrb = createTowerOrb(type, 0);
-        } else if (secondOrb == null) {
-            secondOrb = createTowerOrb(type, 1);
-        } else if (thirdOrb == null) {
-            thirdOrb = createTowerOrb(type, 2);
+    public void placeOrb(Orb.ElementType type, int slot) {
+        switch (slot) {
+            case 1:
+                if (secondOrb == null) {
+                    secondOrb = createTowerOrb(type, slot);
+                }
+                break;
+            case 2:
+                if (thirdOrb == null) {
+                    thirdOrb = createTowerOrb(type, slot);
+                }
+                break;
+            case 0:
+            default:
+                if (firstOrb == null) {
+                    firstOrb = createTowerOrb(type, slot);
+                }
+                break;
         }
         calculateProjectileColor();
     }
@@ -517,9 +533,9 @@ public class Tower extends ClickableEntity {
      * @param type
      * @return 
      */
-    private Orb createTowerOrb(Orb.ElementType type, int orbNumber) {
+    private Orb createTowerOrb(Orb.ElementType type, int slot) {
         Orb o;
-        switch (orbNumber) {
+        switch (slot) {
             case 0:
                 o = new Orb(name + "Orb_1",
                         new Vector3f(
@@ -554,17 +570,17 @@ public class Tower extends ClickableEntity {
      * Replaces a tower orb by its number and a new orb-type to use instead.
      * @param replaceType the type of orb to use instead the current one at 
      * position orbNumber
-     * @param orbNumber the number of orb to replace range from 0-2 incl.
+     * @param slot the number of orb to replace range from 0-2 incl.
      * @return the removed orb-type if the orb was replaced and the 
      * given replacement type otherwise
      */
-    public Orb.ElementType replaceOrb(Orb.ElementType replaceType, int orbNumber) {
-        switch (orbNumber) {
+    public Orb.ElementType replaceOrb(Orb.ElementType replaceType, int slot) {
+        switch (slot) {
             case 0:
                 if (firstOrb != null) {
                     Orb.ElementType type = firstOrb.getElementType();
                     orbNodeRot.detachChild(firstOrb.getClickableEntityNode());
-                    firstOrb = createTowerOrb(replaceType, orbNumber);
+                    firstOrb = createTowerOrb(replaceType, slot);
                     orbNodeRot.attachChild(firstOrb.createNode(GAME));
                     calculateProjectileColor();
                     return type;
@@ -574,7 +590,7 @@ public class Tower extends ClickableEntity {
                 if (secondOrb != null) {
                     Orb.ElementType type = secondOrb.getElementType();
                     orbNodeRot.detachChild(secondOrb.getClickableEntityNode());
-                    secondOrb = createTowerOrb(replaceType, orbNumber);
+                    secondOrb = createTowerOrb(replaceType, slot);
                     orbNodeRot.attachChild(secondOrb.createNode(GAME));
                     calculateProjectileColor();
                     return type;
@@ -584,7 +600,7 @@ public class Tower extends ClickableEntity {
                 if (thirdOrb != null) {
                     Orb.ElementType type = thirdOrb.getElementType();
                     orbNodeRot.detachChild(thirdOrb.getClickableEntityNode());
-                    thirdOrb = createTowerOrb(replaceType, orbNumber);
+                    thirdOrb = createTowerOrb(replaceType, slot);
                     orbNodeRot.attachChild(thirdOrb.createNode(GAME));
                     calculateProjectileColor();
                     return type;
@@ -627,8 +643,8 @@ public class Tower extends ClickableEntity {
                         Orb.ElementType.values()[i], orbTypeCount[i]));
             }
         }
-        
-        AbstractOrbEffect[] effectArray = new AbstractOrbEffect[3]; 
+
+        AbstractOrbEffect[] effectArray = new AbstractOrbEffect[3];
         return effects.toArray(effectArray);
     }
     //==========================================================================
