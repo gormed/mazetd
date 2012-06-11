@@ -45,9 +45,15 @@ package entities.effects;
  * @version 0.2
  */
 public enum OrbEffectType {
-    // TODO: add the other types ;)
-    POISON,
+    /** Posion effect for orbs, does damage over time*/
+    POISON, 
+    /** Frost effect for orbs, slows the target*/
     FROST,
-    FIRE
+    /** Fire effect for orbs, does additional damage*/
+    FIRE,
+    /** Range effect for orbs, increases the range of a tower*/
+    RANGE,
+    /** Attack rate effect for orbs, increases the attack-rate of the tower*/
+    RATE
     
 }

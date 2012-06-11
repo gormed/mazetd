@@ -65,8 +65,8 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
     //===   Methods & Constructor
     //==========================================================================
 
-    public PoisonOrbEffect(OrbEffectType effectType, int level) {
-        super(effectType, level);
+    public PoisonOrbEffect(int level) {
+        super(OrbEffectType.POISON, level);
         createPoisonEmitter(MazeTDGame.getInstance());
     }
 

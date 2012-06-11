@@ -36,6 +36,7 @@
 package entities.effects;
 
 import entities.Creep;
+import entities.Orb.ElementType;
 
 /**
  * The class AbstractOrbEffect for the effects creeps will suffer if 
@@ -46,6 +47,31 @@ import entities.Creep;
  * @version 0.3
  */
 public abstract class AbstractOrbEffect {
+    
+    
+    private static AbstractOrbEffect createOrbEffect(ElementType type, int level) {
+        switch (type) {
+            case BLUE:
+
+                return null;
+            case GREEN:
+                return new PoisonOrbEffect(level);
+            case RED:
+
+                return null;
+            case WHITE:
+
+                return null;
+            case YELLOW:
+            default:
+                return null;
+        }
+    }
+
+    public static AbstractOrbEffect getOrbEffect(ElementType type, int level) {
+        return createOrbEffect(type, level);
+    }
+    
     //==========================================================================
     //===   Private Fields
     //==========================================================================

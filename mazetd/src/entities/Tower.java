@@ -500,7 +500,7 @@ public class Tower extends ClickableEntity {
             colors[2] = thirdOrb.getOrbColor();
         }
 
-        ColorRGBA newColor = new ColorRGBA(0,0,0,1);
+        ColorRGBA newColor = new ColorRGBA(0, 0, 0, 1);
 
         for (ColorRGBA c : colors) {
             if (c != null) {
@@ -597,18 +597,39 @@ public class Tower extends ClickableEntity {
     }
 
     private AbstractOrbEffect[] getOrbEffects() {
-        AbstractOrbEffect[] effects = new AbstractOrbEffect[3];
+        ArrayList<AbstractOrbEffect> effects =
+                new ArrayList<AbstractOrbEffect>();
+        Orb.ElementType[] elements = new Orb.ElementType[3];
+        int[] orbTypeCount = {0, 0, 0, 0, 0};
+
 
         if (firstOrb != null) {
-            effects[0] = firstOrb.getOrbEffect();
+            elements[0] = firstOrb.getElementType();
         }
         if (secondOrb != null) {
-            effects[1] = secondOrb.getOrbEffect();
+            elements[1] = secondOrb.getElementType();
         }
         if (thirdOrb != null) {
-            effects[2] = thirdOrb.getOrbEffect();
+            elements[2] = thirdOrb.getElementType();
         }
-        return effects;
+
+
+        for (Orb.ElementType e : elements) {
+            if (e != null) {
+                orbTypeCount[e.ordinal()]++;
+            }
+        }
+
+        for (int i = 0; i < orbTypeCount.length; i++) {
+            if (orbTypeCount[i] > 0 && orbTypeCount[i] <= 3) {
+                effects.add(
+                        AbstractOrbEffect.getOrbEffect(
+                        Orb.ElementType.values()[i], orbTypeCount[i]));
+            }
+        }
+        
+        AbstractOrbEffect[] effectArray = new AbstractOrbEffect[3]; 
+        return effects.toArray(effectArray);
     }
     //==========================================================================
     //===   Inner Classes
