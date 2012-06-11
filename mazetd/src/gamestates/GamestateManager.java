@@ -169,6 +169,8 @@ public class GamestateManager {
     }
     
     public String getCurrentState() {
+        if (currentState == null)
+            return null;
         return currentState.getName();
     }
 
