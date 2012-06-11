@@ -37,6 +37,7 @@ package entities.effects;
 
 import entities.Creep;
 import entities.Orb.ElementType;
+import entities.Tower;
 
 /**
  * The class AbstractOrbEffect for the effects creeps will suffer if 
@@ -47,8 +48,7 @@ import entities.Orb.ElementType;
  * @version 0.3
  */
 public abstract class AbstractOrbEffect {
-    
-    
+
     private static AbstractOrbEffect createOrbEffect(ElementType type, int level) {
         switch (type) {
             case BLUE:
@@ -70,16 +70,17 @@ public abstract class AbstractOrbEffect {
     public static AbstractOrbEffect getOrbEffect(ElementType type, int level) {
         return createOrbEffect(type, level);
     }
-    
     //==========================================================================
     //===   Private Fields
     //==========================================================================
     protected OrbEffectType effectType;
     protected int level;
     protected Creep infected;
+    protected Tower enhanced;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
+
     /**
      * Creates an AbstractOrbEffect by the effect type and the orbs level.
      * 
@@ -91,20 +92,20 @@ public abstract class AbstractOrbEffect {
         this.effectType = effectType;
         this.level = level;
     }
-    
+
     /**
      * Updated the orb effect over time if timed (like poison).
      * @param tpf 
      */
     public abstract void update(float tpf);
-    
+
     /**
      * If its a timed effect this method should be filled with the desired 
      * behaviour and called on every tick the effect should happen 
      * (e.g. all 2 secs).
      */
     public abstract void onEffect();
-    
+
     /**
      * Will be called if the projectile hits and the effect happens 
      * the first time. Usefull for one-time effects.
@@ -112,11 +113,19 @@ public abstract class AbstractOrbEffect {
     public void onStart(Creep c) {
         this.infected = c;
     }
-    
+
+    public void onStart(Tower t) {
+        this.enhanced = t;
+    }
+
     /**
      * Is called if the effect is removed.
      */
     public abstract void onEnd(Creep c);
+
+    public void onEnd(Tower t) {
+        
+    }
 
     public OrbEffectType getEffectType() {
         return effectType;
@@ -125,5 +134,4 @@ public abstract class AbstractOrbEffect {
     public int getLevel() {
         return level;
     }
-    
 }

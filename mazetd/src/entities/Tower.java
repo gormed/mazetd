@@ -114,7 +114,7 @@ public class Tower extends ClickableEntity {
     private Node orbNodePos;
     private Node orbNodeRot;
     private float orbRotation = 0;
-    private ArrayList<AbstractOrbEffect> orbEffects = 
+    private ArrayList<AbstractOrbEffect> orbEffects =
             new ArrayList<AbstractOrbEffect>();
     //jme3
     private Node attackRangeCollisionNode;
@@ -316,6 +316,12 @@ public class Tower extends ClickableEntity {
         }
     }
 
+    private void updateOrbEffects(float tpf) {
+        for (AbstractOrbEffect e : orbEffects) {
+            e.update(tpf);
+        }
+    }
+
     /**
      * Attacks a creep in a give time interval defined by 
      * <code>damageInterval</code> and <code>intervalCounter</code> and does 
@@ -480,6 +486,16 @@ public class Tower extends ClickableEntity {
         this.maxHealthPoints = maxHealthPoints;
     }
 
+    public void addOrbEffect(AbstractOrbEffect e) {
+        orbEffects.add(e);
+        e.onStart(this);
+    }
+
+    public void removeOrbEffect(AbstractOrbEffect e) {
+        e.onEnd(this);
+        orbEffects.remove(e);
+    }
+
     /**
      * Places an orb at the next free position (max. three orbs.
      * @param type the desired orb-type to add
@@ -642,7 +658,7 @@ public class Tower extends ClickableEntity {
             if (orbTypeCount[i] > 0 && orbTypeCount[i] <= 3) {
                 effects.add(
                         AbstractOrbEffect.getOrbEffect(
-                        Orb.ElementType.values()[i], orbTypeCount[i]-1));
+                        Orb.ElementType.values()[i], orbTypeCount[i] - 1));
             }
         }
 
