@@ -53,7 +53,10 @@ public class Player {
     private int greenCount=0;
     private int yellowCount=0;
     private int whiteCount=0;
+    
+    
     private Orb.ElementType type;
+    
     
     private ArrayList<Orb> inventory;
     
@@ -118,9 +121,7 @@ public class Player {
   }
     }
     
-    public void useOrb(Orb orb) {
-    //TODO
-    }
+
     
   
     

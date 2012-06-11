@@ -53,15 +53,15 @@
         <panel id="spacer" width="10%" height="100%" childLayout="center"></panel>
         
         <panel id="panel_top_Gold" width="20%" height="100%" childLayout="center">    
-             <control name="label" id="Gold" color="" text="${CALL.getGold()}" width="100%" height="100%" />
+             <control name="label" id="gold" color="" text="${CALL.getGold()}" width="100%" height="100%" />
         </panel>
         
         <panel id="panel_top_Wave" width="20%" height="100%" childLayout="center">    
-             <control name="label" id="Wave" color="" text="${CALL.getWave()}" width="100%" height="100%" /> 
+             <control name="label" id="wave" color="" text="${CALL.getWave()}" width="100%" height="100%" /> 
         </panel>
         
         <panel id="panel_top_Time" width="20%" height="100%" childLayout="center">    
-             <control name="label" id="Timet" color="" text="${CALL.getTime()}" width="100%" height="100%" />
+             <control name="label" id="Timet" color="" text="" width="100%" height="100%" />
         </panel>
         
         <panel id="panel_top_Health" width="20%" height="100%" childLayout="center">    

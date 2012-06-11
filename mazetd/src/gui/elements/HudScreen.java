@@ -14,6 +14,7 @@ import de.lessvoid.nifty.elements.render.TextRenderer;
 import logic.Player;
 import gamestates.Gamestate;
 import gamestates.GamestateManager;
+import logic.WaveManager;
  
 public class HudScreen extends AbstractAppState implements ScreenController {
  
@@ -23,14 +24,14 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   private MazeTDGame game;
   private NiftyJmeDisplay niftyDisplay;
   private Player player= Player.getInstance();
-
+  private WaveManager waveManager;
  
  /** custom methods */ 
  public void disableGui() {
   nifty.exit(); 
   }
   
-  public void showMarketplace(String element, String ScreenID){
+ public void showMarketplace(String element, String ScreenID){
         Element niftyElement = nifty.getScreen(ScreenID).findElementByName(element);
         if(niftyElement.isVisible()) niftyElement.hide();
         else niftyElement.show();
@@ -42,13 +43,16 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   }
   
   public String getWave() {
-  return "TestWave"; 
+  waveManager=WaveManager.getInstance();
+  if(waveManager.isInitialized()){    
+  int currentWave = waveManager.getCurrentWaveCount();
+  int maxWaves = waveManager.getmaxWaves();
+  return currentWave+"/"+maxWaves; 
+  }
+  return "Test";
   }
    
-  public String getTime() {
-  return "TestTime"; 
-  }
-  
+ 
   public String getHealth() {
   return "TestHealth"; 
   }
@@ -79,22 +83,27 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
     
     private void updateTextLabels(float tpf) {
-//    if (screen.getScreenId().equals("hud")) {
-        if (GamestateManager.getInstance().getCurrentState().
+    if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
     
+            
     Element invSlot1 = nifty.getCurrentScreen().findElementByName("redCount");
     Element invSlot2 = nifty.getCurrentScreen().findElementByName("blueCount");
     Element invSlot3 = nifty.getCurrentScreen().findElementByName("greenCount");
     Element invSlot4 = nifty.getCurrentScreen().findElementByName("yellowCount");
     Element invSlot5 = nifty.getCurrentScreen().findElementByName("whiteCount");
 
+    Element wave = nifty.getCurrentScreen().findElementByName("wave");
+    Element gold = nifty.getCurrentScreen().findElementByName("gold");
 
     invSlot1.getRenderer(TextRenderer.class).setText(getRed()+"x");
     invSlot2.getRenderer(TextRenderer.class).setText(getBlue()+"x");
     invSlot3.getRenderer(TextRenderer.class).setText(getGreen()+"x");
     invSlot4.getRenderer(TextRenderer.class).setText(getYellow()+"x");
     invSlot5.getRenderer(TextRenderer.class).setText(getWhite()+"x");
+    
+    wave.getRenderer(TextRenderer.class).setText("Wave: "+getWave());
+    gold.getRenderer(TextRenderer.class).setText("TIme:");
     }
     }
     

@@ -219,6 +219,10 @@ public class WaveManager {
         return currentWaveCount;
     }
     
+     public int getmaxWaves() {
+        return maxWaves;
+    }
+    
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
