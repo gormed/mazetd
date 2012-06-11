@@ -114,6 +114,8 @@ public class Tower extends ClickableEntity {
     private Node orbNodePos;
     private Node orbNodeRot;
     private float orbRotation = 0;
+    private ArrayList<AbstractOrbEffect> orbEffects = 
+            new ArrayList<AbstractOrbEffect>();
     //jme3
     private Node attackRangeCollisionNode;
     //particle
@@ -640,7 +642,7 @@ public class Tower extends ClickableEntity {
             if (orbTypeCount[i] > 0 && orbTypeCount[i] <= 3) {
                 effects.add(
                         AbstractOrbEffect.getOrbEffect(
-                        Orb.ElementType.values()[i], orbTypeCount[i]));
+                        Orb.ElementType.values()[i], orbTypeCount[i]-1));
             }
         }
 
