@@ -37,6 +37,7 @@ package mazetd;
 
 import eventsystem.port.ScreenRayCast3D;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AbstractAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -56,9 +57,11 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.shadow.PssmShadowRenderer;
+import de.lessvoid.nifty.screen.ScreenController;
 import gui.elements.MainmenuScreen;
 import gui.elements.HudScreen;
 import gui.elements.PausedScreen;
+import java.util.HashMap;
 
 /**
  * Main application class of MazeTD. 
@@ -70,10 +73,13 @@ import gui.elements.PausedScreen;
  * @see SimpleApplication
  */
 public class MazeTDGame extends SimpleApplication {
+
+    public static final String HUD_SCREEN = "HUDScreen";
+    public static final String MAIN_MENU_SCREEN = "MainMenueScreen";
     //==========================================================================
     //===   Constants
     //==========================================================================
-
+    public static final String PAUSE_SCREEN = "PauseScreen";
     private static final boolean SHADOWS_ENABLED = true;
     private static final boolean SSAO_ENABLED = false;
     //==========================================================================
@@ -82,6 +88,7 @@ public class MazeTDGame extends SimpleApplication {
     /** The single reference to the game*/
     private static MazeTDGame instance;
     private boolean wasPaused;
+    private boolean pause;
 
     /** The hidden contructor of the game*/
     private MazeTDGame() {
@@ -120,7 +127,10 @@ public class MazeTDGame extends SimpleApplication {
     private ScreenRayCast3D rayCast3D;
     private EventManager eventManager;
     private IsoCameraControl isoCameraControl;
-    private GameDebugActionListener gameDebugActionListener = new GameDebugActionListener();
+    private HashMap<String, AbstractAppState> appStates =
+            new HashMap<String, AbstractAppState>();
+    private GameDebugActionListener gameDebugActionListener =
+            new GameDebugActionListener();
     private boolean showFps = true;
     /** The post processor. */
     private FilterPostProcessor postProcessor;
@@ -156,7 +166,13 @@ public class MazeTDGame extends SimpleApplication {
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(
                 assetManager, inputManager, audioRenderer, guiViewPort);
         Nifty nifty = niftyDisplay.getNifty();
-        nifty.fromXml("Interface/screen.xml", "start", new MainmenuScreen(), new HudScreen(), new PausedScreen());
+        appStates.put(MAIN_MENU_SCREEN, new MainmenuScreen());
+        appStates.put(HUD_SCREEN, new HudScreen());
+        appStates.put(PAUSE_SCREEN, new PausedScreen());
+        nifty.fromXml("Interface/screen.xml", "start",
+                (ScreenController) appStates.get(MAIN_MENU_SCREEN),
+                (ScreenController) appStates.get(HUD_SCREEN),
+                (ScreenController) appStates.get(PAUSE_SCREEN));
         guiViewPort.addProcessor(niftyDisplay);
 
     }
@@ -275,19 +291,26 @@ public class MazeTDGame extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
+
         if (wasPaused) {
             tpf = 0;
             wasPaused = false;
         }
 
-        // frequently updates the games current state
-        gamestateManager.update(tpf);
-        // camera
-        isoCameraControl.updateCamera(tpf);
-        // raycaster
-        rayCast3D.update(tpf);
-        // events
-        eventManager.update(tpf);
+        for (AbstractAppState s : appStates.values()) {
+            s.update(tpf);
+        }
+        
+        if (!pause) {
+            // frequently updates the games current state
+            gamestateManager.update(tpf);
+            // camera
+            isoCameraControl.updateCamera(tpf);
+            // raycaster
+            rayCast3D.update(tpf);
+            // events
+            eventManager.update(tpf);
+        }
     }
 
     @Override

@@ -70,7 +70,7 @@ public class SingleplayerState extends Gamestate {
 
     @Override
     public void update(float tpf) {
-
+        
         updateLightsAndShadows(tpf);
         level.update(tpf);
 

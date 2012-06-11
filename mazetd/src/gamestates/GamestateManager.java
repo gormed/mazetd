@@ -167,6 +167,10 @@ public class GamestateManager {
         }
         return gamestates.get(name);
     }
+    
+    public String getCurrentState() {
+        return currentState.getName();
+    }
 
     /**
      * Updates the.

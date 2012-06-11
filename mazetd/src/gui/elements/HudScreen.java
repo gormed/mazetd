@@ -79,7 +79,9 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
     
     private void updateTextLabels(float tpf) {
-    if (screen.getScreenId().equals("hud")) {
+//    if (screen.getScreenId().equals("hud")) {
+        if (GamestateManager.getInstance().getCurrentState().
+                equals(GamestateManager.SINGLEPLAYER_STATE)) {
     
     Element invSlot1 = nifty.getCurrentScreen().findElementByName("redCount");
     Element invSlot2 = nifty.getCurrentScreen().findElementByName("blueCount");

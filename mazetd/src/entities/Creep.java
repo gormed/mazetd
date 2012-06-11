@@ -473,7 +473,6 @@ public class Creep extends CollidableEntity {
         stop();
         // drop an orb if chance is high enough
         dropOrb();
-
         // Path debugging
         if (Pathfinder.DEBUG_PATH) {
             if (debugPathToggle) {

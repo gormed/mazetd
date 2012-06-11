@@ -49,7 +49,6 @@ import com.jme3.scene.shape.Sphere;
 import entities.base.ClickableEntity;
 import entities.base.EntityManager;
 import entities.effects.AbstractOrbEffect;
-import entities.effects.OrbEffectType;
 import entities.effects.PoisonOrbEffect;
 import eventsystem.port.ScreenRayCast3D;
 import mazetd.MazeTDGame;
@@ -70,11 +69,15 @@ public class Orb extends ClickableEntity {
      * The enum ElementType discribes which Elements for orbs exist.
      */
     public enum ElementType {
-
-        RED,
+        /** The green orb type, equals OrbEffectType.POISON */
+        GREEN, 
+        /** The blue orb type, equals OrbEffectType.FROST */
         BLUE,
-        GREEN,
+        /** The red orb type, equals OrbEffectType.FIRE */
+        RED,
+        /** The yellow orb type, equals OrbEffectType.RANGE */
         YELLOW,
+        /** The white orb type, equals OrbEffectType.RATE */
         WHITE
     }
     //==========================================================================
@@ -150,7 +153,7 @@ public class Orb extends ClickableEntity {
     @Override
     public void onClick() {
         explodes();
-        player=player.getInstance();
+        player = player.getInstance();
         player.addOrb(this);
     }
 
@@ -232,29 +235,6 @@ public class Orb extends ClickableEntity {
         return type;
     }
 
-    public AbstractOrbEffect createOrbEffect() {
-        switch (type) {
-            case BLUE:
-
-                return null;
-            case GREEN:
-                return new PoisonOrbEffect(OrbEffectType.POISON, 0);
-            case RED:
-                
-                return null;
-            case WHITE:
-                
-                return null;
-            case YELLOW:
-            default:    
-                return null;
-        }
-    }
-    
-    AbstractOrbEffect getOrbEffect() {
-        return createOrbEffect();
-    }
-    
     ColorRGBA getOrbColor() {
         return element.color.clone();
     }

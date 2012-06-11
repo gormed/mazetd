@@ -184,6 +184,7 @@ public class WaveManager {
             currentWave = waveDescriptions.poll();
             creepGenerationCount = 0;
             waveCompletlySpawned = false;
+            
         } else {
         }
     }
@@ -214,7 +215,9 @@ public class WaveManager {
         return currentWave;
     }
 
-    
+    public int getCurrentWaveCount() {
+        return currentWaveCount;
+    }
     
     //==========================================================================
     //===   Inner Classes
