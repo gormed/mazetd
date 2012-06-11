@@ -81,9 +81,13 @@ public class Player {
     
     switch (type) {
             case RED : redCount= redCount-1;
+                break;
             case BLUE : blueCount= blueCount-1;
+                break;
             case GREEN : greenCount= greenCount-1;
+                break;
             case YELLOW : yellowCount= yellowCount-1;
+                break;
             case WHITE : whiteCount= whiteCount-1;
             break;
             default:
@@ -97,9 +101,13 @@ public class Player {
     
     switch (type) {
             case RED : redCount= redCount+1;
+                break;
             case BLUE : blueCount= blueCount+1;
+                break;
             case GREEN : greenCount= greenCount+1;
+                break;
             case YELLOW : yellowCount= yellowCount+1;
+                break;
             case WHITE : whiteCount= whiteCount+1;
             break;
             default:

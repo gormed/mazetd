@@ -157,29 +157,29 @@
    </panel>
    <panel id="panel_context_mid" width="60%" height="100%" childLayout="vertical">
        <panel id="spacer" width="100%" height="5%" childLayout="center"></panel>
-        <panel id="panel_mid_top" width="100%" height="45%" childLayout="horizontal">
+        <panel id="panel_mid_top" width="100%" height="40%" childLayout="horizontal">
          <text text="${CALL.getHealth()}" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />   
         </panel>
         <panel id="panel_mid_bot" width="100%" height="45%" childLayout="horizontal">
             <panel id="spacer" width="10%" height="100%" childLayout="center"></panel>
             
             
-            <panel id="Slot1" width="26%" height="100%" childLayout="center">
-            <image filename="Interface/Textures/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" ></image>   
+            <panel id="Slot1" width="26%" height="100%" childLayout="center" backgroundImage="Interface/Textures/panel_bottom.png">
+            <!--<image filename="Interface/Textures/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" ></image>-->   
             </panel>
             
-            <panel id="Slot2" width="26%" height="100%" childLayout="center">
-            <image filename="Interface/Textures/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" ></image>    
+            <panel id="Slot2" width="26%" height="100%" childLayout="center" backgroundImage="Interface/Textures/panel_bottom.png">
+            <!--<image filename="Interface/Textures/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" ></image>-->  
             </panel>
             
-            <panel id="Slot3" width="26%" height="100%" childLayout="center">
-            <image filename="Interface/Textures/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" ></image>   
+            <panel id="Slot3" width="26%" height="100%" childLayout="center" backgroundImage="Interface/Textures/panel_bottom.png">
+            <!--<image filename="Interface/Textures/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" ></image>-->
             </panel>
             
             
             <panel id="spacer" width="10%" height="100%" childLayout="center"></panel>
         </panel>
-        <panel id="spacer" width="100%" height="5%" childLayout="center"></panel>
+        <panel id="spacer" width="100%" height="10%" childLayout="center"></panel>
    </panel>
    <panel id="panel_context_right" width="20%" height="100%" childLayout="vertical">
     <panel id="top" width="100%" height="50%" childLayout="center">
