@@ -53,6 +53,7 @@ import entities.effects.OrbEffectType;
 import entities.effects.PoisonOrbEffect;
 import eventsystem.port.ScreenRayCast3D;
 import mazetd.MazeTDGame;
+import logic.Player;
 
 /**
  * The class Orb for upgrade-orbs in MazeTD - for orbs that drop from 
@@ -87,6 +88,7 @@ public class Orb extends ClickableEntity {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    private Player player;
     private Vector3f position;
     private ElementType type;
     private Element element;
@@ -148,6 +150,8 @@ public class Orb extends ClickableEntity {
     @Override
     public void onClick() {
         explodes();
+        player=player.getInstance();
+        player.addOrb(this);
     }
 
     @Override

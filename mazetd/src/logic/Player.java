@@ -34,12 +34,107 @@
  * Documentation created: 13.05.2012 - 23:13:37 by Hans
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
+import java.util.ArrayList;
+import entities.Orb;
 
 /**
  * The class Player
- * @author Hans
+ * @author Ahmed
  * @version
  */
 public class Player {
     
+    public static final int PLAYRER_HEALTH = 500;
+    
+    public static Player instance;
+   
+    private int redCount=0;
+    private int blueCount=0;
+    private int greenCount=0;
+    private int yellowCount=0;
+    private int whiteCount=0;
+    private Orb.ElementType type;
+    
+    private ArrayList<Orb> inventory;
+    
+     
+ 
+
+  
+    
+      
+    public static Player getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        return instance = new Player();
+    }
+    
+    
+    public Player(){
+    inventory = new ArrayList<Orb>();
+    }
+    
+    public void removeOrb(Orb orb) {
+    inventory.remove(orb);
+    type=orb.getElementType();
+    
+    switch (type) {
+            case RED : redCount= redCount-1;
+            case BLUE : blueCount= blueCount-1;
+            case GREEN : greenCount= greenCount-1;
+            case YELLOW : yellowCount= yellowCount-1;
+            case WHITE : whiteCount= whiteCount-1;
+            break;
+            default:
+            break;
+    }
+  }
+    
+    public void addOrb(Orb orb) {
+    inventory.add(orb);
+    type=orb.getElementType();
+    
+    switch (type) {
+            case RED : redCount= redCount+1;
+            case BLUE : blueCount= blueCount+1;
+            case GREEN : greenCount= greenCount+1;
+            case YELLOW : yellowCount= yellowCount+1;
+            case WHITE : whiteCount= whiteCount+1;
+            break;
+            default:
+            break;
+                
+            
+  
+  }
+    }
+    
+    public void useOrb(Orb orb) {
+    //TODO
+    }
+    
+  
+    
+
+
+    public int getRedCount(){
+    return redCount;
+    }
+    
+    public int getBlueCount(){
+    return blueCount;
+    }
+      
+    public int getGreenCount(){
+    return greenCount;
+    }
+    
+    public int getYellowCount(){
+    return yellowCount;
+    }
+   
+    public int getWhiteCount(){
+    return whiteCount;
+    }
 }

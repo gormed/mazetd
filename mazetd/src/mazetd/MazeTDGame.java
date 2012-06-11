@@ -57,6 +57,8 @@ import com.jme3.post.filters.BloomFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.shadow.PssmShadowRenderer;
 import gui.elements.MainmenuScreen;
+import gui.elements.HudScreen;
+import gui.elements.PausedScreen;
 
 /**
  * Main application class of MazeTD. 
@@ -154,7 +156,7 @@ public class MazeTDGame extends SimpleApplication {
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(
                 assetManager, inputManager, audioRenderer, guiViewPort);
         Nifty nifty = niftyDisplay.getNifty();
-        nifty.fromXml("Interface/screen.xml", "start", new MainmenuScreen("start"));
+        nifty.fromXml("Interface/screen.xml", "start", new MainmenuScreen(), new HudScreen(), new PausedScreen());
         guiViewPort.addProcessor(niftyDisplay);
 
     }

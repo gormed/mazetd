@@ -14,7 +14,7 @@ import de.lessvoid.nifty.elements.Element;
 import gamestates.Gamestate;
 import gamestates.GamestateManager;
  
-public class MainmenuScreen extends AbstractAppState implements ScreenController {
+public class PausedScreen extends AbstractAppState implements ScreenController {
  
   private Nifty nifty;
   private Screen screen;
@@ -26,7 +26,7 @@ public class MainmenuScreen extends AbstractAppState implements ScreenController
 
   
   /** custom methods */ 
-  public void startGame(String nextScreen) {
+  public void resumeGame(String nextScreen) {
   nifty.gotoScreen(nextScreen);
   //nifty.getCurrentScreen().getScreenController();
         gamestateManager = GamestateManager.getInstance();
@@ -40,7 +40,7 @@ public class MainmenuScreen extends AbstractAppState implements ScreenController
   }
  
   
-  public MainmenuScreen() { 
+  public PausedScreen() { 
    
   } 
  

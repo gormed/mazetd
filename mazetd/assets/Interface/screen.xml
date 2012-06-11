@@ -11,78 +11,196 @@
 -->
 <useControls filename="nifty-default-controls.xml" />
 <useStyles filename="nifty-default-styles.xml" />
- 
+
+
+
+<!-- ============================Start Screen==================================--> 
  <screen id="start" controller="gui.elements.MainmenuScreen">
-     <layer id="background" backgroundColor="#000f">
-         
-     </layer>
-     <layer id="foreground" backgroundColor="#0000" childLayout="vertical">
-         <panel id="panel_top" height="10%" width="100%" align="center" childLayout="center"
-         backgroundColor="#f008">
-             <text text="MazeTD" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
-         </panel>
-         <panel id="panel_bottom_1" height="45%" width="100%" align="center" childLayout="center">
-         </panel>
-         <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
+   
+   <layer id="background" backgroundColor="#000f"></layer>
+   
+   <layer id="foreground" backgroundColor="#0000" childLayout="vertical">
+        
+        <panel id="panel_top" height="10%" width="100%" align="center" childLayout="center"
+               backgroundColor="#f008">
+            <text text="MazeTD" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
+        </panel>
+        <panel id="panel_bottom_1" height="45%" width="100%" align="center" childLayout="center">
+        </panel>
+        <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
              <control name="button" label="Start" id="StartButton" align="center" valign="center" 
              visibleToMouse="true" > 
-             <interact onClick="startGame(hud)"/>
+                <interact onClick="startGame(hud)"/>
              </control>
-         </panel>
-         <panel id="panel_bottom_3" height="5%" width="100%" align="center" childLayout="center">
+        </panel>
+        <panel id="panel_bottom_3" height="5%" width="100%" align="center" childLayout="center">
              <control name="button" label="Exit MazeTD" id="QuitButton" align="center" valign="center" 
              visibleToMouse="true" > 
-             <interact onClick="quitGame()"/>
+                <interact onClick="quitGame()"/>
              </control>
-         </panel>
-    </layer>
+        </panel>
+         
+  </layer>
+
 </screen>
 
-
-<screen id="hud" controller="gui.elements.MainmenuScreen">
-    <layer id="background" childLayout="center">
-        <image filename="Interface/hud-frame.png" imageMode="resize:40,490,110,170,40,560,40,270,40,560,40,40" width="100%" height="100%"/>
-    </layer>
+<!-- ============================Hud Screen==================================-->
+<screen id="hud" controller="gui.elements.HudScreen">
+    
     <layer id="foreground" childLayout="vertical">
-        <panel id="panel_top" height="4%" width="100%" align="left" childLayout="horizontal">  
-            <panel id="panel_top_1" height="100%" width="20%" align="center" childLayout="center"> 
-                <text text="Gold:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
-            </panel>
-            <panel id="panel_top_2" height="100%" width="20%" align="center" childLayout="center">  
-                <text text="Time:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
-            </panel>
-            <panel id="panel_top_3" height="100%" width="20%" align="center" childLayout="center"> 
-                <text text="Wave:" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
-            </panel>
-            <panel id="panel_top_4" height="100%" width="20%" align="center" childLayout="center">  
-            </panel>
-            <panel id="panel_top_5" height="100%" width="20%" align="center" childLayout="center">
-                <control name="button" label="Gui mach Futsch!" id="GuiButton" align="right" valign="bottom" 
-                visibleToMouse="true" > 
+        <!--Top Panel-->
+    <panel id="panel_top" width="100%" height="5%" childLayout="horizontal" backgroundImage="Interface/Textures/panel_top.png">  
+        <panel id="spacer" width="10%" height="100%" childLayout="center"></panel>
+        
+        <panel id="panel_top_Gold" width="20%" height="100%" childLayout="center">    
+             <control name="label" id="Gold" color="" text="${CALL.getGold()}" width="100%" height="100%" />
+        </panel>
+        
+        <panel id="panel_top_Wave" width="20%" height="100%" childLayout="center">    
+             <control name="label" id="Wave" color="" text="${CALL.getWave()}" width="100%" height="100%" /> 
+        </panel>
+        
+        <panel id="panel_top_Time" width="20%" height="100%" childLayout="center">    
+             <control name="label" id="Timet" color="" text="${CALL.getTime()}" width="100%" height="100%" />
+        </panel>
+        
+        <panel id="panel_top_Health" width="20%" height="100%" childLayout="center">    
+             <control name="label" id="Health" color="" text="${CALL.getHealth()}" width="100%" height="100%" /> 
+        </panel>
+       
+        <panel id="spacer" width="10%" height="100%" childLayout="center">
+            <control name="button" label="Gui mach Futsch!" id="GuiButton" align="right" valign="bottom" visibleToMouse="true" > 
                 <interact onClick="disableGui()"/>
-                </control>
-            </panel>
+            </control>    
         </panel>
-        <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="false">  
-            <panel id="panel_mid_right"  backgroundImage="Interface/Shopbackground.png" height="75%" width="15%" align="right" valign="center" childLayout="center" >  
-            </panel>
+    </panel>
+        <!--Mid Panel-->
+    <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="false">  
+        <panel id="panel_mid_right"  backgroundImage="Interface/Textures/Shopbackground.png" height="75%" width="15%" align="right" valign="center" childLayout="center" >  
         </panel>
-        <panel id="panel_bottom" height="25%" width="100%" align="left" childLayout="horizontal">   
-            <panel id="panel_bottom_1" height="100%" width="25%" align="center" childLayout="center"> 
-            </panel>
-        <panel id="panel_bottom_2" height="100%" width="50%" align="center" childLayout="center">  
-            <text text="Kontextmenu" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
+    </panel>
+        <!--Bot Panel-->
+    <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" backgroundImage="Interface/Textures/panel_bottom.png">  
+    
+    <panel id="panel_bot_left" width="20%" height="100%" childLayout="center">  
+    </panel>
+    
+    <panel id="panel_bot_mid" width="60%" height="100%" childLayout="vertical">  
+        <!--Orbs-->
+    <panel id="panel_Orb_row" width="100%" height="25%" childLayout="horizontal">
+        <panel id="spacer" width="15%" height="100%" childLayout="center">  </panel>
+        
+        <panel id="panel_Slot1" width="10%" height="100%" childLayout="center">  
+        <image filename="Interface/Textures/redOrb.png" valign="center" align="center" height="70%" width="40%" ></image>
         </panel>
-        <panel id="panel_bottom_3" height="100%" width="25%" align="center" childLayout="center"> 
-            <control name="button" label="Shop" id="StartButton" align="right" valign="bottom" 
-            visibleToMouse="true" > 
-            <interact onClick="testMarketplace(panel_mid, hud)"/>
-            </control>
+        <panel id="panel_Slot1_Text" width="4%" height="100%" childLayout="center"> 
+        <control name="label" id="redCount" color="" text="${CALL.getRed()}x" width="100%" height="100%" />
         </panel>
+    
+        <panel id="panel_Slot2" width="10%" height="100%" childLayout="center">
+        <image filename="Interface/Textures/blueOrb.png" valign="center" align="center" height="70%" width="40%" ></image>
         </panel>
+        <panel id="panel_Slot2_Text" width="4%" height="100%" childLayout="center"> 
+        <control name="label" id="blueCount" color="" text="${CALL.getBlue()}x" width="100%" height="100%" />
+        </panel>
+    
+        <panel id="panel_Slot3" width="10%" height="100%" childLayout="center">  
+        <image filename="Interface/Textures/greenOrb.png" valign="center" align="center" height="70%" width="40%" ></image>
+        </panel>
+        <panel id="panel_Slot3_Text" width="4%" height="100%" childLayout="center"> 
+        <control name="label" id="greenCount" color="" text="${CALL.getGreen()}x" width="100%" height="100%" />
+        </panel>
+    
+        <panel id="panel_Slot4" width="10%" height="100%" childLayout="center">  
+        <image filename="Interface/Textures/yellowOrb.png" valign="center" align="center" height="70%" width="40%" ></image>
+        </panel>
+        <panel id="panel_Slot4_Text" width="4%" height="100%" childLayout="center"> 
+        <control name="label" id="yellowCount" color="" text="${CALL.getYellow()}x" width="100%" height="100%" />
+        </panel>
+    
+        <panel id="panel_Slot5" width="10%" height="100%" childLayout="center">  
+        <image filename="Interface/Textures/whiteOrb.png" valign="center" align="center" height="70%" width="40%" ></image>
+        </panel>
+        <panel id="panel_Slot5_Text" width="4%" height="100%" childLayout="center"> 
+        <control name="label" id="whiteCount" color="" text="${CALL.getWhite()}x" width="100%" height="100%" />
+        </panel>
+    
+        <panel id="spacer" width="15%" height="100%" childLayout="center"></panel>
+    </panel>
+         <panel id="panel_Context" width="100%" height="75%" childLayout="horizontal"></panel>
+    </panel>
+    
+    <panel id="panel_bot_right" width="20%" height="100%" childLayout="center">  
+        <image filename="Interface/Textures/shop.png" valign="center" align="center" height="50%" width="50%" >
+            <interact onClick="showMarketplace(panel_mid, hud)"/>    
+        </image>
+    </panel>
+    </panel>
     </layer>  
+    
+    <layer id="Tower_context" childLayout="vertical">
+    
+    <panel id="panel_top" width="100%" height="5%" childLayout="horizontal" visible="false"></panel>
+
+    <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="false"></panel>   
+
+    <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" >
+    <panel id="panel_bot_left" width="20%" height="100%" childLayout="center">  
+    </panel>
+    <panel id="panel_bot_mid" width="60%" height="100%" childLayout="vertical">  
+    <panel id="panel_bot_mid_top" width="100%" height="25%" childLayout="horizontal"></panel>
+    
+   
+   <panel id="panel_context" width="100%" height="75%" childLayout="horizontal">   
+   <panel id="panel_context_left" width="20%" height="100%" childLayout="center">
+        <image filename="Textures/HUD/TowerIcon.png" valign="center" align="center" height="90%" width="90%" ></image>  
+   </panel>
+   <panel id="panel_context_mid" width="60%" height="100%" childLayout="vertical">
+       <panel id="spacer" width="100%" height="5%" childLayout="center"></panel>
+        <panel id="panel_mid_top" width="100%" height="45%" childLayout="horizontal">
+         <text text="${CALL.getHealth()}" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />   
+        </panel>
+        <panel id="panel_mid_bot" width="100%" height="45%" childLayout="horizontal">
+            <panel id="spacer" width="10%" height="100%" childLayout="center"></panel>
+            
+            
+            <panel id="Slot1" width="26%" height="100%" childLayout="center">
+            <image filename="Interface/Textures/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" ></image>   
+            </panel>
+            
+            <panel id="Slot2" width="26%" height="100%" childLayout="center">
+            <image filename="Interface/Textures/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" ></image>    
+            </panel>
+            
+            <panel id="Slot3" width="26%" height="100%" childLayout="center">
+            <image filename="Interface/Textures/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" ></image>   
+            </panel>
+            
+            
+            <panel id="spacer" width="10%" height="100%" childLayout="center"></panel>
+        </panel>
+        <panel id="spacer" width="100%" height="5%" childLayout="center"></panel>
+   </panel>
+   <panel id="panel_context_right" width="20%" height="100%" childLayout="vertical">
+    <panel id="top" width="100%" height="50%" childLayout="center">
+        <image filename="Interface/Textures/destroyTower.png" valign="center" align="center" height="100%" width="90%" >
+            <interact onClick="destroyTower()"/>  
+        </image>  
+    </panel> 
+    <panel id="bot" width="100%" height="50%" childLayout="center"></panel>
+   </panel>
+   </panel>
+    
+    <panel id="panel_bot_right" width="20%" height="100%" childLayout="center"></panel>
+    
+    </panel>
+    </panel>
+   </layer>
+    
  </screen>
  
+ 
+ <!--=============================Paused Screen==============================-->
  <screen id="pause" controller="gui.elements.PausedScreen">
     <layer id="background" backgroundColor="#000f">
     </layer>
@@ -94,23 +212,24 @@
         <panel id="panel_bottom_1" height="45%" width="100%" align="center" childLayout="center">
             <control name="button" label="Resume Game" id="ResumeButton" align="center" valign="bottom" 
             visibleToMouse="true" > 
-                <interact onClick="resume()"/>
+                <interact onClick="resumeGame()"/>
             </control>
         </panel>
         <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
             <control name="button" label="Leave Game" id="LeaveButton" align="center" valign="center" 
             visibleToMouse="true" > 
-                <interact onClick="Leave()"/>
+                <interact onClick="LeaveGame()"/>
             </control>
         </panel>
         <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
            <control name="button" label="Exit MazeTD" id="QuitButton" align="center" valign="center" 
             visibleToMouse="true" > 
-                <interact onClick="terminate()"/>
+                <interact onClick="exitMazeTD()"/>
             </control>
        </panel>
     </layer>
   </screen>
+
   
 </nifty>
 
