@@ -52,8 +52,7 @@ public abstract class AbstractOrbEffect {
     private static AbstractOrbEffect createOrbEffect(ElementType type, int level) {
         switch (type) {
             case BLUE:
-
-                return null;
+                return new FreezeOrbEffect(level);
             case GREEN:
                 return new PoisonOrbEffect(level);
             case RED:
