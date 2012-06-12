@@ -71,6 +71,7 @@ import java.util.Queue;
 import java.util.Random;
 import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
+import logic.Player;
 
 /**
  * The class Creep discribes the creep entity.
@@ -114,6 +115,7 @@ public class Creep extends CollidableEntity {
     private float maxHealthPoints = CREEP_MAX_HP;
     private Tower attacker;
     private Tower target;
+    private Player player = Player.getInstance();
     private HashSet<AbstractOrbEffect> orbEffects = new HashSet<AbstractOrbEffect>();
     private float speed = CREEP_BASE_SPEED;
     private boolean moving = true;
@@ -473,6 +475,8 @@ public class Creep extends CollidableEntity {
         stop();
         // drop an orb if chance is high enough
         dropOrb();
+        //drop gold
+        player.addGold(goldDrop);
         // Path debugging
         if (Pathfinder.DEBUG_PATH) {
             if (debugPathToggle) {

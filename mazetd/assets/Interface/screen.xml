@@ -61,11 +61,11 @@
         </panel>
         
         <panel id="panel_top_Time" width="20%" height="100%" childLayout="center">    
-             <control name="label" id="Timet" color="" text="" width="100%" height="100%" />
+             <control name="label" id="time" color="" text="" width="100%" height="100%" />
         </panel>
         
         <panel id="panel_top_Health" width="20%" height="100%" childLayout="center">    
-             <control name="label" id="Health" color="" text="${CALL.getHealth()}" width="100%" height="100%" /> 
+             <control name="label" id="Health" color="" text="" width="100%" height="100%" /> 
         </panel>
        
         <panel id="spacer" width="10%" height="100%" childLayout="center">

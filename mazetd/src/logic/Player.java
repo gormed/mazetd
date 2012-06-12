@@ -54,6 +54,8 @@ public class Player {
     private int yellowCount=0;
     private int whiteCount=0;
     
+    private int gold=500;
+    
     
     private Orb.ElementType type;
     
@@ -114,18 +116,26 @@ public class Player {
             case WHITE : whiteCount= whiteCount+1;
             break;
             default:
-            break;
-                
-            
+            break;     
   
   }
     }
     
-
+    public void addGold(int golddrop){
+    gold=gold+golddrop;
+    }
     
-  
+    public void chargeGold(int costs){
+    gold=gold-costs;
+    }
     
-
+     public void buyOrb(){
+    //TODO
+    }
+     
+    public int getGold(){
+    return gold;
+    }
 
     public int getRedCount(){
     return redCount;
