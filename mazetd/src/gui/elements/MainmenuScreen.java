@@ -23,13 +23,15 @@ public class MainmenuScreen extends AbstractAppState implements ScreenController
   private MazeTDGame game;
   private SingleplayerState singleplayerState;
   private GamestateManager gamestateManager;
-
+  private HudScreen hudScreen;
   
   /** custom methods */ 
   public void startGame(String nextScreen) {
   nifty.gotoScreen(nextScreen);
   gamestateManager = GamestateManager.getInstance();
   gamestateManager.enterState("Singleplayer");
+  hudScreen=game.getHudScreenInstance();
+  hudScreen.init();
   }
  
   public void quitGame() {

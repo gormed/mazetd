@@ -216,7 +216,7 @@
             </control>
         </panel>
         <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
-            <control name="button" label="Leave Game" id="LeaveButton" align="center" valign="center" 
+            <control name="button" label="Leave//TODO" id="LeaveButton" align="center" valign="center" 
             visibleToMouse="true" > 
                 <interact onClick="LeaveGame(start)"/>
             </control>

@@ -18,29 +18,24 @@ public class PausedScreen extends AbstractAppState implements ScreenController {
  
   private Nifty nifty;
   private Screen screen;
-  private HudScreen hudScreen;
+  private HudScreen hudScreen=MazeTDGame.getInstance().getHudScreenInstance();
   private SimpleApplication app;
   private MazeTDGame game=MazeTDGame.getInstance();
   private SingleplayerState singleplayerState;
-  private GamestateManager gamestateManager;
+  private GamestateManager gamestateManager=GamestateManager.getInstance();
   
 
   
   /** custom methods */ 
   public void resumeGame(String nextScreen) {
   nifty.gotoScreen(nextScreen);
-  hudScreen=game.getHudScreenInstance();
   hudScreen.setPaused(false);
-        gamestateManager = GamestateManager.getInstance();
-        gamestateManager.resume();
+  gamestateManager.resume();
   
   }
    
   public void LeaveGame(String nextScreen) {
-   nifty.gotoScreen(nextScreen);
-   gamestateManager = GamestateManager.getInstance();
-   gamestateManager.terminate();
-   gamestateManager.enterState("Mainmenu");
+  //TODO
   }
   
   public void quitGame() {
