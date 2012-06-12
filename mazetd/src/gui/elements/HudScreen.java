@@ -21,6 +21,8 @@ import logic.WaveManager;
  
 public class HudScreen extends AbstractAppState implements ScreenController {
  
+    
+  private GamestateManager gamestateManager;   
   private Nifty nifty;
   private Screen screen;
   private SimpleApplication app;
@@ -29,8 +31,9 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   private Player player= Player.getInstance();
   private WaveManager waveManager;
   private int timeElapsed=0;
-  private int min=0;
-  private float time=0;
+  private int min;
+  private float time;
+  private boolean paused;
 
 
 
@@ -45,6 +48,10 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   public void disableGui() {
   nifty.exit(); 
   }
+
+  public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
  
   public void showMarketplace(String element, String ScreenID){
         Element marketPlace = nifty.getScreen(ScreenID).findElementByName(element);
@@ -52,6 +59,13 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         else marketPlace.show();
 
     }
+  
+  public void pause(String nextScreen){
+  paused=true;
+  nifty.gotoScreen(nextScreen);
+  gamestateManager = GamestateManager.getInstance();
+  gamestateManager.pause();
+  }
  
  public void showContext(){
  Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
@@ -61,12 +75,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   
   public String getWave() {
   waveManager=WaveManager.getInstance();
-  if(waveManager.isInitialized()){    
+ // if(waveManager.isInitialized()){    
   int currentWave = waveManager.getCurrentWaveCount();
   int maxWaves = waveManager.getmaxWaves();
   return currentWave+"/"+maxWaves; 
-  }
-  return "Test";
+  //}
   }
    
    public String getTime(){
@@ -83,35 +96,6 @@ public class HudScreen extends AbstractAppState implements ScreenController {
    return min+":"+timeElapsed;
    }
     
-    public int getGold() {
-    int g = player.getGold();
-    return g; 
-    }
-    
-    public int getRed(){
-    int r = player.getRedCount();
-    return r;
-    }
-    
-    public int getBlue(){
-    int b = player.getBlueCount();
-    return b;
-    }
-      
-    public int getGreen(){
-    int g = player.getGreenCount();
-    return g;
-    }
-    
-    public int getYellow(){
-    int y = player.getYellowCount();
-    return y;
-    }
-   
-    public int getWhite(){
-    int w = player.getWhiteCount();
-    return w;
-    }
     
     private void updateTextLabels(float tpf) {
     if (GamestateManager.getInstance().getCurrentState().
@@ -128,13 +112,13 @@ public class HudScreen extends AbstractAppState implements ScreenController {
      Element time = nifty.getCurrentScreen().findElementByName("time");
    
 
-    invSlot1.getRenderer(TextRenderer.class).setText(getRed()+"x");
-    invSlot2.getRenderer(TextRenderer.class).setText(getBlue()+"x");
-    invSlot3.getRenderer(TextRenderer.class).setText(getGreen()+"x");
-    invSlot4.getRenderer(TextRenderer.class).setText(getYellow()+"x");
-    invSlot5.getRenderer(TextRenderer.class).setText(getWhite()+"x");
+    invSlot1.getRenderer(TextRenderer.class).setText(player.getRedCount()+"x");
+    invSlot2.getRenderer(TextRenderer.class).setText(player.getBlueCount()+"x");
+    invSlot3.getRenderer(TextRenderer.class).setText(player.getGreenCount()+"x");
+    invSlot4.getRenderer(TextRenderer.class).setText(player.getYellowCount()+"x");
+    invSlot5.getRenderer(TextRenderer.class).setText(player.getWhiteCount()+"x");
    
-    gold.getRenderer(TextRenderer.class).setText("Gold: "+getGold()); 
+    gold.getRenderer(TextRenderer.class).setText("Gold: "+player.getGold()); 
     wave.getRenderer(TextRenderer.class).setText("Wave: "+getWave());
     time.getRenderer(TextRenderer.class).setText("Time: "+getTime());
 
@@ -153,7 +137,8 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     this.screen = screen;
   }
  
-  public void onStartScreen() { 
+  public void onStartScreen() {
+     
   }
  
   public void onEndScreen() { 
@@ -163,6 +148,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
  
     @Override
     public void update(float tpf) { 
+        if(!paused){
         updateTextLabels(tpf);   
         time+=tpf;
         timeElapsed=(int)(time+0.5f);
@@ -170,7 +156,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
             time=0;
             min=min+1;
         }
- 
+        }
     }
   }
  

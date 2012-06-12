@@ -69,8 +69,8 @@
         </panel>
        
         <panel id="spacer" width="10%" height="100%" childLayout="center">
-            <control name="button" label="Gui mach Futsch!" id="GuiButton" align="right" valign="bottom" visibleToMouse="true" > 
-                <interact onClick="disableGui()"/>
+            <control name="button" label="Pause" id="pause" visibleToMouse="true" width="80%" height="80%" > 
+                <interact onClick="pause(pause)"/>
             </control>    
         </panel>
     </panel>
@@ -212,19 +212,19 @@
         <panel id="panel_bottom_1" height="45%" width="100%" align="center" childLayout="center">
             <control name="button" label="Resume Game" id="ResumeButton" align="center" valign="bottom" 
             visibleToMouse="true" > 
-                <interact onClick="resumeGame()"/>
+                <interact onClick="resumeGame(hud)"/>
             </control>
         </panel>
         <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
             <control name="button" label="Leave Game" id="LeaveButton" align="center" valign="center" 
             visibleToMouse="true" > 
-                <interact onClick="LeaveGame()"/>
+                <interact onClick="LeaveGame(start)"/>
             </control>
         </panel>
         <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
            <control name="button" label="Exit MazeTD" id="QuitButton" align="center" valign="center" 
             visibleToMouse="true" > 
-                <interact onClick="exitMazeTD()"/>
+                <interact onClick="quitGame()"/>
             </control>
        </panel>
     </layer>

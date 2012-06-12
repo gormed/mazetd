@@ -529,7 +529,7 @@ public class Creep extends CollidableEntity {
         stop();
         // drop an orb if chance is high enough
         dropOrb();
-        //drop gold
+        // drop gold
         player.addGold(goldDrop);
         // Path debugging
         if (Pathfinder.DEBUG_PATH) {

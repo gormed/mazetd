@@ -13,29 +13,38 @@ import gamestates.lib.SingleplayerState;
 import de.lessvoid.nifty.elements.Element;
 import gamestates.Gamestate;
 import gamestates.GamestateManager;
- 
+import gui.elements.HudScreen;
 public class PausedScreen extends AbstractAppState implements ScreenController {
  
   private Nifty nifty;
   private Screen screen;
+  private HudScreen hudScreen;
   private SimpleApplication app;
-  private MazeTDGame game;
+  private MazeTDGame game=MazeTDGame.getInstance();
   private SingleplayerState singleplayerState;
   private GamestateManager gamestateManager;
-  private Element asd;
+  
 
   
   /** custom methods */ 
   public void resumeGame(String nextScreen) {
   nifty.gotoScreen(nextScreen);
-  //nifty.getCurrentScreen().getScreenController();
+  hudScreen=game.getHudScreenInstance();
+  hudScreen.setPaused(false);
         gamestateManager = GamestateManager.getInstance();
-        gamestateManager.enterState("Singleplayer");
+        gamestateManager.resume();
   
   }
- 
+   
+  public void LeaveGame(String nextScreen) {
+   nifty.gotoScreen(nextScreen);
+   gamestateManager = GamestateManager.getInstance();
+   gamestateManager.terminate();
+   gamestateManager.enterState("Mainmenu");
+  }
+  
   public void quitGame() {
-    this.game=MazeTDGame.getInstance();
+    game=MazeTDGame.getInstance();
     game.stop(); 
   }
  

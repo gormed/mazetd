@@ -13,6 +13,7 @@ import gamestates.lib.SingleplayerState;
 import de.lessvoid.nifty.elements.Element;
 import gamestates.Gamestate;
 import gamestates.GamestateManager;
+import gui.elements.HudScreen;
  
 public class MainmenuScreen extends AbstractAppState implements ScreenController {
  
@@ -22,16 +23,13 @@ public class MainmenuScreen extends AbstractAppState implements ScreenController
   private MazeTDGame game;
   private SingleplayerState singleplayerState;
   private GamestateManager gamestateManager;
-  private Element asd;
 
   
   /** custom methods */ 
   public void startGame(String nextScreen) {
   nifty.gotoScreen(nextScreen);
-  //nifty.getCurrentScreen().getScreenController();
-        gamestateManager = GamestateManager.getInstance();
-        gamestateManager.enterState("Singleplayer");
-  
+  gamestateManager = GamestateManager.getInstance();
+  gamestateManager.enterState("Singleplayer");
   }
  
   public void quitGame() {

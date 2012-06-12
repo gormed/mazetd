@@ -4,6 +4,7 @@
  */
 package logic;
 import entities.Orb;
+import entities.Tower;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import java.util.Collection;
 public class Inventory {
     
     private Orb orb;
+    private Tower tower;
     private Object o;
     private Orb.ElementType type;
     private HashMap <String, Orb> towerSlot;
@@ -28,6 +30,8 @@ public class Inventory {
     private boolean slot1IsEmpty;
     private boolean slot2IsEmpty;
     private boolean slot3IsEmpty;
+    
+    public static Inventory instance;
        
     public enum Slot {
         SLOT1,
@@ -39,6 +43,13 @@ public class Inventory {
     
     public Inventory(){
     towerSlot = new HashMap<String, Orb>();
+    }
+    
+    public static Inventory getInstance() {
+      if (instance != null) {
+            return instance;
+        }
+        return instance = new Inventory();
     }
     
     public void InventoryInit(){
