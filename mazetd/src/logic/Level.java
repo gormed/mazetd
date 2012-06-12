@@ -165,12 +165,12 @@ public class Level {
 
         for (int i = 0; i < 30; i++) {
             description = waveManager.new WaveDescription();
-            description.creepCount = 7 + 3 * i;
-            description.creepDamage = 50 + 10 * i;
-            description.creepGoldDrop = 10 + 5 * i;
-            description.creepOrbDropRate = 0.125f + 0.01f * i;
+            description.creepCount = 4 + 2 * i;
+            description.creepDamage = 80 + 15 * i;
+            description.creepGoldDrop = 5 + 2 * i;
+            description.creepOrbDropRate = 0.07f + 0.015f * i;
             description.creepSpeed = 0.8f + 0.05f * i;
-            description.maxCreepHealthPoints = 45 + 18.5f * i;
+            description.maxCreepHealthPoints = 25 + 12.5f * i;
 
             waveDescriptions.add(description);
         }
@@ -223,9 +223,9 @@ public class Level {
         // add tower
         Tower t = entityManager.createTower(
                 "FirstTower", square);
-//        t.placeOrb(Orb.ElementType.WHITE,0);
-//        t.placeOrb(Orb.ElementType.WHITE,1);
-//        t.placeOrb(Orb.ElementType.WHITE,2);
+//        t.placeOrb(Orb.ElementType.BLUE,0);
+//        t.placeOrb(Orb.ElementType.GREEN,1);
+//        t.placeOrb(Orb.ElementType.YELLOW,2);
         creepAI.setChangeMapSquare(square, Pathfinder.TOWER_WEIGHT);
         return t;
     }

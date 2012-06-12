@@ -86,7 +86,7 @@ public class Orb extends ClickableEntity {
     private static final float HEIGHT_OVER_GROUND = 0.4f;
     public static final int ORB_DECAY = 2;
     private static final int ORB_SAMPLES = 10;
-    private static final float ORB_SIZE = 0.125f;
+    private static final float ORB_SIZE = 0.1f;
     private static MazeTDGame game = MazeTDGame.getInstance();
     //==========================================================================
     //===   Private Fields

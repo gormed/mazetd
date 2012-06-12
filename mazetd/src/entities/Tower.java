@@ -176,12 +176,12 @@ public class Tower extends ClickableEntity {
         roofMaterial.setColor("Ambient", ColorRGBA.Orange);   // ... color of this object
         roofMaterial.setColor("Diffuse", ColorRGBA.Orange);   // ... color of light being reflected
 
-        wallMaterial = new Material(
-                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-        wallMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
-        wallMaterial.setColor("Specular", ColorRGBA.White);
-        wallMaterial.setColor("Ambient", ColorRGBA.Gray);   // ... color of this object
-        wallMaterial.setColor("Diffuse", ColorRGBA.Gray);   // ... color of light being reflected#
+//        wallMaterial = new Material(
+//                game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+//        wallMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
+//        wallMaterial.setColor("Specular", ColorRGBA.White);
+//        wallMaterial.setColor("Ambient", ColorRGBA.Gray);   // ... color of this object
+//        wallMaterial.setColor("Diffuse", ColorRGBA.Gray);   // ... color of light being reflected#
 //        Texture tex =
 //                game.getAssetManager().loadTexture(
 //                "Textures/Tower/brick.jpg");
@@ -194,6 +194,21 @@ public class Tower extends ClickableEntity {
 //        
 //        wallMaterial.setTexture("NormalMap", normal);
 
+        
+                wallMaterial = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        wallMaterial.setBoolean("UseMaterialColors", true);
+        wallMaterial.setColor("Specular", new ColorRGBA(ColorRGBA.Gray));
+
+        if (wallMaterial.getMaterialDef().getName().equals("Phong Lighting")) {
+            Texture t = game.getAssetManager().loadTexture("Textures/Shader/toon.png");
+                t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
+                t.setMagFilter(Texture.MagFilter.Nearest);
+            wallMaterial.setTexture("ColorRamp", t);
+            wallMaterial.setColor("Diffuse", ColorRGBA.Gray);
+//                wallMaterial.setColor("Diffuse", new ColorRGBA(0.25f, 0.25f, 0.25f, 1.0f));
+            wallMaterial.setBoolean("VertexLighting", true);
+        }
+        
         // Geometry
         float[] angles = {(float) -Math.PI / 2f, 0, 0};
 
@@ -340,21 +355,21 @@ public class Tower extends ClickableEntity {
      * @param tpf the time-gap
      */
     private void updateOrbs(float tpf) {
-        orbRotation += tpf * TOWER_ORB_ROTATION_SPEED;
-        float[] angles = {0, orbRotation, 0};
-        Quaternion q = new Quaternion(angles);
-        orbNodeRot.setLocalRotation(q);
-        orbNodePos.setLocalTranslation(position);
+//        orbRotation += tpf * TOWER_ORB_ROTATION_SPEED;
+//        float[] angles = {0, orbRotation, 0};
+//        Quaternion q = new Quaternion(angles);
+//        orbNodeRot.setLocalRotation(q);
+//        orbNodePos.setLocalTranslation(position);
 
-        if (firstOrb != null) {
-            firstOrb.update(tpf);
-        }
-        if (secondOrb != null) {
-            secondOrb.update(tpf);
-        }
-        if (thirdOrb != null) {
-            thirdOrb.update(tpf);
-        }
+//        if (firstOrb != null) {
+//            firstOrb.update(tpf);
+//        }
+//        if (secondOrb != null) {
+//            secondOrb.update(tpf);
+//        }
+//        if (thirdOrb != null) {
+//            thirdOrb.update(tpf);
+//        }
     }
 
     private void updateOrbEffects(float tpf) {
@@ -397,7 +412,7 @@ public class Tower extends ClickableEntity {
             onDestroy();
         }
     }
-    
+
     /**
      * Needs to be called by the gui to signal that the player 
      * demolishes the tower and all resources need to be freed.
@@ -762,17 +777,17 @@ public class Tower extends ClickableEntity {
             case 0:
                 o = new Orb(name + "Orb_1",
                         new Vector3f(
-                        TOWER_SIZE,
-                        TOWER_HEIGHT + 0.1f,
-                        -TOWER_SIZE / 2),
+                        0,
+                        0,
+                        -TOWER_SIZE+0.0f),
                         type);
                 break;
             case 1:
                 o = new Orb(name + "Orb_2",
                         new Vector3f(
-                        -TOWER_SIZE,
-                        TOWER_HEIGHT + 0.1f,
-                        -TOWER_SIZE / 2),
+                        0,
+                        TOWER_HEIGHT - 0.7f,
+                        -TOWER_SIZE+0.025f),
                         type);
                 break;
             case 2:
@@ -780,10 +795,35 @@ public class Tower extends ClickableEntity {
                 o = new Orb(name + "Orb_3",
                         new Vector3f(
                         0,
-                        TOWER_HEIGHT + 0.1f,
-                        TOWER_SIZE),
+                        TOWER_HEIGHT - 0.4f,
+                        -TOWER_SIZE+0.05f),
                         type);
                 break;
+//            case 0:
+//                o = new Orb(name + "Orb_1",
+//                        new Vector3f(
+//                        TOWER_SIZE,
+//                        TOWER_HEIGHT + 0.1f,
+//                        -TOWER_SIZE / 2),
+//                        type);
+//                break;
+//            case 1:
+//                o = new Orb(name + "Orb_2",
+//                        new Vector3f(
+//                        -TOWER_SIZE,
+//                        TOWER_HEIGHT + 0.1f,
+//                        -TOWER_SIZE / 2),
+//                        type);
+//                break;
+//            case 2:
+//            default:
+//                o = new Orb(name + "Orb_3",
+//                        new Vector3f(
+//                        0,
+//                        TOWER_HEIGHT + 0.1f,
+//                        TOWER_SIZE),
+//                        type);
+//                break;
         }
         orbNodeRot.attachChild(o.createNode(GAME));
 //        o.applyTowerOrbMaterial();
