@@ -104,7 +104,7 @@ public class Creep extends CollidableEntity {
     private Material material;
     private Vector3f position;
     private Vector3f destination;
-    private boolean deacying = false;
+    private boolean decaying = false;
     private float decayTime = 0;
     private ClickableGeometry debugGeometry;
     private boolean debugPathToggle = false;
@@ -172,7 +172,7 @@ public class Creep extends CollidableEntity {
         // update the bar
         healthBar.update(tpf);
         // if dead and therfore decaying
-        if (deacying) {
+        if (decaying) {
             decayTime += tpf;
             if (decayTime > CREEP_DECAY) {
                 // finally destroy
@@ -357,8 +357,8 @@ public class Creep extends CollidableEntity {
                     // otherwise we are attacking a tower or are at the goal.
                     CreepHandler.getInstance().invokeCreepAction(
                             CreepEventType.ReachedEnd, this, null);
-
                     moving = false;
+                    destroy();
                 }
             } else {
                 if (currentSquare.hasTower()) {
@@ -399,6 +399,10 @@ public class Creep extends CollidableEntity {
         }
     }
 
+    /**
+     * Moves the creep to the target and attacks it if in front of it. 
+     * @param tpf the time-gap
+     */
     private void attack(float tpf) {
         position = collidableEntityNode.getLocalTranslation();
 
@@ -434,6 +438,10 @@ public class Creep extends CollidableEntity {
         moving = true;
     }
 
+    /**
+     * Sets the target and state if a creep wont find a path through the maze.
+     * @param target the tower to destroy
+     */
     private void destroyTower(Tower target) {
         this.target = target;
         this.attacking = true;
@@ -446,6 +454,11 @@ public class Creep extends CollidableEntity {
     public void stop() {
         moving = false;
     }
+    
+    public void destroy() {
+        this.healthPoints = 0;
+        decaying = true;
+    }
 
     /**
      * Damages a creep by <code>amount</code> points.
@@ -453,7 +466,7 @@ public class Creep extends CollidableEntity {
      */
     public void applyDamge(float amount) {
         this.healthPoints -= amount;
-        if (isDead() && !deacying) {
+        if (isDead() && !decaying) {
             // visualize the death
             triggerGoldEmitter();
             material.setColor("Ambient", ColorRGBA.Red);
@@ -467,9 +480,13 @@ public class Creep extends CollidableEntity {
         }
     }
 
+    /**
+     * Is triggered if the creep dies from a tower, not if the creep is removed
+     * after reaching the end.
+     */
     private void onDeath() {
         // set decaying
-        deacying = true;
+        decaying = true;
         // stop movement
         stop();
         // drop an orb if chance is high enough
@@ -486,6 +503,9 @@ public class Creep extends CollidableEntity {
         }
     }
 
+    /**
+     * Drops an orb by random on creeps death.
+     */
     private void dropOrb() {
         Random r = new Random(System.currentTimeMillis());
 
@@ -569,8 +589,6 @@ public class Creep extends CollidableEntity {
                 return;
             }
         }
-
-        
         orbEffects.add(effect);
         effect.onStart(this);
     }
@@ -725,23 +743,6 @@ public class Creep extends CollidableEntity {
             cam = game.getCamera();
 
             // Material
-//            barMaterial = new Material(
-//                    game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-//            barMaterial.setBoolean("UseMaterialColors", true);
-//            barMaterial.setColor("Specular", ColorRGBA.White.clone());
-//            barMaterial.setColor("Ambient", ColorRGBA.Green.clone());
-//            barMaterial.setColor("Diffuse", ColorRGBA.Gray.clone());
-//            barMaterial.getAdditionalRenderState().setBlendMode(BlendMode.PremultAlpha);
-//            
-//            frameMaterial = new Material(
-//                    game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-//            frameMaterial.setBoolean("UseMaterialColors", true);
-//            frameMaterial.setColor("Specular", ColorRGBA.White.clone());
-//            frameMaterial.setColor("Ambient", ColorRGBA.Black.clone());
-//            frameMaterial.setColor("Diffuse", ColorRGBA.Gray.clone());
-//            frameMaterial.getAdditionalRenderState().setBlendMode(BlendMode.PremultAlpha);
-
-
             barMaterial = new Material(game.getAssetManager(),
                     "Common/MatDefs/Misc/Unshaded.j3md");
             barMaterial.setColor("Color", new ColorRGBA(0, 1, 0, 0.6f));
