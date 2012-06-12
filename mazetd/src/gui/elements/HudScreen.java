@@ -29,7 +29,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   private Player player= Player.getInstance();
   private WaveManager waveManager;
   private int timeElapsed=0;
-  private int min;
+  private int min=0;
   private float time=0;
 
 
@@ -69,7 +69,19 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   return "Test";
   }
    
- 
+   public String getTime(){
+   if(timeElapsed<10&&min<10){
+   return "0"+min+":0"+timeElapsed;
+   }
+   if(min<10){
+   return "0"+min+":"+timeElapsed;
+   }
+   if(timeElapsed<10){
+   return min+":0"+timeElapsed;
+   }
+  
+   return min+":"+timeElapsed;
+   }
     
     public int getGold() {
     int g = player.getGold();
@@ -111,19 +123,21 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     Element invSlot4 = nifty.getCurrentScreen().findElementByName("yellowCount");
     Element invSlot5 = nifty.getCurrentScreen().findElementByName("whiteCount");
 
-    Element wave = nifty.getCurrentScreen().findElementByName("wave");
-    Element time = nifty.getCurrentScreen().findElementByName("time");
-    Element gold = nifty.getCurrentScreen().findElementByName("gold");
+     Element gold = nifty.getCurrentScreen().findElementByName("gold");
+     Element wave = nifty.getCurrentScreen().findElementByName("wave");
+     Element time = nifty.getCurrentScreen().findElementByName("time");
+   
 
     invSlot1.getRenderer(TextRenderer.class).setText(getRed()+"x");
     invSlot2.getRenderer(TextRenderer.class).setText(getBlue()+"x");
     invSlot3.getRenderer(TextRenderer.class).setText(getGreen()+"x");
     invSlot4.getRenderer(TextRenderer.class).setText(getYellow()+"x");
     invSlot5.getRenderer(TextRenderer.class).setText(getWhite()+"x");
-    
+   
+    gold.getRenderer(TextRenderer.class).setText("Gold: "+getGold()); 
     wave.getRenderer(TextRenderer.class).setText("Wave: "+getWave());
-    gold.getRenderer(TextRenderer.class).setText("Gold: "+getGold());
-    time.getRenderer(TextRenderer.class).setText("TIme:"+min+":"+timeElapsed);
+    time.getRenderer(TextRenderer.class).setText("Time: "+getTime());
+
     }
     }
     
