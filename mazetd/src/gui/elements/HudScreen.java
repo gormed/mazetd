@@ -31,8 +31,8 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   private int timeElapsed=0;
   private int min;
   private float time=0;
-  private ScreenController s;
-  public static HudScreen instance;
+
+
 
  
   
@@ -41,12 +41,6 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }   
   
   /** custom methods */ 
- 
-  public HudScreen getInstance(){
-  s=nifty.getCurrentScreen().getScreenController();
-  instance=(HudScreen)s;
-  return instance;
-  }
   
   public void disableGui() {
   nifty.exit(); 
