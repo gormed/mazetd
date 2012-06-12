@@ -36,6 +36,7 @@
 package gamestates;
 
 import java.util.HashMap;
+import mazetd.MazeTDGame;
 
 /**
  * The Class GamestateManager.
@@ -191,6 +192,7 @@ public class GamestateManager {
     public void pause() {
         if (currentState != null) {
             currentState.pause();
+            MazeTDGame.getInstance().setPause(true);
         }
     }
 
@@ -200,6 +202,7 @@ public class GamestateManager {
     public void resume() {
         if (currentState != null) {
             currentState.resume();
+            MazeTDGame.getInstance().setPause(false);
         }
     }
 

@@ -357,6 +357,13 @@ public class MazeTDGame extends SimpleApplication {
     return HudScreenInstance;
     }
 
+    public boolean isPause() {
+        return pause;
+    }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
+    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
