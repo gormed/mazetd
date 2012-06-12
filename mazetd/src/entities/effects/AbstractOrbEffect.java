@@ -61,7 +61,7 @@ public abstract class AbstractOrbEffect {
                 return null;
             case WHITE:
 
-                return null;
+                return new RangeOrbEffect(level);
             case YELLOW:
                 return new SpeedOrbEffect(level);
             default:

@@ -46,8 +46,10 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Cylinder;
+import com.jme3.texture.Texture;
 import entities.Orb.ElementType;
 import entities.base.AbstractEntity;
 import entities.base.ClickableEntity;
@@ -62,6 +64,7 @@ import java.util.Comparator;
 import logic.Level;
 import mazetd.MazeTDGame;
 import gui.elements.HudScreen;
+import jme3tools.optimize.GeometryBatchFactory;
 
 /**
  * The class Tower for a basical tower in MazeTD.
@@ -75,7 +78,7 @@ public class Tower extends ClickableEntity {
     //========================================================================== 
     public static final float TOWER_BASE_DAMAGE_INTERVAL = 1.2f;
     public static final int TOWER_BASE_DAMAGE = 5;
-    public static final int TOWER_BASE_RANGE = 3;
+    public static final float TOWER_BASE_RANGE = 3;
     public static final int TOWER_DECAY = 2;
     public static final int TOWER_HP = 500;
     public static final float TOWER_ORB_ROTATION_SPEED = 0.5f;
@@ -101,9 +104,9 @@ public class Tower extends ClickableEntity {
     private Vector3f position;
     private boolean deacying = false;
     private float decayTime = 0;
-    private HudScreen hudscreen=GAME.getHudScreenInstance();
+    private HudScreen hudscreen = GAME.getHudScreenInstance();
     //logic
-    private int towerRange = TOWER_BASE_RANGE;
+    private float towerRange = TOWER_BASE_RANGE;
     private Creep target;
     private Map.MapSquare square;
     private float healthPoints = TOWER_HP;
@@ -122,10 +125,10 @@ public class Tower extends ClickableEntity {
     //jme3
     private Node attackRangeCollisionNode;
     //particle
+
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-
     /**
      * Contructor of a basical tower for MazeTD.
      * @param name the name of the tower
@@ -141,6 +144,9 @@ public class Tower extends ClickableEntity {
         super.createNode(game);
         createGeometry(game);
         // create collision for tower attacking range
+
+        attackRangeCollisionNode =
+                new Node("AttackCollisionCylinderNode");
         createCollision(game);
 
         orbNodePos = new Node("OrbNodeRos");
@@ -175,10 +181,35 @@ public class Tower extends ClickableEntity {
         wallMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
         wallMaterial.setColor("Specular", ColorRGBA.White);
         wallMaterial.setColor("Ambient", ColorRGBA.Gray);   // ... color of this object
-        wallMaterial.setColor("Diffuse", ColorRGBA.Gray);   // ... color of light being reflected
+        wallMaterial.setColor("Diffuse", ColorRGBA.Gray);   // ... color of light being reflected#
+//        Texture tex =
+//                game.getAssetManager().loadTexture(
+//                "Textures/Tower/brick.jpg");
+//        tex.setWrap(Texture.WrapMode.Repeat);
+//        wallMaterial.setTexture("DiffuseMap", tex);
+//        Texture normal =
+//                game.getAssetManager().loadTexture(
+//                "Textures/Tower/brick_normal.jpg");
+//        normal.setWrap(Texture.WrapMode.MirroredRepeat);
+//        
+//        wallMaterial.setTexture("NormalMap", normal);
 
         // Geometry
-        float[] angles = {(float) Math.PI / 2, 0, 0};
+        float[] angles = {(float) -Math.PI / 2f, 0, 0};
+
+        // Tower Model
+
+        Spatial tower =
+                game.getAssetManager().loadModel("Models/Towers/tower.j3o");
+        tower.setMaterial(wallMaterial);
+        tower.setLocalRotation(new Quaternion(angles));
+
+        Node n = new Node("BatchNode");
+        n.attachChild(tower);
+
+        tower = GeometryBatchFactory.optimize(n);
+        tower.setQueueBucket(Bucket.Translucent);
+
         // Roof
         Cylinder roof = new Cylinder(
                 TOWER_SAMPLES,
@@ -211,11 +242,12 @@ public class Tower extends ClickableEntity {
         wallGeometry.setQueueBucket(Bucket.Inherit);
 
         // Hierarchy
-        clickableEntityNode.attachChild(wallGeometry);
-        clickableEntityNode.attachChild(roofGeometry);
+//        clickableEntityNode.attachChild(wallGeometry);
+//        clickableEntityNode.attachChild(roofGeometry);
+        clickableEntityNode.attachChild(tower);
         // apply position to main node
         clickableEntityNode.setLocalTranslation(position);
-        clickableEntityNode.setShadowMode(ShadowMode.CastAndReceive);
+        clickableEntityNode.setShadowMode(ShadowMode.Cast);
 
     }
 
@@ -234,7 +266,7 @@ public class Tower extends ClickableEntity {
 
         collisionMaterial = new Material(game.getAssetManager(),
                 "Common/MatDefs/Misc/Unshaded.j3md");
-        collisionMaterial.setColor("Color", new ColorRGBA(1, 0, 0, 0.075f));
+        collisionMaterial.setColor("Color", new ColorRGBA(1, 1, 1, 0.25f));
         collisionMaterial.getAdditionalRenderState().setBlendMode(BlendMode.AlphaAdditive);
 
         float[] angles = {(float) Math.PI / 2, 0, 0};
@@ -245,8 +277,6 @@ public class Tower extends ClickableEntity {
         collisionCylinder.setLocalRotation(new Quaternion(angles));
         collisionCylinder.setQueueBucket(Bucket.Transparent);
 
-        attackRangeCollisionNode =
-                new Node("AttackCollisionCylinderNode");
         attackRangeCollisionNode.setLocalTranslation(position);
         attackRangeCollisionNode.attachChild(collisionCylinder);
     }
@@ -278,6 +308,9 @@ public class Tower extends ClickableEntity {
         } else if (target.isDead()) {
             target = null;
         }
+        // refresheds the effects on orbs
+        updateOrbEffects(tpf);
+        // refreshes the orbs hovering over the tower
         updateOrbs(tpf);
     }
 
@@ -364,12 +397,20 @@ public class Tower extends ClickableEntity {
             onDestroy();
         }
     }
-
-    private void demolish() {
+    
+    /**
+     * Needs to be called by the gui to signal that the player 
+     * demolishes the tower and all resources need to be freed.
+     */
+    public void demolish() {
         this.healthPoints = 0;
         onDestroy();
     }
 
+    /**
+     * Is called if the tower is destroyed by a creep or 
+     * demolished by the player.
+     */
     private void onDestroy() {
         deacying = true;
 
@@ -384,9 +425,11 @@ public class Tower extends ClickableEntity {
     private void destroyed() {
         EntityManager.getInstance().removeEntity(id);
         ScreenRayCast3D.getInstance().removeClickableObject(clickableEntityNode);
+        Level.getInstance().
+                getStaticLevelElements().detachChild(attackRangeCollisionNode);
+        Level.getInstance().
+                getDynamicLevelElements().detachChild(orbNodePos);
         Level.getInstance().removeTower(square);
-
-        Level.getInstance().getDynamicLevelElements().detachChild(orbNodePos);
         square.setTower(null);
 
     }
@@ -517,24 +560,64 @@ public class Tower extends ClickableEntity {
         this.maxHealthPoints = maxHealthPoints;
     }
 
+    /**
+     * gets the towers attack rate, means the time between two attacks.
+     * @return the current rate
+     */
     public float getAttackRate() {
         return damageInterval;
     }
 
+    /**
+     * Applys a new attack-rate to the tower for the next attacks.
+     * @param attackRate the new rate
+     */
     public void setAttackRate(float attackRate) {
         this.damageInterval = attackRate;
     }
 
+    /**
+     * Gets the current range of the tower in OpenGL world distance.
+     * @return the current range
+     */
+    public float getTowerRange() {
+        return towerRange;
+    }
+
+    /**
+     * Sets the new range of a tower. and calculates new collision-volume.
+     * @param towerRange the new range
+     */
+    public void setTowerRange(float towerRange) {
+        this.towerRange = towerRange;
+        attackRangeCollisionNode.detachAllChildren();
+        createCollision(GAME);
+    }
+
+    /**
+     * Attaches a tower-orb-effect on target.
+     * @param e the effect to attach
+     */
     public void addOrbEffect(AbstractOrbEffect e) {
         orbEffects.add(e);
         e.onStart(this);
     }
 
+    /**
+     * Removes an effect from the tower, e.g. if 
+     * orb is removed or tower is destroyed.
+     * @param e the effect to remove
+     */
     public void removeOrbEffect(AbstractOrbEffect e) {
         e.onEnd(this);
         orbEffects.remove(e);
     }
 
+    /**
+     * Refreshes all OrbEffects attached to the tower.
+     * First removes all and than recalculates the Orb levels and 
+     * finally attaches the orb-effects to tower.
+     */
     private void refreshTowerOrbEffects() {
         ArrayList<AbstractOrbEffect> clone = new ArrayList<AbstractOrbEffect>(orbEffects);
         for (AbstractOrbEffect e : clone) {
@@ -580,7 +663,7 @@ public class Tower extends ClickableEntity {
     /**
      * Replaces a tower orb by its number and a new orb-type to use instead.
      * @param replaceType the type of orb to use instead the current one at 
-     * position orbNumber
+     * position slot
      * @param slot the number of orb to replace range from 0-2 incl.
      * @return the removed orb-type if the orb was replaced and the 
      * given replacement type otherwise
@@ -608,6 +691,15 @@ public class Tower extends ClickableEntity {
         }
     }
 
+    /**
+     * Replaces an orb from the tower with a new orb.
+     * @param orb the orb to be replaced
+     * @param replaceType the type of the new orb to place
+     * @param slot the slot where the old or should be removed and the new orb
+     * should be placed
+     * @return the removed orb-type if the orb was replaced and the 
+     * given replacement type otherwise
+     */
     private ElementType replaceOrb(Orb orb, ElementType replaceType, int slot) {
         ElementType type = orb.getElementType();
 
@@ -661,8 +753,8 @@ public class Tower extends ClickableEntity {
 
     /**
      * Created an orb for the tower.
-     * @param type
-     * @return 
+     * @param type the type to create
+     * @return the created orb
      */
     private Orb createTowerOrb(Orb.ElementType type, int slot) {
         Orb o;
@@ -698,6 +790,10 @@ public class Tower extends ClickableEntity {
         return o;
     }
 
+    /** 
+     * Checks all Orbs and gets the Effects in an array by level.
+     * @return an array with OrbEffects by level
+     */
     private AbstractOrbEffect[] getOrbEffects() {
         ArrayList<AbstractOrbEffect> effects =
                 new ArrayList<AbstractOrbEffect>();
@@ -733,7 +829,4 @@ public class Tower extends ClickableEntity {
         AbstractOrbEffect[] effectArray = new AbstractOrbEffect[3];
         return effects.toArray(effectArray);
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }

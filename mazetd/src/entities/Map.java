@@ -44,6 +44,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.network.serializing.Serializable;
+import com.jme3.network.serializing.Serializer;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
@@ -169,8 +171,8 @@ public class Map extends Node {
         groundMaterial = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         groundMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
         groundMaterial.setColor("Specular", ColorRGBA.White);
-        groundMaterial.setColor("Ambient", ColorRGBA.Gray);   // ... color of this object
-        groundMaterial.setColor("Diffuse", ColorRGBA.Gray);   // ... color of light being reflected
+        groundMaterial.setColor("Ambient", new ColorRGBA(0.4f, 0.9f, 0.4f, 1));   // ... color of this object
+        groundMaterial.setColor("Diffuse", new ColorRGBA(0f, 0.5f, 0, 1));   // ... color of light being reflected
 
         groundPlane.setMaterial(groundMaterial);
 
@@ -399,7 +401,7 @@ public class Map extends Node {
         void setTower(Tower t) {
             this.tower = t;
         }
-        
+
         public void setHovered(boolean value) {
             hovered = value;
         }

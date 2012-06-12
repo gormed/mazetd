@@ -223,25 +223,20 @@ public class Level {
         // add tower
         Tower t = entityManager.createTower(
                 "FirstTower", square);
-//        t.placeOrb(Orb.ElementType.GREEN,0);
-//        t.placeOrb(Orb.ElementType.GREEN,1);
-//        t.placeOrb(Orb.ElementType.BLUE,2);
+//        t.placeOrb(Orb.ElementType.WHITE,0);
+//        t.placeOrb(Orb.ElementType.WHITE,1);
+//        t.placeOrb(Orb.ElementType.WHITE,2);
         creepAI.setChangeMapSquare(square, Pathfinder.TOWER_WEIGHT);
         return t;
     }
 
     /**
-     * Erzeugt ein grafisches Tower-Objekt an der Position des übergebenen Squares
-     * - Liegt der erzeugte Tower auf dem Path wird ein neuer Path generiert 
-     *   und allen Creeps übergeben
+     * Removes a tower from a given MapSquare and recalculates the creep-pathes.
      * 
-     * @param square 
+     * @param square the square containing the tower
      */
     public void removeTower(MapSquare square) {
         if (square != null && square.getTower() != null) {
-            staticLevelElements.detachChild(
-                    square.getTower().getRangeCollisionNode());
-
             creepAI.setChangeMapSquare(square, -Pathfinder.TOWER_WEIGHT);
         }
     }
