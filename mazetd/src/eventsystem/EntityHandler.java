@@ -164,6 +164,12 @@ public class EntityHandler {
                     l.onAction(event);
                 }
             }
+            if (entityListeners.containsKey(null)) {
+                HashSet<EntityListener> listeners = entityListeners.get(null);
+                for (EntityListener l : listeners) {
+                    l.onAction(event);
+                }
+            }
         }
 
     }

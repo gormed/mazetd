@@ -122,6 +122,8 @@ public class Level {
         pathfinder.initialize();
 
         setupLevelContent();
+        
+        TowerListener t = new TowerListener();
 
         game.getIsoCameraControl().lookAtMapSquare(
                 pathfinder.getStartField().getSquare());
