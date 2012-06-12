@@ -44,7 +44,6 @@ import entities.Map.MapSquare;
 import entities.Orb;
 import entities.Tower;
 import eventsystem.CreepHandler;
-import eventsystem.EventManager;
 import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.port.Collider3D;
 import java.util.HashMap;

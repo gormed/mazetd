@@ -65,7 +65,6 @@ import eventsystem.CreepHandler;
 import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.port.Collider3D;
 import eventsystem.port.ScreenRayCast3D;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Random;
@@ -677,8 +676,8 @@ public class Creep extends CollidableEntity {
 
         public static final float BAR_HEIGHT = 0.1f;
         public static final float BAR_WIDTH = 0.5f;
-        public static final float FRAME_HEIGHT = 0.12f;
-        public static final float FRAME_WIDTH = 0.52f;
+        public static final float FRAME_HEIGHT = 0.15f;
+        public static final float FRAME_WIDTH = 0.55f;
         private Material barMaterial;
         private Material frameMaterial;
         private Geometry barGeometry;
@@ -706,7 +705,7 @@ public class Creep extends CollidableEntity {
             Vector3f barOffset =
                     new Vector3f(BAR_WIDTH / 2, 0.01f, -BAR_HEIGHT / 2);
             Vector3f frameOffset =
-                    new Vector3f(FRAME_WIDTH / 2, 0, -BAR_HEIGHT / 2);
+                    new Vector3f(FRAME_WIDTH / 2, 0, -FRAME_HEIGHT / 2);
 
             Vector3f up = cam.getUp().clone();
             Vector3f dir = cam.getDirection().

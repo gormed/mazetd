@@ -35,7 +35,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
-import com.jme3.math.Vector2f;
 import entities.Creep;
 import entities.base.EntityManager;
 import eventsystem.EventManager;
@@ -184,7 +183,7 @@ public class WaveManager {
             currentWave = waveDescriptions.poll();
             creepGenerationCount = 0;
             waveCompletlySpawned = false;
-            
+
         } else {
         }
     }
@@ -218,11 +217,17 @@ public class WaveManager {
     public int getCurrentWaveCount() {
         return currentWaveCount;
     }
-    
-     public int getmaxWaves() {
+
+    public int getmaxWaves() {
         return maxWaves;
     }
-    
+
+    public void setStartWave(int startWave) {
+        if (startWave < maxWaves) {
+            this.currentWaveCount = startWave;
+        }
+    }
+
     //==========================================================================
     //===   Inner Classes
     //==========================================================================

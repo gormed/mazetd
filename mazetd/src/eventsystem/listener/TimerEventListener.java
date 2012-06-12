@@ -30,20 +30,20 @@ import java.util.EventListener;
  */
 public interface TimerEventListener extends EventListener {
 
-        /**
-         * On timed event that will be executed all getPeriod()-milliseconds.
-         * 
-         * @param t
-         *            the t
-         */
-        public void onTimedEvent(TimerEvent t);
+    /**
+     * On timed event that will be executed all getPeriod()-milliseconds.
+     * 
+     * @param t
+     *            the t
+     */
+    public void onTimedEvent(TimerEvent t);
 
-        /**
-         * Gets the period. This is the times to tick the listener wants to hear.
-         * e.g. 100 for 10 times per second. Every base tick occurs every
-         * millisecond.
-         * 
-         * @return the period
-         */
-        public float getPeriod();
+    /**
+     * Gets the period. This is the times to tick the listener wants to hear.
+     * e.g. 100 for 10 times per second. Every base tick occurs every
+     * millisecond.
+     * 
+     * @return the period
+     */
+    public float getPeriod();
 }

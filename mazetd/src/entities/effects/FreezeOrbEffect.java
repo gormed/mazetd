@@ -41,6 +41,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import entities.Creep;
+import entities.Orb.ElementType;
 import mazetd.MazeTDGame;
 
 /**
@@ -67,7 +68,7 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
     //==========================================================================
 
     public FreezeOrbEffect(int level) {
-        super(OrbEffectType.FROST, level);
+        super(OrbEffectType.FROST, ElementType.BLUE, level);
         createFreezeEmitter(MazeTDGame.getInstance());
     }
 
@@ -85,10 +86,6 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
                 infected.removeOrbEffect(this);
                 decaying = true;
             }
-            if (particelCounter > particelPeriod[level]) {
-                onEffect();
-                particelCounter = 0;
-            }
         }
 
 
@@ -97,7 +94,6 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
 
     @Override
     public void onEffect() {
-        emittFreezeParticles();
     }
 
     @Override
@@ -106,16 +102,20 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
         infected.getCollidableEntityNode().attachChild(freezeEmitter);
         tempSpeed = infected.getSpeed();
         infected.setSpeed(slowValue[level]);
+        freezeEmitter.setParticlesPerSec(5);
+        freezeEmitter.emitAllParticles();
     }
 
     @Override
     public void onEnd(Creep c) {
         infected.setSpeed(tempSpeed);
+        freezeEmitter.setParticlesPerSec(0);
+        
     }
 
     private void createFreezeEmitter(MazeTDGame game) {
                 /** Uses Texture from jme3-test-data library! */
-        freezeEmitter = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 3);
+        freezeEmitter = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 5);
         Material mat_red = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
         mat_red.setTexture("Texture",
                 game.getAssetManager().loadTexture("Textures/Effects/FreezeParticle.png"));
@@ -125,20 +125,14 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
         freezeEmitter.setEndColor(new ColorRGBA(0f, 0f, 1f, 1f));
         freezeEmitter.setStartColor(new ColorRGBA(1f, 1f, 1f, 0.0f));
         freezeEmitter.getParticleInfluencer().setInitialVelocity(
-                new Vector3f(0, 1, 0));
+                new Vector3f(0, 2, 0));
         freezeEmitter.setStartSize(0.1f);
-        freezeEmitter.setEndSize(0.25f);
-        freezeEmitter.setGravity(0f, -2f, 1f);
+        freezeEmitter.setEndSize(0.15f);
+        freezeEmitter.setGravity(0f, 0.5f, 1f);
         freezeEmitter.setLowLife(0.6f);
         freezeEmitter.setHighLife(1.0f);
+        freezeEmitter.setRotateSpeed((float)Math.PI);
         freezeEmitter.getParticleInfluencer().setVelocityVariation(0.5f);
         freezeEmitter.preload(game.getRenderManager(), game.getViewPort());
-        freezeEmitter.setParticlesPerSec(0);
-    }
-
-    private void emittFreezeParticles() {
-        freezeEmitter.setParticlesPerSec(3);
-        freezeEmitter.emitAllParticles();
-        freezeEmitter.setParticlesPerSec(0);
     }
 }

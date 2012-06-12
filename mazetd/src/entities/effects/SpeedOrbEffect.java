@@ -28,55 +28,56 @@
  * 
  * 
  * Project: MazeTD Project
- * File: AbstractEvent.java
- * Type: events.AbstractEvent
+ * File: SpeedOrbEffect.java
+ * Type: entities.effects.SpeedOrbEffect
  * 
- * Documentation created: 13.05.2012 - 23:22:39 by Hans Ferchland
+ * Documentation created: 12.06.2012 - 00:50:39 by Hans Ferchland
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-package eventsystem.events;
+package entities.effects;
 
-import java.util.EventObject;
+import entities.Orb.ElementType;
+import entities.Tower;
 
 /**
- * The class AbstractEvenet for all events in MazeTD.
+ * The class SpeedOrbEffect.
  * @author Hans Ferchland
+ * @version
  */
-public abstract class AbstractEvent extends EventObject {
-    //==========================================================================
-    //===   Static
-    //==========================================================================
+public class SpeedOrbEffect extends AbstractOrbEffect {
 
-    /** The running eventid for all events */
-    private static int runningEventID = 0;
 
-    /**
-     * Gets the next eventID. This function increments the eventID by each call.
-     * There will never be a doubled eventid!
-     * @return the next free and unused eventID
-     */
-    static int getContiniousEventID() {
-        return runningEventID++;
-    }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private int eventID = getContiniousEventID();
+    private float[] attackRate = { 1.1f, 0.9f, 0.6f };
+    private float oldAttackRate = 0;
     //==========================================================================
-    //===   Constructor & Methods
+    //===   Methods & Constructor
     //==========================================================================
-    /**
-     * Creates an event.
-     * @param source the firing object.
-     */
-    public AbstractEvent(Object source) {
-        super(source);
+    public SpeedOrbEffect(int level) {
+        super(OrbEffectType.RATE, ElementType.YELLOW, level);
+    }
+    
+    @Override
+    public void update(float tpf) {
+        
     }
 
-    /**
-     * Returns the event-id of the event.
-     * @return the events id
-     */
-    public int getEventID() {
-        return eventID;
+    @Override
+    public void onEffect() {
+        
+    }
+
+    @Override
+    public void onStart(Tower t) {
+        super.onStart(t);
+        oldAttackRate = t.getAttackRate();
+        t.setAttackRate(attackRate[level]);
+    }
+
+    @Override
+    public void onEnd(Tower t) {
+        t.setAttackRate(oldAttackRate);
+        super.onEnd(t);
     }
 }

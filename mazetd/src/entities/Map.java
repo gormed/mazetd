@@ -148,6 +148,9 @@ public class Map extends Node {
         ScreenRayCast3D.getInstance().addClickableObject(clickableMapElements);
     }
 
+    /**
+     * Frees all resources aquired by the map.
+     */
     public void destroy() {
         decorativeMapElemetns.detachAllChildren();
         clickableMapElements.detachAllChildren();
@@ -209,6 +212,10 @@ public class Map extends Node {
         }
     }
 
+    /**
+     * Gets a copy of all map-squares.
+     * @return a copy of all map-squares in a HashMap
+     */
     public HashSet<MapSquare> getMapSquares() {
         return new HashSet<MapSquare>(mapSquares);
     }
@@ -268,12 +275,16 @@ public class Map extends Node {
             return geometry;
         }
 
+        /**
+         * Method, that is invoked if this squares geometry is clicked.
+         */
         public void squareClicked() {
             buildTowerHUD.show(this);
         }
 
         /**
-         * TODO: Hady
+         * Builds a Tower on this field if the icon on the 
+         * field (BuildTowerHub) is clicked.
          */
         public void buildTowerOnField() {
             if (this.getFieldInfo().getWeight() < Pathfinder.TOWER_WEIGHT
@@ -285,7 +296,8 @@ public class Map extends Node {
         }
 
         /**
-         * TODO: Hady
+         * Checks if a Creep is on this map-sqaure.
+         * TODO: fix this, not nessecary
          */
         private boolean isCreepOnField(FieldInfo field, HashMap<Integer, Creep> creeps) {
             for (Creep creep : creeps.values()) {
@@ -313,7 +325,7 @@ public class Map extends Node {
                  */
                 @Override
                 public void onRayCastClick(Vector2f mouse, CollisionResult result) {
-                    // TODO: implement handling if a square is clicked
+                    // TODO: implement handling if a square is clicked #done
                     System.out.println(name + " clicked!");
                     System.out.println(field.toString());
                     squareClicked();

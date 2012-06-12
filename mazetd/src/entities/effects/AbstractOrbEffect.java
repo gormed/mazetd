@@ -36,6 +36,7 @@
 package entities.effects;
 
 import entities.Creep;
+import entities.Orb;
 import entities.Orb.ElementType;
 import entities.Tower;
 
@@ -62,6 +63,7 @@ public abstract class AbstractOrbEffect {
 
                 return null;
             case YELLOW:
+                return new SpeedOrbEffect(level);
             default:
                 return null;
         }
@@ -70,10 +72,25 @@ public abstract class AbstractOrbEffect {
     public static AbstractOrbEffect getOrbEffect(ElementType type, int level) {
         return createOrbEffect(type, level);
     }
+    public static final ElementType[] TOWER_ELEMENT_TYPES = {ElementType.WHITE, ElementType.YELLOW};
+
+    public static boolean isTowerElement(ElementType elementType) {
+        for (ElementType e : TOWER_ELEMENT_TYPES) {
+            if (e.equals(elementType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean isCreepElement(ElementType elementType) {
+        return !isTowerElement(elementType);
+    }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
     protected OrbEffectType effectType;
+    protected Orb.ElementType elementType;
     protected int level;
     protected Creep infected;
     protected Tower enhanced;
@@ -88,7 +105,8 @@ public abstract class AbstractOrbEffect {
      * @param effectType the desired type
      * @param level the desired level
      */
-    public AbstractOrbEffect(OrbEffectType effectType, int level) {
+    public AbstractOrbEffect(OrbEffectType effectType, ElementType elementType, int level) {
+        this.elementType = elementType;
         this.effectType = effectType;
         this.level = level;
     }
@@ -121,14 +139,19 @@ public abstract class AbstractOrbEffect {
     /**
      * Is called if the effect is removed.
      */
-    public abstract void onEnd(Creep c);
+    public void onEnd(Creep c) {
+        
+    }
 
     public void onEnd(Tower t) {
-        
     }
 
     public OrbEffectType getEffectType() {
         return effectType;
+    }
+
+    public ElementType getElementType() {
+        return elementType;
     }
 
     public int getLevel() {

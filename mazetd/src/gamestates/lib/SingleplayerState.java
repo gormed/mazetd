@@ -89,8 +89,24 @@ public class SingleplayerState extends Gamestate {
     @Override
     protected void loadContent(MazeTDGame game) {
         this.game = game;
+        
+        // setup level
         this.level = Level.getInstance();
-        test();
+        level.initialize();
+
+        // add two lights to scene
+        ambientLight = new AmbientLight();
+        ambientLight.setColor(ColorRGBA.DarkGray);
+
+        pointLight = new PointLight();
+        pointLight.setColor(new ColorRGBA(1f, 1f, 1f, 1f));
+        pointLight.setRadius(60);
+        pointLight.setPosition(new Vector3f(0, 20, -10));
+
+        game.getRootNode().addLight(pointLight);
+        game.getRootNode().addLight(ambientLight);
+        
+        //test();
     }
 
     private void test() {
@@ -138,19 +154,7 @@ public class SingleplayerState extends Gamestate {
 
         //ScreenRayCast3D.getInstance().addCollisonObject(geom2);
 
-        level.initialize();
 
-        // add two lights to scene
-        ambientLight = new AmbientLight();
-        ambientLight.setColor(ColorRGBA.DarkGray);
-
-        pointLight = new PointLight();
-        pointLight.setColor(new ColorRGBA(1f, 1f, 1f, 1f));
-        pointLight.setRadius(60);
-        pointLight.setPosition(new Vector3f(0, 20, -10));
-
-        game.getRootNode().addLight(pointLight);
-        game.getRootNode().addLight(ambientLight);
     }
 
     @Override

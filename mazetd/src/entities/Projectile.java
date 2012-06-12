@@ -47,7 +47,6 @@ import com.jme3.scene.shape.Sphere;
 import entities.base.AbstractEntity;
 import entities.base.EntityManager;
 import entities.effects.AbstractOrbEffect;
-import entities.effects.OrbEffectType;
 import logic.Level;
 import mazetd.MazeTDGame;
 

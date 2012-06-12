@@ -46,10 +46,9 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.texture.Texture;
 import entities.base.ClickableEntity;
 import entities.base.EntityManager;
-import entities.effects.AbstractOrbEffect;
-import entities.effects.PoisonOrbEffect;
 import eventsystem.port.ScreenRayCast3D;
 import mazetd.MazeTDGame;
 import logic.Player;
@@ -69,8 +68,9 @@ public class Orb extends ClickableEntity {
      * The enum ElementType discribes which Elements for orbs exist.
      */
     public enum ElementType {
+
         /** The green orb type, equals OrbEffectType.POISON */
-        GREEN, 
+        GREEN,
         /** The blue orb type, equals OrbEffectType.FROST */
         BLUE,
         /** The red orb type, equals OrbEffectType.FIRE */
@@ -98,8 +98,6 @@ public class Orb extends ClickableEntity {
     private float height = 0.4f;
     private boolean deacying = false;
     private float decayTime = 0;
-    private Tower attachedTower;
-    private AbstractOrbEffect orbEffect;
     // Particle
     private ParticleEmitter explodesEmitter;
 
@@ -239,9 +237,28 @@ public class Orb extends ClickableEntity {
         return element.color.clone();
     }
 
+    public void applyTowerOrbMaterial() {
+        //Material
+        element.material = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        element.material.setBoolean("UseMaterialColors", true);
+        element.material.setColor("Specular", new ColorRGBA(element.color));
+
+        if (element.material.getMaterialDef().getName().equals("Phong Lighting")) {
+            Texture t = game.getAssetManager().loadTexture("Textures/Shader/toon.png");
+                t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
+                t.setMagFilter(Texture.MagFilter.Nearest);
+            element.material.setTexture("ColorRamp", t);
+            element.material.setColor("Diffuse", element.color);
+//                material.setColor("Diffuse", new ColorRGBA(0.25f, 0.25f, 0.25f, 1.0f));
+            element.material.setBoolean("VertexLighting", true);
+        }
+
+        element.geometry.setMaterial(element.material);
+    }
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+
     /**
      * The class Element discribes the orb-element from the Orb.
      * @author Hans Ferchland

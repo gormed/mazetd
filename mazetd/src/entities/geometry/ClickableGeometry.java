@@ -47,9 +47,6 @@ import com.jme3.scene.Mesh;
 public abstract class ClickableGeometry extends Geometry implements Clickable3D {
 
     //==========================================================================
-    //===   Private Fields
-    //==========================================================================
-    //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
     public ClickableGeometry(String name) {
@@ -59,7 +56,4 @@ public abstract class ClickableGeometry extends Geometry implements Clickable3D 
     public ClickableGeometry(String name, Mesh mesh) {
         super(name, mesh);
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }

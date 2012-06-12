@@ -36,7 +36,6 @@
 package eventsystem.port;
 
 import com.jme3.bounding.BoundingVolume;
-import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;

@@ -48,6 +48,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Cylinder;
+import entities.Orb.ElementType;
 import entities.base.AbstractEntity;
 import entities.base.ClickableEntity;
 import entities.base.EntityManager;
@@ -301,6 +302,10 @@ public class Tower extends ClickableEntity {
         attackRangeCollisionNode.setCullHint(CullHint.Always);
     }
 
+    /**
+     * Updates the orbs attached to the tower every tick.
+     * @param tpf the time-gap
+     */
     private void updateOrbs(float tpf) {
         orbRotation += tpf * TOWER_ORB_ROTATION_SPEED;
         float[] angles = {0, orbRotation, 0};
@@ -367,10 +372,15 @@ public class Tower extends ClickableEntity {
 
     private void onDestroy() {
         deacying = true;
+
         roofMaterial.setColor("Ambient", ColorRGBA.Red);
         wallMaterial.setColor("Ambient", ColorRGBA.Red);
     }
 
+    /**
+     * Is called if the tower is finally out of the scene and 
+     * all resources need to be freed.
+     */
     private void destroyed() {
         EntityManager.getInstance().removeEntity(id);
         ScreenRayCast3D.getInstance().removeClickableObject(clickableEntityNode);
@@ -390,7 +400,7 @@ public class Tower extends ClickableEntity {
         CollisionResults collisionResults =
                 Collider3D.getInstance().objectCollides(
                 attackRangeCollisionNode.getWorldBound());
-        // if there are creeps
+        // if there are collidables
         if (collisionResults != null) {
             Node n;
             ArrayList<Creep> creeps = new ArrayList<Creep>();
@@ -401,21 +411,22 @@ public class Tower extends ClickableEntity {
                 if (n instanceof CollidableEntityNode) {
                     CollidableEntityNode col = (CollidableEntityNode) n;
                     AbstractEntity e = col.getEntity();
-                    // check if creep entity
+                    // check if its a creep entity
                     if (e instanceof Creep) {
                         Creep c = (Creep) e;
                         if (!c.isDead() && !creeps.contains(c)) {
                             // Creep was found
                             creeps.add(c);
-                            //System.out.println(c.getName() + " was detected.");
                         }
                     }
                 }
             }
+            // if no creep was found return
             if (creeps.isEmpty()) {
                 return null;
             }
 
+            // else sort the creeps by distance to the tower
             Collections.sort(creeps, new Comparator<Creep>() {
 
                 @Override
@@ -432,6 +443,7 @@ public class Tower extends ClickableEntity {
                     }
                 }
             });
+            // and return the closest
             return creeps.get(0);
         }
         return null;
@@ -472,21 +484,45 @@ public class Tower extends ClickableEntity {
         this.target = target;
     }
 
+    /**
+     * Checks if the tower is below zero health.
+     * @return true if healthPoints below or at zero, false otherwise
+     */
     public boolean isDead() {
         return healthPoints <= 0;
     }
 
+    /**
+     * Gets the current HP of the tower,
+     * @return the numeric value of the HP
+     */
     public float getHealthPoints() {
         return healthPoints;
     }
 
+    /**
+     * Gets the initial HP of a tower.
+     * @return the maximum value of HP a tower can have
+     */
     public float getMaxHealthPoints() {
         return maxHealthPoints;
     }
 
+    /**
+     * Sets the new HP of a tower, both max and current HP to the new value.
+     * @param maxHealthPoints the new HP of the tower
+     */
     public void setMaxHealthPoints(float maxHealthPoints) {
         this.healthPoints = maxHealthPoints;
         this.maxHealthPoints = maxHealthPoints;
+    }
+
+    public float getAttackRate() {
+        return damageInterval;
+    }
+
+    public void setAttackRate(float attackRate) {
+        this.damageInterval = attackRate;
     }
 
     public void addOrbEffect(AbstractOrbEffect e) {
@@ -497,6 +533,19 @@ public class Tower extends ClickableEntity {
     public void removeOrbEffect(AbstractOrbEffect e) {
         e.onEnd(this);
         orbEffects.remove(e);
+    }
+
+    private void refreshTowerOrbEffects() {
+        ArrayList<AbstractOrbEffect> clone = new ArrayList<AbstractOrbEffect>(orbEffects);
+        for (AbstractOrbEffect e : clone) {
+            removeOrbEffect(e);
+        }
+        AbstractOrbEffect[] effects = getOrbEffects();
+        for (AbstractOrbEffect aoe : effects) {
+            if (aoe != null && AbstractOrbEffect.isTowerElement(aoe.getElementType())) {
+                addOrbEffect(aoe);
+            }
+        }
     }
 
     /**
@@ -522,9 +571,61 @@ public class Tower extends ClickableEntity {
                 }
                 break;
         }
+        // refreshes the towers orb effects if there are some
+        refreshTowerOrbEffects();
+        // recalculates the projectiles and its particles color
         calculateProjectileColor();
     }
 
+    /**
+     * Replaces a tower orb by its number and a new orb-type to use instead.
+     * @param replaceType the type of orb to use instead the current one at 
+     * position orbNumber
+     * @param slot the number of orb to replace range from 0-2 incl.
+     * @return the removed orb-type if the orb was replaced and the 
+     * given replacement type otherwise
+     */
+    public ElementType replaceOrb(ElementType replaceType, int slot) {
+        switch (slot) {
+            case 0:
+                if (firstOrb != null) {
+                    return replaceOrb(firstOrb, replaceType, slot);
+                }
+                return replaceType;
+            case 1:
+                if (secondOrb != null) {
+                    return replaceOrb(secondOrb, replaceType, slot);
+                }
+                return replaceType;
+            case 2:
+                if (thirdOrb != null) {
+                    return replaceOrb(thirdOrb, replaceType, slot);
+                }
+                return replaceType;
+            default:
+
+                return replaceType;
+        }
+    }
+
+    private ElementType replaceOrb(Orb orb, ElementType replaceType, int slot) {
+        ElementType type = orb.getElementType();
+
+        orbNodeRot.detachChild(orb.getClickableEntityNode());
+        orb = createTowerOrb(replaceType, slot);
+        orbNodeRot.attachChild(orb.createNode(GAME));
+
+        // refreshes the towers orb effects if there are some
+        refreshTowerOrbEffects();
+        // recalculates the projectiles and its particles color
+        calculateProjectileColor();
+        return type;
+    }
+
+    /**
+     * Calculates the color of the towers projectiles according to the current
+     * orbs placed.
+     */
     private void calculateProjectileColor() {
         ColorRGBA[] colors = new ColorRGBA[3];
         if (firstOrb != null) {
@@ -539,9 +640,18 @@ public class Tower extends ClickableEntity {
 
         ColorRGBA newColor = new ColorRGBA(0, 0, 0, 1);
 
+        ArrayList<ColorRGBA> colorList = new ArrayList<ColorRGBA>();
+
         for (ColorRGBA c : colors) {
             if (c != null) {
-                newColor.addLocal(c);
+                colorList.add(c);
+            }
+        }
+
+        if (colorList.size() > 0) {
+            float multi = 1.f / colorList.size();
+            for (ColorRGBA c : colorList) {
+                newColor.addLocal(c.mult(multi));
                 //newColor.clamp();
             }
         }
@@ -584,53 +694,8 @@ public class Tower extends ClickableEntity {
                 break;
         }
         orbNodeRot.attachChild(o.createNode(GAME));
+//        o.applyTowerOrbMaterial();
         return o;
-    }
-
-    /**
-     * Replaces a tower orb by its number and a new orb-type to use instead.
-     * @param replaceType the type of orb to use instead the current one at 
-     * position orbNumber
-     * @param slot the number of orb to replace range from 0-2 incl.
-     * @return the removed orb-type if the orb was replaced and the 
-     * given replacement type otherwise
-     */
-    public Orb.ElementType replaceOrb(Orb.ElementType replaceType, int slot) {
-        switch (slot) {
-            case 0:
-                if (firstOrb != null) {
-                    Orb.ElementType type = firstOrb.getElementType();
-                    orbNodeRot.detachChild(firstOrb.getClickableEntityNode());
-                    firstOrb = createTowerOrb(replaceType, slot);
-                    orbNodeRot.attachChild(firstOrb.createNode(GAME));
-                    calculateProjectileColor();
-                    return type;
-                }
-                return replaceType;
-            case 1:
-                if (secondOrb != null) {
-                    Orb.ElementType type = secondOrb.getElementType();
-                    orbNodeRot.detachChild(secondOrb.getClickableEntityNode());
-                    secondOrb = createTowerOrb(replaceType, slot);
-                    orbNodeRot.attachChild(secondOrb.createNode(GAME));
-                    calculateProjectileColor();
-                    return type;
-                }
-                return replaceType;
-            case 2:
-                if (thirdOrb != null) {
-                    Orb.ElementType type = thirdOrb.getElementType();
-                    orbNodeRot.detachChild(thirdOrb.getClickableEntityNode());
-                    thirdOrb = createTowerOrb(replaceType, slot);
-                    orbNodeRot.attachChild(thirdOrb.createNode(GAME));
-                    calculateProjectileColor();
-                    return type;
-                }
-                return replaceType;
-            default:
-
-                return replaceType;
-        }
     }
 
     private AbstractOrbEffect[] getOrbEffects() {

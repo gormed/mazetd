@@ -139,6 +139,7 @@ public class Level {
         staticLevelElements.attachChild(map);
 
         waveManager.loadWaves(testWaves());
+//        waveManager.setStartWave(6);
         waveManager.initialize();
 
 //        Orb o = entityManager.createOrb(
@@ -222,7 +223,9 @@ public class Level {
         // add tower
         Tower t = entityManager.createTower(
                 "FirstTower", square);
-//        t.placeOrb(Orb.ElementType.GREEN);
+//        t.placeOrb(Orb.ElementType.GREEN,0);
+//        t.placeOrb(Orb.ElementType.GREEN,1);
+//        t.placeOrb(Orb.ElementType.BLUE,2);
         creepAI.setChangeMapSquare(square, Pathfinder.TOWER_WEIGHT);
         return t;
     }

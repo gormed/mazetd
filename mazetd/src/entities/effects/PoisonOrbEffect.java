@@ -41,6 +41,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import entities.Creep;
+import entities.Orb.ElementType;
 import mazetd.MazeTDGame;
 
 /**
@@ -66,7 +67,7 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
     //==========================================================================
 
     public PoisonOrbEffect(int level) {
-        super(OrbEffectType.POISON, level);
+        super(OrbEffectType.POISON, ElementType.GREEN, level);
         createPoisonEmitter(MazeTDGame.getInstance());
     }
 
