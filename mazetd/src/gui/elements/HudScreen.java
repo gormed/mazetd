@@ -31,24 +31,39 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   private int timeElapsed=0;
   private int min;
   private float time=0;
+  private ScreenController s;
+  public static HudScreen instance;
 
  
- /** custom methods */ 
- public void disableGui() {
-  nifty.exit(); 
+  
+   public HudScreen() {
+       
+    }   
+  
+  /** custom methods */ 
+ 
+  public HudScreen getInstance(){
+  s=nifty.getCurrentScreen().getScreenController();
+  instance=(HudScreen)s;
+  return instance;
   }
   
- public void showMarketplace(String element, String ScreenID){
-        Element niftyElement = nifty.getScreen(ScreenID).findElementByName(element);
-        if(niftyElement.isVisible()) niftyElement.hide();
-        else niftyElement.show();
+  public void disableGui() {
+  nifty.exit(); 
+  }
+ 
+  public void showMarketplace(String element, String ScreenID){
+        Element marketPlace = nifty.getScreen(ScreenID).findElementByName(element);
+        if(marketPlace.isVisible()) marketPlace.hide();
+        else marketPlace.show();
 
     }
  
-  public int getGold() {
-  int g = player.getGold();
-  return g; 
-  }
+ public void showContext(){
+ Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
+ towerContext.show();
+ }
+ 
   
   public String getWave() {
   waveManager=WaveManager.getInstance();
@@ -61,8 +76,12 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   }
    
  
-
-  
+    
+    public int getGold() {
+    int g = player.getGold();
+    return g; 
+    }
+    
     public int getRed(){
     int r = player.getRedCount();
     return r;
@@ -114,9 +133,8 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
     }
     
-  public HudScreen() {
-        
-    }   
+ 
+ 
   
 
  

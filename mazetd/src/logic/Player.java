@@ -121,15 +121,15 @@ public class Player {
   }
     }
     
-    public void addGold(int golddrop){
-    gold=gold+golddrop;
+    public void addGold(int gains){
+    gold=gold+gains;
     }
     
     public void chargeGold(int costs){
     gold=gold-costs;
     }
     
-     public void buyOrb(){
+    public void buyOrb(){
     //TODO
     }
      

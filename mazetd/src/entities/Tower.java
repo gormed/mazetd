@@ -60,6 +60,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import logic.Level;
 import mazetd.MazeTDGame;
+import gui.elements.HudScreen;
 
 /**
  * The class Tower for a basical tower in MazeTD.
@@ -99,6 +100,7 @@ public class Tower extends ClickableEntity {
     private Vector3f position;
     private boolean deacying = false;
     private float decayTime = 0;
+    private HudScreen hudscreen=GAME.getHudScreenInstance();
     //logic
     private int towerRange = TOWER_BASE_RANGE;
     private Creep target;
@@ -281,6 +283,7 @@ public class Tower extends ClickableEntity {
     @Override
     public void onClick() {
         System.out.println("You clicked tower: #" + getEntityId() + " - " + getName());
+        hudscreen.showContext();
     }
 
     @Override

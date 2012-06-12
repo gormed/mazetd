@@ -73,6 +73,7 @@ import java.util.HashMap;
  * @see SimpleApplication
  */
 public class MazeTDGame extends SimpleApplication {
+    private HudScreen HudScreenInstance;
 
     public static final String HUD_SCREEN = "HUDScreen";
     public static final String MAIN_MENU_SCREEN = "MainMenueScreen";
@@ -166,8 +167,9 @@ public class MazeTDGame extends SimpleApplication {
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(
                 assetManager, inputManager, audioRenderer, guiViewPort);
         Nifty nifty = niftyDisplay.getNifty();
+        HudScreenInstance = new HudScreen();
         appStates.put(MAIN_MENU_SCREEN, new MainmenuScreen());
-        appStates.put(HUD_SCREEN, new HudScreen());
+        appStates.put(HUD_SCREEN, HudScreenInstance);
         appStates.put(PAUSE_SCREEN, new PausedScreen());
         nifty.fromXml("Interface/screen.xml", "start",
                 (ScreenController) appStates.get(MAIN_MENU_SCREEN),
@@ -349,6 +351,10 @@ public class MazeTDGame extends SimpleApplication {
 
     public IsoCameraControl getIsoCameraControl() {
         return isoCameraControl;
+    }
+    
+    public HudScreen getHudScreenInstance(){
+    return HudScreenInstance;
     }
 
     //==========================================================================
