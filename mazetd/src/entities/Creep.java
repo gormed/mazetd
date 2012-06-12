@@ -39,6 +39,7 @@ import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
+import com.jme3.effect.shapes.EmitterPointShape;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
@@ -88,12 +89,13 @@ public class Creep extends CollidableEntity {
     public static final float CREEP_BASE_ORB_DROP = 0.0f;
     public static final float CREEP_BASE_SPEED = 1.1f;
     public static final float CREEP_DECAY = 1f;
+    public static final int CREEP_DESTROY_PARTICLES = 10;
     public static final int CREEP_GOLD_PARTICLES = 5;
     public static final float CREEP_GROUND_RADIUS = 0.25f;
     public static final float CREEP_HEIGHT = 0.5f;
     public static final int CREEP_MAX_HP = 100;
     public static final float CREEP_MIN_DISTANCE = 0.5f;
-    private static final int CREEP_SAMPLES = 10;
+    private static final int CREEP_SAMPLES = CREEP_DESTROY_PARTICLES;
     public static final float CREEP_TOP_RADIUS = 0.1f;
     private static final float CREEP_BASE_DAMAGE_INTERVAL = 1f;
     //==========================================================================
@@ -130,6 +132,7 @@ public class Creep extends CollidableEntity {
     private MapSquare lastSquare = null;
     //Particles
     private ParticleEmitter goldEmitter;
+    private ParticleEmitter destroyedEmitter;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -160,6 +163,7 @@ public class Creep extends CollidableEntity {
 
         createCreepGeometry(game);
         createGoldEmitter(game);
+        createDestroyedEmitter(game);
         createDebugGeometry(game);
 
         healthBar = new HealthBar(this);
@@ -232,9 +236,13 @@ public class Creep extends CollidableEntity {
         collidableEntityNode.setShadowMode(ShadowMode.CastAndReceive);
     }
 
+    /**
+     * Creates the emitter for gold animation on death.
+     * @param game the mazetd game
+     */
     private void createGoldEmitter(MazeTDGame game) {
 
-        goldEmitter = new ParticleEmitter("Emitter",
+        goldEmitter = new ParticleEmitter("GoldEmitter",
                 ParticleMesh.Type.Triangle, CREEP_GOLD_PARTICLES);
         Material mat_red = new Material(
                 game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
@@ -256,6 +264,34 @@ public class Creep extends CollidableEntity {
         goldEmitter.setLocalTranslation(0, CREEP_HEIGHT + 0.2f, 0);
     }
 
+    private void createDestroyedEmitter(MazeTDGame game) {
+        destroyedEmitter = new ParticleEmitter("DestroyedEmitter",
+                ParticleMesh.Type.Triangle, CREEP_DESTROY_PARTICLES);
+        Material sparkMat = new Material(
+                game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
+        sparkMat.setTexture("Texture",
+                game.getAssetManager().loadTexture("Textures/Effects/spark.png"));
+        destroyedEmitter.setMaterial(sparkMat);
+        destroyedEmitter.setImagesX(1);
+        destroyedEmitter.setImagesY(1);
+        destroyedEmitter.setEndColor(new ColorRGBA(0f, 0f, 1f, 0.0f));
+        destroyedEmitter.setStartColor(new ColorRGBA(0.8f, 0f, 0.2f, 1.0f));
+        destroyedEmitter.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 6f, 0));
+        destroyedEmitter.setStartSize(1f);
+        destroyedEmitter.setEndSize(0.5f);
+        destroyedEmitter.setGravity(0f, -1f, 1f);
+        destroyedEmitter.setLowLife(1.5f);
+        destroyedEmitter.setHighLife(2.0f);
+        destroyedEmitter.setFacingVelocity(true);
+        destroyedEmitter.getParticleInfluencer().setVelocityVariation(0.2f);
+        destroyedEmitter.preload(game.getRenderManager(), game.getViewPort());
+        destroyedEmitter.setLocalTranslation(0, CREEP_HEIGHT + 0.2f, 0);
+    }
+
+    /**
+     * Creates debug geometry for pathfind-debug.
+     * @param game the mazetd game
+     */
     private void createDebugGeometry(MazeTDGame game) {
 
         Material m = new Material(
@@ -321,6 +357,7 @@ public class Creep extends CollidableEntity {
      * Finally frees the creeps resources.
      */
     private void rotten() {
+        collidableEntityNode.detachAllChildren();
         Collider3D.getInstance().removeCollisonObject(collidableEntityNode);
         ScreenRayCast3D.getInstance().removeClickableObject(debugGeometry);
         EntityManager.getInstance().removeEntity(id);
@@ -454,9 +491,10 @@ public class Creep extends CollidableEntity {
     public void stop() {
         moving = false;
     }
-    
+
     public void destroy() {
         this.healthPoints = 0;
+        triggerDestroyedEmitter();
         decaying = true;
     }
 
@@ -525,6 +563,12 @@ public class Creep extends CollidableEntity {
         collidableEntityNode.attachChild(goldEmitter);
         goldEmitter.emitAllParticles();
         goldEmitter.setParticlesPerSec(0);
+    }
+    
+    private void triggerDestroyedEmitter() {
+        collidableEntityNode.attachChild(destroyedEmitter);
+        destroyedEmitter.emitAllParticles();
+        destroyedEmitter.setParticlesPerSec(0);
     }
 
     /**
