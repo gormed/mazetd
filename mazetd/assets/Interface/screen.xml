@@ -202,31 +202,25 @@
  
  <!--=============================Paused Screen==============================-->
  <screen id="pause" controller="gui.elements.PausedScreen">
-    <layer id="background" backgroundColor="#000f">
+    <layer id="background">
     </layer>
-    <layer id="foreground" backgroundColor="#0000" childLayout="vertical">
-        <panel id="panel_top" height="10%" width="100%" align="center" childLayout="center"
-        backgroundColor="#f008">  
-            <text text="Game Paused" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
-        </panel>
-        <panel id="panel_bottom_1" height="45%" width="100%" align="center" childLayout="center">
-            <control name="button" label="Resume Game" id="ResumeButton" align="center" valign="bottom" 
+    <layer id="foreground" childLayout="vertical">
+        <panel id="panel_bottom_1" height="100%" width="100%" align="center" childLayout="center">
+          <panel id="Menu" height="15%" width="20%" align="center" childLayout="vertical">
+          <control name="button" label="Resume Game" id="ResumeButton" align="center" valign="bottom" 
             visibleToMouse="true" > 
                 <interact onClick="resumeGame(hud)"/>
             </control>
-        </panel>
-        <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
-            <control name="button" label="Leave//TODO" id="LeaveButton" align="center" valign="center" 
+             <control name="button" label="Leave//TODO" id="LeaveButton" align="center" valign="center" 
             visibleToMouse="true" > 
                 <interact onClick="LeaveGame(start)"/>
             </control>
-        </panel>
-        <panel id="panel_bottom_2" height="5%" width="100%" align="center" childLayout="center">
-           <control name="button" label="Exit MazeTD" id="QuitButton" align="center" valign="center" 
+              <control name="button" label="Exit MazeTD" id="QuitButton" align="center" valign="center" 
             visibleToMouse="true" > 
                 <interact onClick="quitGame()"/>
             </control>
-       </panel>
+        </panel>
+        </panel>
     </layer>
   </screen>
 

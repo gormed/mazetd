@@ -39,7 +39,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
 
  
   
-   public HudScreen() {
+  public HudScreen() {
        
     }   
   
