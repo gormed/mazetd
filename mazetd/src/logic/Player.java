@@ -34,6 +34,7 @@
  * Documentation created: 13.05.2012 - 23:13:37 by Hans
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
+
 import java.util.ArrayList;
 import entities.Orb;
 import entities.Tower;
@@ -44,190 +45,223 @@ import eventsystem.events.EntityEvent.EntityEventType;
 import eventsystem.listener.EntityListener;
 import entities.Creep;
 import eventsystem.events.CreepEvent;
+import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.listener.CreepListener;
-import gui.elements.HudScreen;
-import mazetd.MazeTDGame;
-
-
 
 /**
  * The class Player
  * @author Ahmed
  * @version
  */
-public class Player implements EntityListener,CreepListener {
-    
-    public static final int PLAYRER_HEALTH = 500;
-    public static Player instance;
-   
+public class Player implements EntityListener, CreepListener {
+
+    public static final int PLAYRER_HEALTH = 5;
+    private static Player instance;
     private Tower selectedTower;
-    private int redCount=0;
-    private int blueCount=0;
-    private int greenCount=0;
-    private int yellowCount=0;
-    private int whiteCount=0;
-    
-    private int gold=500;
-    
+    private int redCount = 0;
+    private int blueCount = 0;
+    private int greenCount = 0;
+    private int yellowCount = 0;
+    private int whiteCount = 0;
+    private int gold = 500;
+    private int maxLives = PLAYRER_HEALTH;
+    private int lives = PLAYRER_HEALTH;
     private Orb.ElementType type;
     private boolean towerIsClicked;
-    
-    
     private ArrayList<Orb> inventory;
-    
-     
- 
 
-  
-    
-      
     public static Player getInstance() {
         if (instance != null) {
             return instance;
         }
         return instance = new Player();
     }
-    
-    
-    public Player(){
-    inventory = new ArrayList<Orb>();
-    EventManager.getInstance().addEntityListener(this, (AbstractEntity) null);
-    }
-    
-    public void addGold(int gains){
-        gold=gold+gains;
-    }
-    
-    public void chargeGold(int costs){
-        gold=gold-costs;
-    }
-    
-    public void buyOrb(){
-    //TODO
-    }
-    
-    public void removeOrb(Orb orb) {
-    inventory.remove(orb);
-    type=orb.getElementType();
-    
-    switch (type) {
-            case RED : redCount= redCount-1;
-                break;
-            case BLUE : blueCount= blueCount-1;
-                break;
-            case GREEN : greenCount= greenCount-1;
-                break;
-            case YELLOW : yellowCount= yellowCount-1;
-                break;
-            case WHITE : whiteCount= whiteCount-1;
-            break;
-            default:
-            break;
-    }
-  }
-    
-    public void addOrb(Orb orb) {
-    inventory.add(orb);
-    type=orb.getElementType();
-    
-    switch (type) {
-            case RED : redCount= redCount+1;
-                break;
-            case BLUE : blueCount= blueCount+1;
-                break;
-            case GREEN : greenCount= greenCount+1;
-                break;
-            case YELLOW : yellowCount= yellowCount+1;
-                break;
-            case WHITE : whiteCount= whiteCount+1;
-                break;
-            default:
-                break;     
-  }
-    }
-    
-    public boolean hasType(Orb.ElementType type){
-    
-        switch (type) {
-            case RED:
-             if(redCount>0){
-             return true;
-             }
-            case BLUE:
-              if(blueCount>0){
-             return true;
-             }
-            case GREEN:
-               if(greenCount>0){
-             return true;
-             }
-            case YELLOW:
-               if(yellowCount>0){
-             return true;
-             }
-             case WHITE:
-             if(whiteCount>0){
-             return true;
-             } 
-             default:
-                return false;
-    }
+
+    private Player() {
+        inventory = new ArrayList<Orb>();
+        lives = maxLives;
+        EventManager.getInstance().addCreepListener(this, (Creep) null);
+        EventManager.getInstance().addEntityListener(this, (AbstractEntity) null);
     }
 
-  
+    public void update(float tpf) {
+        if (!isPlayerAlive()) {
+            onDeath();
+        }
+    }
+
+    // Live
+    public int getLives() {
+        return lives;
+    }
+
+    public int getLivesLeft() {
+        return maxLives - lives;
+    }
+
+    public void setMaxLives(int lives) {
+        this.maxLives = lives;
+        this.lives = maxLives;
+    }
+
+    // Gold
+    public void addGold(int gains) {
+        gold = gold + gains;
+    }
+
+    public void chargeGold(int costs) {
+        gold = gold - costs;
+    }
+
+    public void buyOrb() {
+        //TODO
+    }
+
+    public void removeOrb(Orb orb) {
+        inventory.remove(orb);
+        type = orb.getElementType();
+
+        switch (type) {
+            case RED:
+                redCount = redCount - 1;
+                break;
+            case BLUE:
+                blueCount = blueCount - 1;
+                break;
+            case GREEN:
+                greenCount = greenCount - 1;
+                break;
+            case YELLOW:
+                yellowCount = yellowCount - 1;
+                break;
+            case WHITE:
+                whiteCount = whiteCount - 1;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void addOrb(Orb orb) {
+        inventory.add(orb);
+        type = orb.getElementType();
+
+        switch (type) {
+            case RED:
+                redCount = redCount + 1;
+                break;
+            case BLUE:
+                blueCount = blueCount + 1;
+                break;
+            case GREEN:
+                greenCount = greenCount + 1;
+                break;
+            case YELLOW:
+                yellowCount = yellowCount + 1;
+                break;
+            case WHITE:
+                whiteCount = whiteCount + 1;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public boolean hasType(Orb.ElementType type) {
+
+        switch (type) {
+            case RED:
+                if (redCount > 0) {
+                    return true;
+                }
+            case BLUE:
+                if (blueCount > 0) {
+                    return true;
+                }
+            case GREEN:
+                if (greenCount > 0) {
+                    return true;
+                }
+            case YELLOW:
+                if (yellowCount > 0) {
+                    return true;
+                }
+            case WHITE:
+                if (whiteCount > 0) {
+                    return true;
+                }
+            default:
+                return false;
+        }
+    }
+
     public Tower getSelectedTower() {
         return selectedTower;
     }
-      
-    public int getGold(){
+
+    public int getGold() {
         return gold;
     }
 
-    public int getRedCount(){
+    public int getRedCount() {
         return redCount;
     }
-    
-    public int getBlueCount(){
+
+    public int getBlueCount() {
         return blueCount;
     }
-      
-    public int getGreenCount(){
+
+    public int getGreenCount() {
         return greenCount;
     }
-    
-    public int getYellowCount(){
+
+    public int getYellowCount() {
         return yellowCount;
     }
-   
-    public int getWhiteCount(){
+
+    public int getWhiteCount() {
         return whiteCount;
     }
 
-    public boolean TowerIsClicked() {
+    public boolean towerIsClicked() {
         return towerIsClicked;
     }
-    
 
-    
-   @Override
+    public boolean isPlayerAlive() {
+        return lives > 0;
+    }
+
+    @Override
     public void onAction(EntityEvent entityEvent) {
         // get the entity
         AbstractEntity e = entityEvent.getEntity();
         // check if tower an clicked
-        if (e instanceof Tower && 
-                entityEvent.getEventType().equals(EntityEventType.Click)) {
+        if (e instanceof Tower
+                && entityEvent.getEventType().equals(EntityEventType.Click)) {
             // cast to tower
             Tower tower = (Tower) e;
             selectedTower = tower;
             System.out.println("Tower clicked:" + tower.getName());
-            towerIsClicked=true;
+            towerIsClicked = true;
         }
     }
-    
+
     @Override
     public void onAction(CreepEvent e) {
-        if (e.getType().equals(CreepEvent.CreepEventType.ReachedEnd)) {
+        if (e.getType().equals(CreepEventType.ReachedEnd)) {
             Creep c = e.getCreep();
+            lives--;
+
+            System.out.println("Lives: " + lives + "/left: " + (maxLives - lives));
+
+        } else if (e.getType().equals(CreepEventType.Death)) {
+            Creep c = e.getCreep();
+            addGold(c.getGoldDrop());
         }
+    }
+
+    private void onDeath() {
+        // TODO: Show GAME OVER hud
+        System.out.println("PLAYER IS DEAD!");
     }
 }

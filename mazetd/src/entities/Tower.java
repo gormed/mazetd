@@ -96,6 +96,7 @@ public class Tower extends ClickableEntity {
     //visual
     private Geometry roofGeometry;
     private Geometry wallGeometry;
+    private Spatial towerGeometry;
     private Geometry collisionCylinder;
     private Material roofMaterial;
     private Material wallMaterial;
@@ -104,6 +105,7 @@ public class Tower extends ClickableEntity {
     private Vector3f position;
     private boolean deacying = false;
     private float decayTime = 0;
+    private ColorRGBA fadeColor = new ColorRGBA();
     //logic
     private float towerRange = TOWER_BASE_RANGE;
     private Creep target;
@@ -194,36 +196,36 @@ public class Tower extends ClickableEntity {
 //        
 //        wallMaterial.setTexture("NormalMap", normal);
 
-        
-                wallMaterial = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+
+        wallMaterial = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         wallMaterial.setBoolean("UseMaterialColors", true);
         wallMaterial.setColor("Specular", new ColorRGBA(ColorRGBA.Gray));
 
         if (wallMaterial.getMaterialDef().getName().equals("Phong Lighting")) {
             Texture t = game.getAssetManager().loadTexture("Textures/Shader/toon.png");
-                t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
-                t.setMagFilter(Texture.MagFilter.Nearest);
+            t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
+            t.setMagFilter(Texture.MagFilter.Nearest);
             wallMaterial.setTexture("ColorRamp", t);
-            wallMaterial.setColor("Diffuse", ColorRGBA.Gray);
+            wallMaterial.setColor("Diffuse", fadeColor = ColorRGBA.Gray.clone());
 //                wallMaterial.setColor("Diffuse", new ColorRGBA(0.25f, 0.25f, 0.25f, 1.0f));
             wallMaterial.setBoolean("VertexLighting", true);
         }
-        
+
         // Geometry
         float[] angles = {(float) -Math.PI / 2f, 0, 0};
 
         // Tower Model
 
-        Spatial tower =
+        towerGeometry =
                 game.getAssetManager().loadModel("Models/Towers/tower.j3o");
-        tower.setMaterial(wallMaterial);
-        tower.setLocalRotation(new Quaternion(angles));
+        towerGeometry.setMaterial(wallMaterial);
+        towerGeometry.setLocalRotation(new Quaternion(angles));
 
         Node n = new Node("BatchNode");
-        n.attachChild(tower);
+        n.attachChild(towerGeometry);
 
-        tower = GeometryBatchFactory.optimize(n);
-        tower.setQueueBucket(Bucket.Translucent);
+        towerGeometry = GeometryBatchFactory.optimize(n);
+        towerGeometry.setQueueBucket(Bucket.Translucent);
 
         // Roof
         Cylinder roof = new Cylinder(
@@ -259,7 +261,7 @@ public class Tower extends ClickableEntity {
         // Hierarchy
 //        clickableEntityNode.attachChild(wallGeometry);
 //        clickableEntityNode.attachChild(roofGeometry);
-        clickableEntityNode.attachChild(tower);
+        clickableEntityNode.attachChild(towerGeometry);
         // apply position to main node
         clickableEntityNode.setLocalTranslation(position);
         clickableEntityNode.setShadowMode(ShadowMode.Cast);
@@ -301,10 +303,21 @@ public class Tower extends ClickableEntity {
         // if dead and therfore decaying
         if (deacying) {
             decayTime += tpf;
+
+            if (fadeColor.a >= 0.0f) {
+                fadeColor.a -= tpf * 1f;
+                
+                wallMaterial.setColor("Ambient", fadeColor);   // ... color of this object
+                wallMaterial.setColor("Diffuse", fadeColor);   // ... color of light being reflected
+                towerGeometry.setMaterial(wallMaterial);
+            }
+
             if (decayTime > TOWER_DECAY) {
                 // finally destroy
                 destroyed();
+
             }
+            return;
         }
         // TODO: fix collision
         if (target == null) {
@@ -332,7 +345,6 @@ public class Tower extends ClickableEntity {
     @Override
     public void onClick() {
         System.out.println("You clicked tower: #" + getEntityId() + " - " + getName());
-       
     }
 
     @Override
@@ -360,7 +372,6 @@ public class Tower extends ClickableEntity {
 //        Quaternion q = new Quaternion(angles);
 //        orbNodeRot.setLocalRotation(q);
 //        orbNodePos.setLocalTranslation(position);
-
 //        if (firstOrb != null) {
 //            firstOrb.update(tpf);
 //        }
@@ -429,8 +440,17 @@ public class Tower extends ClickableEntity {
     private void onDestroy() {
         deacying = true;
 
-        roofMaterial.setColor("Ambient", ColorRGBA.Red);
-        wallMaterial.setColor("Ambient", ColorRGBA.Red);
+        wallMaterial = new Material(GAME.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        wallMaterial.setBoolean("UseMaterialColors", true);
+        wallMaterial.setColor("Specular", new ColorRGBA(ColorRGBA.Gray));
+        wallMaterial.setColor("Diffuse", ColorRGBA.Gray.clone());
+//        roofMaterial.setColor("Ambient", ColorRGBA.Red);
+        wallMaterial.setColor("Ambient", ColorRGBA.Gray.clone());
+        wallMaterial.getAdditionalRenderState().setBlendMode(BlendMode.AlphaAdditive);
+
+        towerGeometry.setQueueBucket(Bucket.Translucent);
+        towerGeometry.setShadowMode(ShadowMode.Off);
+        towerGeometry.setMaterial(wallMaterial);
     }
 
     /**
@@ -610,8 +630,6 @@ public class Tower extends ClickableEntity {
     public Orb getThirdOrb() {
         return thirdOrb;
     }
-    
-    
 
     /**
      * Sets the new range of a tower. and calculates new collision-volume.
@@ -793,7 +811,7 @@ public class Tower extends ClickableEntity {
                         new Vector3f(
                         0,
                         0,
-                        -TOWER_SIZE+0.0f),
+                        -TOWER_SIZE + 0.0f),
                         type);
                 break;
             case 1:
@@ -801,7 +819,7 @@ public class Tower extends ClickableEntity {
                         new Vector3f(
                         0,
                         TOWER_HEIGHT - 0.7f,
-                        -TOWER_SIZE+0.025f),
+                        -TOWER_SIZE + 0.025f),
                         type);
                 break;
             case 2:
@@ -810,7 +828,7 @@ public class Tower extends ClickableEntity {
                         new Vector3f(
                         0,
                         TOWER_HEIGHT - 0.4f,
-                        -TOWER_SIZE+0.05f),
+                        -TOWER_SIZE + 0.05f),
                         type);
                 break;
         }
