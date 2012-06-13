@@ -123,7 +123,7 @@ public class Grid {
         setTower(2, 18);
         setTower(2, 19);
         setTower(2, 20);
-
+        
         setTower(4, 0);
         setTower(4, 1);
         setTower(4, 2);
@@ -144,7 +144,7 @@ public class Grid {
         setTower(4, 17);
         setTower(4, 18);
         setTower(4, 19);
-*/
+         */
 
 
     }
@@ -201,6 +201,7 @@ public class Grid {
         private int weight;
         private MapSquare square;
         private FieldInfo parent;
+        private int g;
 
         /**
          * FieldInfo Constructor
@@ -218,6 +219,14 @@ public class Grid {
 
         }
 
+        public void setG(int g) {
+            this.g = g;
+        }
+
+        public int getG() {
+            return g;
+        }
+
         public void setParent(FieldInfo field) {
             this.parent = field;
         }
@@ -227,7 +236,7 @@ public class Grid {
          * 
          * @param value 
          */
-        public  void incrementWeight(int weight) {
+        public void incrementWeight(int weight) {
             this.weight += weight;
         }
 

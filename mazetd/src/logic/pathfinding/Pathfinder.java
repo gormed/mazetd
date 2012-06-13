@@ -105,7 +105,7 @@ public class Pathfinder {
                 lastPath = path;
                 path = createMainPath();
                 gridChanged = false;
-                
+
 //                Future fut = MazeTDGame.getInstance().enqueue(new Callable() {
 //
 //                    @Override
@@ -224,11 +224,12 @@ public class Pathfinder {
         }
 
 //        while (field != null && !field.getParent().equals(start)) {
-        while (field != null ) {
+        while (field != null) {
             tempPath.add(field.getSquare());
             field = field.getParent();
-            if (field.equals(creepPos))
+            if (field.equals(creepPos)) {
                 break;
+            }
         }
 //        if (DEBUG_PATH) {
 //            for (MapSquare ms : tempPath) {
@@ -268,19 +269,11 @@ public class Pathfinder {
                 FieldInfo fi = grid.getFieldInfo(qx - 1, qy);
                 if (!closedList.contains(fi)) {
                     fi.setParent(q);
+                    fi.setG(calcG(fi));
+                    fi.setWeight(fi.getG() + fi.getWeight());
                     successors.add(fi);
                 }
 
-            } catch (ArrayIndexOutOfBoundsException aie) {
-            }
-
-            try {
-                //Richtung 2
-                FieldInfo fi = grid.getFieldInfo(qx, qy - 1);
-                if (!closedList.contains(fi)) {
-                    fi.setParent(q);
-                    successors.add(fi);
-                }
             } catch (ArrayIndexOutOfBoundsException aie) {
             }
 
@@ -289,16 +282,32 @@ public class Pathfinder {
                 FieldInfo fi = grid.getFieldInfo(qx + 1, qy);
                 if (!closedList.contains(fi)) {
                     fi.setParent(q);
+                    fi.setG(calcG(fi));
+                    fi.setWeight(fi.getG() + fi.getWeight());
                     successors.add(fi);
                 }
 
             } catch (ArrayIndexOutOfBoundsException aie) {
             }
             try {
+                //Richtung 2
+                FieldInfo fi = grid.getFieldInfo(qx, qy - 1);
+                if (!closedList.contains(fi)) {
+                    fi.setParent(q);
+                    fi.setG(calcG(fi));
+                    fi.setWeight(fi.getG() + fi.getWeight());
+                    successors.add(fi);
+                }
+            } catch (ArrayIndexOutOfBoundsException aie) {
+            }
+
+            try {
                 //Richtung 4
                 FieldInfo fi = grid.getFieldInfo(qx, qy + 1);
                 if (!closedList.contains(fi)) {
                     fi.setParent(q);
+                    fi.setG(calcG(fi));
+                    fi.setWeight(fi.getG() + fi.getWeight());
                     successors.add(fi);
                 }
             } catch (ArrayIndexOutOfBoundsException aie) {
@@ -324,6 +333,12 @@ public class Pathfinder {
         //Schleife beendet->kein Weg gefunden
 
         throw new RuntimeException("keinen Weg gefunden");
+    }
+
+    private static int calcG(FieldInfo field) //Bisheriger Weg:
+    {
+        FieldInfo f = field.getParent();  //Bisheriger Weg des Vaterknotens + 1
+        return f.getG() + 1;
     }
 
     /**

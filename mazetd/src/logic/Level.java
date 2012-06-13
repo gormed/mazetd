@@ -122,7 +122,7 @@ public class Level {
         pathfinder.initialize();
 
         setupLevelContent();
-        
+
         TowerListener t = new TowerListener();
 
         game.getIsoCameraControl().lookAtMapSquare(
@@ -151,7 +151,7 @@ public class Level {
 //        t.placeOrb(Orb.ElementType.RED);
 //        t.placeOrb(Orb.ElementType.GREEN);
 //        t.placeOrb(Orb.ElementType.YELLOW);
-        
+
 //        Creep c = entityManager.createCreep("FirstCreep",
 //                Pathfinder.getInstance().getStartField().getSquare().getLocalTranslation(),
 //                100, 100);
@@ -225,8 +225,8 @@ public class Level {
         // add tower
         Tower t = entityManager.createTower(
                 "FirstTower", square);
-//        t.placeOrb(Orb.ElementType.BLUE,0);
-//        t.placeOrb(Orb.ElementType.GREEN,1);
+        t.placeOrb(Orb.ElementType.BLUE, 0);
+        t.placeOrb(Orb.ElementType.GREEN, 1);
 //        t.placeOrb(Orb.ElementType.YELLOW,2);
         creepAI.setChangeMapSquare(square, Pathfinder.TOWER_WEIGHT);
         return t;
