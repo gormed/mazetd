@@ -836,7 +836,7 @@ public class Tower extends ClickableEntity {
         ArrayList<AbstractOrbEffect> effects =
                 new ArrayList<AbstractOrbEffect>();
         Orb.ElementType[] elements = new Orb.ElementType[3];
-        int[] orbTypeCount = {0, 0, 0, 0, 0};
+        int[] orbTypeCount = {0, 0, 0, 0, 0,0};
 
 
         if (firstOrb != null) {

@@ -78,7 +78,9 @@ public class Orb extends ClickableEntity {
         /** The yellow orb type, equals OrbEffectType.RANGE */
         YELLOW,
         /** The white orb type, equals OrbEffectType.RATE */
-        WHITE
+        WHITE,
+        /** The lila orb type, equals OrbEffectType.RASTA */
+        LILA
     }
     //==========================================================================
     //===   Constants
@@ -224,6 +226,8 @@ public class Orb extends ClickableEntity {
                 return Element.getYellowElement();
             case WHITE:
                 return Element.getWhiteElement();
+            case LILA:
+                return Element.getLilaElement();
             default:
                 return Element.getBlueElement();
         }
@@ -245,8 +249,8 @@ public class Orb extends ClickableEntity {
 
         if (element.material.getMaterialDef().getName().equals("Phong Lighting")) {
             Texture t = game.getAssetManager().loadTexture("Textures/Shader/toon.png");
-                t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
-                t.setMagFilter(Texture.MagFilter.Nearest);
+            t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
+            t.setMagFilter(Texture.MagFilter.Nearest);
             element.material.setTexture("ColorRamp", t);
             element.material.setColor("Diffuse", element.color);
 //                material.setColor("Diffuse", new ColorRGBA(0.25f, 0.25f, 0.25f, 1.0f));
@@ -324,6 +328,20 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
+        
+                /**
+         * Creates a lila orb-element.
+         * @return the lila orb-element
+         */
+        public static Element getLilaElement() {
+            Element e = new Element();
+            e.color = ColorRGBA.Cyan.clone();
+            e.createBaseElement();
+
+            return e;
+        }
+        
+        
         private ColorRGBA color;
         private Geometry geometry;
         private Material material;

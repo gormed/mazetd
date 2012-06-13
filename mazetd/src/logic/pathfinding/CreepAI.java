@@ -39,6 +39,7 @@ import entities.Creep;
 import entities.Map;
 import entities.Map.MapSquare;
 import entities.base.EntityManager;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -81,6 +82,7 @@ public class CreepAI {
     private Pathfinder pathfinder = Pathfinder.getInstance();
     private MapSquare changedSquare = null;
     private boolean changed = false;
+    private boolean someReverse = false;
     private int changedWeight = 1;
 //    private Queue<MapSquare> currentMainPath;
     //==========================================================================
@@ -92,10 +94,23 @@ public class CreepAI {
             updateCreepPathes(tpf, changedSquare, changedWeight);
             changed = false;
         }
+        if (someReverse) {
+            updateCreepPathesReverse(tpf);
+
+        } 
+
+    }
+
+    private void updateCreepPathesReverse(float tpf) {
+
+        checkCreepsReverse(entityManager.getCreepHashMap(),
+                pathfinder.getMainPath());
+
+        //currentMainPath = new LinkedList<MapSquare>(pathfinder.getMainPath());
     }
 
     private void updateCreepPathes(float tpf, MapSquare square, int newWeight) {
-        
+
         //Liegt der Turm auf dem aktuellen MainPath?
         if (pathfinder.getLastPath().contains(square)) {
             //NeuerPfad wird generiert
@@ -105,6 +120,56 @@ public class CreepAI {
         //currentMainPath = new LinkedList<MapSquare>(pathfinder.getMainPath());
     }
 
+    private void checkCreepsReverse(
+            HashMap<Integer, Creep> creeps,
+            Queue<MapSquare> mainPath) {
+        someReverse = false;
+        for (Creep creep : creeps.values()) {
+            if (creep.isReverse()) {
+                Queue<MapSquare> path = new LinkedList<MapSquare>(mainPath);
+                //Ist der Creep auf dem MainPath?
+                if (mainPath.contains(creep.getCurrentSquare())) {
+                    Collections.reverse((LinkedList) path);
+                    //Ziehe alle Squares aus der Queue bis das richtige am anfang steht
+                    while (!path.poll().equals(creep.getCurrentSquare())) {
+                    }
+
+                    creep.setPath(path);
+                } else {
+                    Queue<MapSquare> uniquePath =
+                            pathfinder.createCreepPath(
+                            creep.getCurrentSquare().getFieldInfo(), pathfinder.getStartField());
+                    creep.setPath(uniquePath);
+                }
+                someReverse = true;
+            }
+
+        }
+    }
+
+    
+    /**
+     * 
+     * @param creep 
+     */
+    public void createUniqueCreepPath(Creep creep){
+        Queue<MapSquare> mainPath = pathfinder.getMainPath();
+                    Queue<MapSquare> path = new LinkedList<MapSquare>(mainPath);
+            //Ist der Creep auf dem MainPath?
+            if (mainPath.contains(creep.getCurrentSquare())) {
+                //Ziehe alle Squares aus der Queue bis das richtige am anfang steht
+                while (!path.poll().equals(creep.getCurrentSquare())) {
+                }
+
+                creep.setPath(path);
+            } else {
+                Queue<MapSquare> uniquePath =
+                        pathfinder.createCreepPath(
+                        creep.getCurrentSquare().getFieldInfo(), pathfinder.getEndField());
+                creep.setPath(uniquePath);
+            }
+    }
+    
     /**
      * Ermittelt für alle Creeps den neuen Path
      * - wenn der Creep auf dem MainPath ist wird der MainPath ab der Creepposition übergeben
@@ -129,10 +194,10 @@ public class CreepAI {
             } else {
                 Queue<MapSquare> uniquePath =
                         pathfinder.createCreepPath(
-                        creep.getCurrentSquare().getFieldInfo());
+                        creep.getCurrentSquare().getFieldInfo(), pathfinder.getEndField());
                 creep.setPath(uniquePath);
             }
-            
+
 
         }
     }
@@ -142,6 +207,10 @@ public class CreepAI {
         this.changedWeight = newWight;
         pathfinder.setChangedMapSquare(square, newWight);
         this.changed = true;
+    }
+
+    public void setSomeReverse(boolean isRevert) {
+        this.someReverse = true;
     }
     //==========================================================================
     //===   Inner Classes

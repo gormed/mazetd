@@ -54,6 +54,8 @@ public enum OrbEffectType {
     /** Range effect for orbs, increases the range of a tower*/
     RANGE,
     /** Attack rate effect for orbs, increases the attack-rate of the tower*/
-    RATE
+    RATE,
+        /** Attack rate effect for orbs, increases the attack-rate of the tower*/
+    RASTA
     
 }

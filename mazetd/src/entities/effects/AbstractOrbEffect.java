@@ -64,6 +64,8 @@ public abstract class AbstractOrbEffect {
                 return new RangeOrbEffect(level);
             case YELLOW:
                 return new SpeedOrbEffect(level);
+            case LILA:
+                return new RastaOrbEffect(level);
             default:
                 return null;
         }
@@ -82,7 +84,7 @@ public abstract class AbstractOrbEffect {
         }
         return false;
     }
-    
+
     public static boolean isCreepElement(ElementType elementType) {
         return !isTowerElement(elementType);
     }
@@ -140,7 +142,6 @@ public abstract class AbstractOrbEffect {
      * Is called if the effect is removed.
      */
     public void onEnd(Creep c) {
-        
     }
 
     public void onEnd(Tower t) {

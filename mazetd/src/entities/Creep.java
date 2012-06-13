@@ -121,6 +121,7 @@ public class Creep extends CollidableEntity {
     private float speed = CREEP_BASE_SPEED;
     private boolean moving = true;
     private boolean attacking = false;
+        public boolean reverted = false;
     private int goldDrop = 0;
     private float orbDropRate = CREEP_BASE_ORB_DROP;
     private float damage = CREEP_BASE_DAMAGE;
@@ -136,6 +137,7 @@ public class Creep extends CollidableEntity {
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
+
 
     /**
      * The constructor of the entity with a given name, hp and position.
@@ -198,6 +200,14 @@ public class Creep extends CollidableEntity {
                 }
             }
         }
+    }
+    
+    public boolean isReverse(){
+        return reverted;
+    }
+    
+        public void setReverse(boolean reverted){
+        this.reverted = reverted;
     }
 
     /**

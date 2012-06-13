@@ -214,11 +214,11 @@ public class Pathfinder {
      * @param creepPos Field
      * @return 
      */
-    public Queue<MapSquare> createCreepPath(FieldInfo creepPos) {
+    public Queue<MapSquare> createCreepPath(FieldInfo creepPos, FieldInfo goal) {
         Queue<MapSquare> tempPath = new LinkedList<MapSquare>();
         FieldInfo field = null;
         try {
-            field = findPath(grid, creepPos, getEndField());
+            field = findPath(grid, creepPos, goal);
         } catch (RuntimeException e) {
             System.out.println("fehler Pathfinder-> findPath()");
         }
@@ -270,7 +270,6 @@ public class Pathfinder {
                 if (!closedList.contains(fi)) {
                     fi.setParent(q);
                     fi.setG(calcG(fi));
-                    fi.setWeight(fi.getG() + fi.getWeight());
                     successors.add(fi);
                 }
 
@@ -283,7 +282,6 @@ public class Pathfinder {
                 if (!closedList.contains(fi)) {
                     fi.setParent(q);
                     fi.setG(calcG(fi));
-                    fi.setWeight(fi.getG() + fi.getWeight());
                     successors.add(fi);
                 }
 
@@ -295,7 +293,6 @@ public class Pathfinder {
                 if (!closedList.contains(fi)) {
                     fi.setParent(q);
                     fi.setG(calcG(fi));
-                    fi.setWeight(fi.getG() + fi.getWeight());
                     successors.add(fi);
                 }
             } catch (ArrayIndexOutOfBoundsException aie) {
@@ -307,7 +304,6 @@ public class Pathfinder {
                 if (!closedList.contains(fi)) {
                     fi.setParent(q);
                     fi.setG(calcG(fi));
-                    fi.setWeight(fi.getG() + fi.getWeight());
                     successors.add(fi);
                 }
             } catch (ArrayIndexOutOfBoundsException aie) {
@@ -316,7 +312,7 @@ public class Pathfinder {
             for (FieldInfo f : successors) {  //für jede Gehmöglichkeit
                 if (f.getXCoord() == goal.getXCoord() && f.getYCoord() == goal.getYCoord()) //wenn Ziel
                 {
-                    return f;  //FERTIG!!!:)
+                    return f;  //FOUND SHORTEST PATH !!!
                 }
                 boolean add = true;  //wenn es kein besserer Feld in der
                 if (betterIn(f, openList) || betterIn(f, closedList)) //openList und der closedList
@@ -335,9 +331,17 @@ public class Pathfinder {
         throw new RuntimeException("keinen Weg gefunden");
     }
 
-    private static int calcG(FieldInfo field) //Bisheriger Weg:
+    
+    /**
+     * Calculate the distance between the given field and the start field
+     * Used to optimize findPath() -> find the shortest Path
+     * 
+     * @param field current FieldInfo in openList
+     * @return distance between field and startField
+     */
+    private static int calcG(FieldInfo field) 
     {
-        FieldInfo f = field.getParent();  //Bisheriger Weg des Vaterknotens + 1
+        FieldInfo f = field.getParent();  
         return f.getG() + 1;
     }
 
@@ -351,7 +355,7 @@ public class Pathfinder {
     {
         FieldInfo least = null;
         for (FieldInfo f : l) {
-            if ((least == null) || (f.getWeight() < least.getWeight())) {
+            if ((least == null) || (f.getWeight()+f.getG() < least.getWeight()+least.getG())) {
                 least = f;
             }
         }
@@ -368,7 +372,7 @@ public class Pathfinder {
     private static boolean betterIn(FieldInfo f, ArrayList<FieldInfo> l) //Umweg gegangen?
     {
         for (FieldInfo field : l) {
-            if (field.getXCoord() == f.getXCoord() && field.getYCoord() == f.getYCoord() && field.getWeight() <= f.getWeight()) {
+            if (field.getXCoord() == f.getXCoord() && field.getYCoord() == f.getYCoord() && field.getWeight()+field.getG() <= f.getWeight()+f.getG()) {
                 return true;
             }
         }
