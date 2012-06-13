@@ -117,23 +117,23 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     Element healthglobe = nifty.getCurrentScreen().findElementByName("healthglobe");
     
     if(player.getHitCount()==1){
-        NiftyImage healthglobe_1 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_1.png", false);
+        NiftyImage healthglobe_1 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe/Healthglobe_hit_1.png", false);
         healthglobe.getRenderer(ImageRenderer.class).setImage(healthglobe_1);
     }
     if(player.getHitCount()==2){
-        NiftyImage healthglobe_2 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_2.png", false);
+        NiftyImage healthglobe_2 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe/Healthglobe_hit_2.png", false);
         healthglobe.getRenderer(ImageRenderer.class).setImage(healthglobe_2);
     }
     if(player.getHitCount()==3){
-        NiftyImage healthglobe_3 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_3.png", false);
+        NiftyImage healthglobe_3 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe/Healthglobe_hit_3.png", false);
         healthglobe.getRenderer(ImageRenderer.class).setImage(healthglobe_3);
     }
     if(player.getHitCount()==4){
-        NiftyImage healthglobe_4 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_4.png", false);
+        NiftyImage healthglobe_4 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe/Healthglobe_hit_4.png", false);
         healthglobe.getRenderer(ImageRenderer.class).setImage(healthglobe_4);
     }
     if(player.getHitCount()>=5){
-        NiftyImage healthglobe_5 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_5.png", false);
+        NiftyImage healthglobe_5 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe/Healthglobe_hit_5.png", false);
         healthglobe.getRenderer(ImageRenderer.class).setImage(healthglobe_5);
     }
     
