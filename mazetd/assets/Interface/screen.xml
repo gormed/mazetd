@@ -83,6 +83,7 @@
     <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" backgroundImage="Interface/Textures/panel_bottom.png">  
     
     <panel id="panel_bot_left" width="20%" height="100%" childLayout="center">  
+    <image id="healthglobe" filename="Interface/Textures/Healthglobe_Full.png" valign="center" align="center" height="90%" width="90%" ></image> 
     </panel>
     
     <panel id="panel_bot_mid" width="60%" height="100%" childLayout="vertical">  
@@ -145,8 +146,7 @@
     <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="false"></panel>   
 
     <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" >
-    <panel id="panel_bot_left" width="20%" height="100%" childLayout="center">  
-    </panel>
+    <panel id="panel_bot_left" width="20%" height="100%" childLayout="center"></panel>
     <panel id="panel_bot_mid" width="60%" height="100%" childLayout="vertical">  
     <panel id="panel_bot_mid_top" width="100%" height="25%" childLayout="horizontal"></panel>
     

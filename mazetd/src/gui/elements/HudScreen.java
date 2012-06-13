@@ -1,9 +1,7 @@
 package gui.elements;
  
-import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -11,8 +9,9 @@ import mazetd.MazeTDGame;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
+import de.lessvoid.nifty.elements.render.ImageRenderer;
+import de.lessvoid.nifty.render.NiftyImage;
 import logic.Player;
-import gamestates.Gamestate;
 import gamestates.GamestateManager;
 import logic.WaveManager;
 
@@ -112,6 +111,36 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     
     }
     
+    private void updateHealthglobe(float tpf){
+    if (GamestateManager.getInstance().getCurrentState().
+                equals(GamestateManager.SINGLEPLAYER_STATE)) {
+        
+    Element healthglobe = nifty.getCurrentScreen().findElementByName("healthglobe");
+    
+    if(player.getHitCount()==1){
+        NiftyImage healthglobe_1 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_1.png", false);
+        healthglobe.getRenderer(ImageRenderer.class).setImage(healthglobe_1);
+    }
+    if(player.getHitCount()==2){
+        NiftyImage healthglobe_2 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_2.png", false);
+        healthglobe.getRenderer(ImageRenderer.class).setImage(healthglobe_2);
+    }
+    if(player.getHitCount()==3){
+        NiftyImage healthglobe_3 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_3.png", false);
+        healthglobe.getRenderer(ImageRenderer.class).setImage(healthglobe_3);
+    }
+    if(player.getHitCount()==4){
+        NiftyImage healthglobe_4 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_4.png", false);
+        healthglobe.getRenderer(ImageRenderer.class).setImage(healthglobe_4);
+    }
+    if(player.getHitCount()>=5){
+        NiftyImage healthglobe_5 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_5.png", false);
+        healthglobe.getRenderer(ImageRenderer.class).setImage(healthglobe_5);
+    }
+    
+    }
+    }
+    
     
     private void updateTextLabels(float tpf) {
     if (GamestateManager.getInstance().getCurrentState().
@@ -167,7 +196,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         if(!paused){
         updateTextLabels(tpf); 
         showContext(tpf);
-        
+        updateHealthglobe(tpf);
         time+=tpf;
         timeElapsed=(int)(time+0.5f);
         if(timeElapsed>=59){
