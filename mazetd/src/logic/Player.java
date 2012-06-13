@@ -94,6 +94,18 @@ public class Player implements EntityListener,CreepListener {
     EventManager.getInstance().addEntityListener(this, (AbstractEntity) null);
     }
     
+    public void addGold(int gains){
+        gold=gold+gains;
+    }
+    
+    public void chargeGold(int costs){
+        gold=gold-costs;
+    }
+    
+    public void buyOrb(){
+    //TODO
+    }
+    
     public void removeOrb(Orb orb) {
     inventory.remove(orb);
     type=orb.getElementType();
@@ -135,18 +147,39 @@ public class Player implements EntityListener,CreepListener {
   }
     }
     
-    public void addGold(int gains){
-        gold=gold+gains;
-    }
+    public boolean hasType(Orb.ElementType type){
     
-    public void chargeGold(int costs){
-        gold=gold-costs;
+        switch (type) {
+            case RED:
+             if(redCount>0){
+             return true;
+             }
+            case BLUE:
+              if(blueCount>0){
+             return true;
+             }
+            case GREEN:
+               if(greenCount>0){
+             return true;
+             }
+            case YELLOW:
+               if(yellowCount>0){
+             return true;
+             }
+             case WHITE:
+             if(whiteCount>0){
+             return true;
+             } 
+             default:
+                return false;
     }
-    
-    public void buyOrb(){
-    //TODO
     }
-     
+
+  
+    public Tower getSelectedTower() {
+        return selectedTower;
+    }
+      
     public int getGold(){
         return gold;
     }
@@ -175,7 +208,7 @@ public class Player implements EntityListener,CreepListener {
         return towerIsClicked;
     }
     
-    
+
     
    @Override
     public void onAction(EntityEvent entityEvent) {
