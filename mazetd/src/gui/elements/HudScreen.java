@@ -102,9 +102,8 @@ public class HudScreen extends AbstractAppState implements ScreenController {
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
     if(contextIsShown){
     /**
-         * 
-         * 
-         * 
+    NiftyImage healthglobe_1 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_1.png", false);
+      
          */ 
     }
     }
