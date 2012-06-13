@@ -135,5 +135,11 @@ public class CreepHandler {
                 l.onAction(event);
             }
         }
+        if (creepListeners.containsKey(null)) {
+            HashSet<CreepListener> listeners = creepListeners.get(null);
+            for (CreepListener l : listeners) {
+                l.onAction(event);
+            }
+        }
     }
 }

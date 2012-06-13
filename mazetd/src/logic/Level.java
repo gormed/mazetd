@@ -87,6 +87,7 @@ public class Level {
     //===   Private Fields
     //==========================================================================
     private MazeTDGame game = MazeTDGame.getInstance();
+    private Player player = Player.getInstance();
     private boolean initialized = false;
     private EntityManager entityManager = EntityManager.getInstance();
     private EventManager eventManager = EventManager.getInstance();
@@ -162,6 +163,11 @@ public class Level {
 
     }
 
+    /**
+     * Init waves for simple waves. 
+     * Maybe import from XML or via (random) seed.
+     * @return the waves to use for the game
+     */
     private Queue<WaveManager.WaveDescription> testWaves() {
         LinkedList<WaveManager.WaveDescription> waveDescriptions =
                 new LinkedList<WaveManager.WaveDescription>();
@@ -170,12 +176,12 @@ public class Level {
 
         for (int i = 0; i < 30; i++) {
             description = waveManager.new WaveDescription();
-            description.creepCount = 4 + 2 * i;
+            description.creepCount = 5 + (i * 5);
             description.creepDamage = 80 + 15 * i;
             description.creepGoldDrop = 5 + 2 * i;
-            description.creepOrbDropRate = 0.07f + 0.015f * i;
+            description.creepOrbDropRate = 0.03f + 0.01f * i;
             description.creepSpeed = 0.8f + 0.05f * i;
-            description.maxCreepHealthPoints = 25 + 12.5f * i;
+            description.maxCreepHealthPoints = 20 + 12.5f * i;
 
             waveDescriptions.add(description);
         }
@@ -187,6 +193,7 @@ public class Level {
      * @param tpf 
      */
     public void update(float tpf) {
+        player.update(tpf);
         pathfinder.update(tpf);
         creepAI.update(tpf);
         entityManager.update(tpf);
@@ -228,11 +235,9 @@ public class Level {
         // add tower
         Tower t = entityManager.createTower(
                 "FirstTower", square);
-
-//        t.placeOrb(Orb.ElementType.RED, 0);
-//        t.placeOrb(Orb.ElementType.RED, 1);
-//        t.placeOrb(Orb.ElementType.RED, 2);
-
+//       t.placeOrb(Orb.ElementType.RED, 0);
+//        t.placeOrb(Orb.ElementType.YELLOW, 1);
+//        t.placeOrb(Orb.ElementType.GREEN,2);
 
         creepAI.setChangeMapSquare(square, Pathfinder.TOWER_WEIGHT);
         return t;
