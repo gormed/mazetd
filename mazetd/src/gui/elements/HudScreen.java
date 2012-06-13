@@ -111,7 +111,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     
     }
     
-    private void updateHealthglobe(float tpf){
+  /*  private void updateHealthglobe(float tpf){
     if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
         
@@ -140,7 +140,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     
     }
     }
-    
+    */
     
     private void updateTextLabels(float tpf) {
     if (GamestateManager.getInstance().getCurrentState().
@@ -196,7 +196,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         if(!paused){
         updateTextLabels(tpf); 
         showContext(tpf);
-        updateHealthglobe(tpf);
+       // updateHealthglobe(tpf);
         time+=tpf;
         timeElapsed=(int)(time+0.5f);
         if(timeElapsed>=59){
