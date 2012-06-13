@@ -61,7 +61,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
 
     }
   
-  public void pause(String nextScreen){
+ public void pause(String nextScreen){
   paused=true;
   nifty.gotoScreen(nextScreen);
   gamestateManager = GamestateManager.getInstance();
@@ -77,12 +77,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
  
   
   public String getWave() {
-  waveManager=WaveManager.getInstance();
- // if(waveManager.isInitialized()){    
+  waveManager=WaveManager.getInstance();   
   int currentWave = waveManager.getCurrentWaveCount();
   int maxWaves = waveManager.getmaxWaves();
   return currentWave+"/"+maxWaves; 
-  //}
+
   }
    
    public String getTime(){
@@ -117,18 +116,18 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     private void updateTextLabels(float tpf) {
     if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
-   
+   //find old text
     Element invSlot1 = nifty.getCurrentScreen().findElementByName("redCount");
     Element invSlot2 = nifty.getCurrentScreen().findElementByName("blueCount");
     Element invSlot3 = nifty.getCurrentScreen().findElementByName("greenCount");
     Element invSlot4 = nifty.getCurrentScreen().findElementByName("yellowCount");
     Element invSlot5 = nifty.getCurrentScreen().findElementByName("whiteCount");
 
-     Element gold = nifty.getCurrentScreen().findElementByName("gold");
-     Element wave = nifty.getCurrentScreen().findElementByName("wave");
-     Element time = nifty.getCurrentScreen().findElementByName("time");
+    Element gold = nifty.getCurrentScreen().findElementByName("gold");
+    Element wave = nifty.getCurrentScreen().findElementByName("wave");
+    Element time = nifty.getCurrentScreen().findElementByName("time");
    
-
+    //swap old with new text
     invSlot1.getRenderer(TextRenderer.class).setText(player.getRedCount()+"x");
     invSlot2.getRenderer(TextRenderer.class).setText(player.getBlueCount()+"x");
     invSlot3.getRenderer(TextRenderer.class).setText(player.getGreenCount()+"x");
