@@ -48,11 +48,6 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   public void disableGui() {
   nifty.exit(); 
   }
-  
-  public void init(){
-  time=0;
-  min=0;
-  }
 
   public void setPaused(boolean paused) {
         this.paused = paused;

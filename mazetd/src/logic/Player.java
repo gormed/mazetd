@@ -36,18 +36,31 @@
 package logic;
 import java.util.ArrayList;
 import entities.Orb;
+import entities.Tower;
+import entities.base.AbstractEntity;
+import eventsystem.EventManager;
+import eventsystem.events.EntityEvent;
+import eventsystem.events.EntityEvent.EntityEventType;
+import eventsystem.listener.EntityListener;
+import entities.Creep;
+import eventsystem.events.CreepEvent;
+import eventsystem.listener.CreepListener;
+import gui.elements.HudScreen;
+import mazetd.MazeTDGame;
+
+
 
 /**
  * The class Player
  * @author Ahmed
  * @version
  */
-public class Player {
+public class Player implements EntityListener,CreepListener {
     
     public static final int PLAYRER_HEALTH = 500;
-    
     public static Player instance;
    
+    private Tower selectedTower;
     private int redCount=0;
     private int blueCount=0;
     private int greenCount=0;
@@ -56,7 +69,8 @@ public class Player {
     
     private int gold=500;
     
-    
+    private MazeTDGame game= MazeTDGame.getInstance();
+    private HudScreen hudscreen = game.getHudScreenInstance();
     private Orb.ElementType type;
     
     
@@ -78,6 +92,7 @@ public class Player {
     
     public Player(){
     inventory = new ArrayList<Orb>();
+    EventManager.getInstance().addEntityListener(this, (AbstractEntity) null);
     }
     
     public void removeOrb(Orb orb) {
@@ -155,5 +170,27 @@ public class Player {
    
     public int getWhiteCount(){
     return whiteCount;
+    }
+    
+   @Override
+    public void onAction(EntityEvent entityEvent) {
+        // get the entity
+        AbstractEntity e = entityEvent.getEntity();
+        // check if tower an clicked
+        if (e instanceof Tower && 
+                entityEvent.getEventType().equals(EntityEventType.Click)) {
+            // cast to tower
+            Tower tower = (Tower) e;
+            selectedTower = tower;
+            System.out.println("Tower clicked:" + tower.getName());
+            hudscreen.showContext();
+        }
+    }
+    
+    @Override
+    public void onAction(CreepEvent e) {
+        if (e.getType().equals(CreepEvent.CreepEventType.ReachedEnd)) {
+            Creep c = e.getCreep();
+        }
     }
 }

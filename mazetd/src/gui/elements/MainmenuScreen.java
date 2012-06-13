@@ -31,7 +31,6 @@ public class MainmenuScreen extends AbstractAppState implements ScreenController
   gamestateManager = GamestateManager.getInstance();
   gamestateManager.enterState("Singleplayer");
   hudScreen=game.getHudScreenInstance();
-  hudScreen.init();
   }
  
   public void quitGame() {
