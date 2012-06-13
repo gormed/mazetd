@@ -14,8 +14,9 @@ import de.lessvoid.nifty.render.NiftyImage;
 import logic.Player;
 import gamestates.GamestateManager;
 import logic.WaveManager;
-
-
+import entities.Orb.ElementType;
+import logic.Inventory;
+import entities.Tower;
 
  
 public class HudScreen extends AbstractAppState implements ScreenController {
@@ -33,7 +34,10 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   private int min;
   private float time;
   private boolean paused;
-  private boolean contextIsShown;
+  private ElementType type;
+  private Inventory inventory=Inventory.getInstance();
+  private boolean towerIsClicked=false;
+  
 
 
 
@@ -59,6 +63,9 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         else marketPlace.show();
 
     }
+  public void demolishTower(){
+  player.getSelectedTower().demolish();
+  }
   
  public void pause(String nextScreen){
   paused=true;
@@ -68,9 +75,13 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   }
  
  public void showContext(float tpf){
- if(player.isTowerIsClicked()){
- Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
+ if(player.TowerIsClicked()){
+ Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");    
  towerContext.show();
+ towerIsClicked=true;
+ }
+ else{
+ towerIsClicked=false;
  }
  }
  
@@ -97,17 +108,120 @@ public class HudScreen extends AbstractAppState implements ScreenController {
    return min+":"+timeElapsed;
    }
     
-    private void updateContext(){
-    if (GamestateManager.getInstance().getCurrentState().
-                equals(GamestateManager.SINGLEPLAYER_STATE)) {
-    if(contextIsShown){
-    /**
-    NiftyImage healthglobe_1 = nifty.getRenderEngine().createImage("Interface/Textures/Healthglobe_hit_1.png", false);
-      
-         */ 
+   private void slot3Context(float tpf){
+   if (GamestateManager.getInstance().getCurrentState().
+   equals(GamestateManager.SINGLEPLAYER_STATE)) {
+   if(towerIsClicked){
+   Element slot3 = nifty.getCurrentScreen().findElementByName("Orb3");      
+            
+   if(inventory.Slot3Context()!=null){
+                switch (type) {
+                case RED :  
+                NiftyImage redOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/redOrbSlot", false);
+                slot3.getRenderer(ImageRenderer.class).setImage(redOrbSlot);   
+                slot3.show();
+                case BLUE : 
+                NiftyImage blueOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/blueOrbSlot", false);
+                slot3.getRenderer(ImageRenderer.class).setImage(blueOrbSlot);   
+                slot3.show();
+                case GREEN :
+                NiftyImage greenOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/greenOrbSlot", false);
+                slot3.getRenderer(ImageRenderer.class).setImage(greenOrbSlot);   
+                slot3.show();    
+                case YELLOW :;
+                NiftyImage yellowOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/yellowOrbSlot", false);
+                slot3.getRenderer(ImageRenderer.class).setImage(yellowOrbSlot);   
+                slot3.show();   
+                case WHITE : ;
+                NiftyImage whiteOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/whiteOrbSlot", false);
+                slot3.getRenderer(ImageRenderer.class).setImage(whiteOrbSlot);   
+                slot3.show();   
+                } 
+            }
+    else{
+        slot3.hide();
     }
     }
-    
+    /*else{ 
+    Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
+    towerIsClicked=false;
+    towerContext.hide();
+   }*/
+    }
+    }
+   
+   private void slot2Context(float tpf){
+   if (GamestateManager.getInstance().getCurrentState().
+   equals(GamestateManager.SINGLEPLAYER_STATE)) {
+   if(towerIsClicked){
+   Element slot2 = nifty.getCurrentScreen().findElementByName("Orb2");      
+            
+   if(inventory.Slot2Context()!=null){
+                switch (type) {
+                case RED :  
+                NiftyImage redOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/redOrbSlot", false);
+                slot2.getRenderer(ImageRenderer.class).setImage(redOrbSlot);   
+                slot2.show();
+                case BLUE : 
+                NiftyImage blueOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/blueOrbSlot", false);
+                slot2.getRenderer(ImageRenderer.class).setImage(blueOrbSlot);   
+                slot2.show();
+                case GREEN :
+                NiftyImage greenOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/greenOrbSlot", false);
+                slot2.getRenderer(ImageRenderer.class).setImage(greenOrbSlot);   
+                slot2.show();    
+                case YELLOW :;
+                NiftyImage yellowOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/yellowOrbSlot", false);
+                slot2.getRenderer(ImageRenderer.class).setImage(yellowOrbSlot);   
+                slot2.show();   
+                case WHITE : ;
+                NiftyImage whiteOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/whiteOrbSlot", false);
+                slot2.getRenderer(ImageRenderer.class).setImage(whiteOrbSlot);   
+                slot2.show();   
+                } 
+            }
+    else{
+        slot2.hide();
+    }
+    }
+    }
+    }
+   
+   private void slot1Context(float tpf){
+   if (GamestateManager.getInstance().getCurrentState().
+   equals(GamestateManager.SINGLEPLAYER_STATE)) {
+   if(towerIsClicked){
+   Element slot1 = nifty.getCurrentScreen().findElementByName("Orb1");      
+            
+   if(inventory.Slot1Context()!=null){
+                switch (type) {
+                case RED :  
+                NiftyImage redOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/redOrbSlot", false);
+                slot1.getRenderer(ImageRenderer.class).setImage(redOrbSlot);   
+                slot1.show();
+                case BLUE : 
+                NiftyImage blueOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/blueOrbSlot", false);
+                slot1.getRenderer(ImageRenderer.class).setImage(blueOrbSlot);   
+                slot1.show();
+                case GREEN :
+                NiftyImage greenOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/greenOrbSlot", false);
+                slot1.getRenderer(ImageRenderer.class).setImage(greenOrbSlot);   
+                slot1.show();    
+                case YELLOW :;
+                NiftyImage yellowOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/yellowOrbSlot", false);
+                slot1.getRenderer(ImageRenderer.class).setImage(yellowOrbSlot);   
+                slot1.show();   
+                case WHITE : ;
+                NiftyImage whiteOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/whiteOrbSlot", false);
+                slot1.getRenderer(ImageRenderer.class).setImage(whiteOrbSlot);   
+                slot1.show();   
+                } 
+            }
+    else{
+        slot1.hide();
+    }
+    }
+    }
     }
     
   /*  private void updateHealthglobe(float tpf){
@@ -195,6 +309,9 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         if(!paused){
         updateTextLabels(tpf); 
         showContext(tpf);
+        slot3Context(tpf);
+        slot2Context(tpf);
+        slot1Context(tpf);
        // updateHealthglobe(tpf);
         time+=tpf;
         timeElapsed=(int)(time+0.5f);

@@ -203,7 +203,7 @@ public class Player implements EntityListener,CreepListener {
         return whiteCount;
     }
 
-    public boolean isTowerIsClicked() {
+    public boolean TowerIsClicked() {
         return towerIsClicked;
     }
     

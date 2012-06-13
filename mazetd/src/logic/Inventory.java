@@ -17,12 +17,6 @@ public class Inventory {
     private Tower tower;
     private Orb.ElementType type;
     
-    public boolean slot1IsEmpty;
-    public boolean slot2IsEmpty;
-    public boolean slot3IsEmpty;
-    
-
-    
     public static Inventory instance;
        
     public enum Slot {
@@ -44,34 +38,45 @@ public class Inventory {
         return instance = new Inventory();
      }
   
-  /* public void generateContext(){
+   public Orb.ElementType Slot1Context(){
    tower=player.getSelectedTower();
-   Orb orb1=tower.getFirstOrb();
-   Orb orb2=tower.getSecondOrb();
-   Orb orb3=tower.getThirdOrb();
+   Orb orb1=tower.getFirstOrb();  
    
    if(orb1==null){
-   slot1IsEmpty=true;
+   return null;
    }
    else{
-   slot1IsEmpty=false;
    orb1.getElementType();
-       switch (type) {
-            case RED :
-                
-            case BLUE :
-                
-            case GREEN : 
-                
-            case YELLOW :
-                
-            case WHITE : 
-            default:
-                break;     
+   return type;   
   }
    }
    
-   }*/
+   public Orb.ElementType Slot2Context(){
+   tower=player.getSelectedTower();
+   Orb orb2=tower.getSecondOrb();
+
+   if(orb2==null){
+   return null;
+   }
+   else{
+   orb2.getElementType();
+   return type;   
+  }
+   }
+   
+   public Orb.ElementType Slot3Context(){
+   tower=player.getSelectedTower();
+   Orb orb3=tower.getThirdOrb();
+ 
+   if(orb3==null){
+   return null;
+   }
+   else{
+   orb3.getElementType();
+   return type;   
+  }
+   }
+   
     
    public void placeOrb(Slot slot, Orb.ElementType type) {
         

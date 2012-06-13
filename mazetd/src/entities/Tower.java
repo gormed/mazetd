@@ -599,6 +599,20 @@ public class Tower extends ClickableEntity {
         return towerRange;
     }
 
+    public Orb getFirstOrb() {
+        return firstOrb;
+    }
+
+    public Orb getSecondOrb() {
+        return secondOrb;
+    }
+
+    public Orb getThirdOrb() {
+        return thirdOrb;
+    }
+    
+    
+
     /**
      * Sets the new range of a tower. and calculates new collision-volume.
      * @param towerRange the new range
