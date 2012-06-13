@@ -34,6 +34,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   private int min;
   private float time;
   private boolean paused;
+  private boolean contextIsShown;
 
 
 
@@ -95,6 +96,20 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   
    return min+":"+timeElapsed;
    }
+    
+    private void updateContext(){
+    if (GamestateManager.getInstance().getCurrentState().
+                equals(GamestateManager.SINGLEPLAYER_STATE)) {
+    if(contextIsShown){
+    /**
+         * 
+         * 
+         * 
+         */ 
+    }
+    }
+    
+    }
     
     
     private void updateTextLabels(float tpf) {

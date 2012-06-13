@@ -63,7 +63,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import logic.Level;
 import mazetd.MazeTDGame;
-import gui.elements.HudScreen;
 import jme3tools.optimize.GeometryBatchFactory;
 
 /**
@@ -104,7 +103,6 @@ public class Tower extends ClickableEntity {
     private Vector3f position;
     private boolean deacying = false;
     private float decayTime = 0;
-    private HudScreen hudscreen = GAME.getHudScreenInstance();
     //logic
     private float towerRange = TOWER_BASE_RANGE;
     private Creep target;
@@ -332,7 +330,7 @@ public class Tower extends ClickableEntity {
     @Override
     public void onClick() {
         System.out.println("You clicked tower: #" + getEntityId() + " - " + getName());
-        hudscreen.showContext();
+       
     }
 
     @Override
