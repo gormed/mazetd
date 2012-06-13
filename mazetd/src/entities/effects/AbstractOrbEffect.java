@@ -57,10 +57,8 @@ public abstract class AbstractOrbEffect {
             case GREEN:
                 return new PoisonOrbEffect(level);
             case RED:
-
-                return null;
+                return new DamageOrbEffect(level);
             case WHITE:
-
                 return new RangeOrbEffect(level);
             case YELLOW:
                 return new SpeedOrbEffect(level);
