@@ -256,6 +256,7 @@ public class Map extends Node {
         private ColorRGBA fadeColor = SQUARE_COLOR.clone();
         private FieldInfo field;
         private Tower tower;
+        private Stone stone;
         //==========================================================================
         //===   Methods & Constructor
         //==========================================================================
@@ -294,6 +295,19 @@ public class Map extends Node {
                     entityManager.getCreepHashMap())) {
                 Level.getInstance().buildTower(this);
                 buildTowerHUD.hide();
+            }
+        }
+
+        /**
+         * Builds a Stone on this field 
+         * Used b
+         * 
+         */
+        public void buildStoneOnField() {
+            if (this.getFieldInfo().getWeight() < Pathfinder.TOWER_WEIGHT
+                    && !isCreepOnField(this.getFieldInfo(),
+                    entityManager.getCreepHashMap())) {
+                Level.getInstance().buildStone(this);
             }
         }
 
@@ -396,6 +410,10 @@ public class Map extends Node {
 
         public Tower getTower() {
             return tower;
+        }
+
+        void setStone(Stone stone) {
+            this.stone = stone;
         }
 
         void setTower(Tower t) {

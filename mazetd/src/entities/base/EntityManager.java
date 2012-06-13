@@ -42,6 +42,7 @@ import com.jme3.scene.Node;
 import entities.Creep;
 import entities.Map.MapSquare;
 import entities.Orb;
+import entities.Stone;
 import entities.Tower;
 import eventsystem.CreepHandler;
 import eventsystem.events.CreepEvent.CreepEventType;
@@ -95,6 +96,7 @@ public class EntityManager {
     private HashMap<Integer, Tower> towerHashMap = new HashMap<Integer, Tower>();
     private HashMap<Integer, Creep> creepHashMap = new HashMap<Integer, Creep>();
     private HashMap<Integer, Orb> orbHashMap = new HashMap<Integer, Orb>();
+    private HashMap<Integer, Stone> stoneHashMap = new HashMap<Integer, Stone>();
     private MazeTDGame game = MazeTDGame.getInstance();
     private ScreenRayCast3D rayCast3D = ScreenRayCast3D.getInstance();
     private Collider3D collider3D = Collider3D.getInstance();
@@ -210,6 +212,25 @@ public class EntityManager {
         rayCast3D.addClickableObject(geometryNode);
 
         return o;
+    }
+
+    /**
+     * Creates a tower on a given position.
+     * @param name the towers name
+     * @param position the towers position
+     * @return the tower just created
+     */
+    public Stone createStone(String name, MapSquare square) {
+        Stone s = new Stone(name, square);
+
+        addEntity(s);
+        stoneHashMap.put(s.getEntityId(), s);
+        Node geometryNode = s.createNode(game);
+        rayCast3D.addClickableObject(geometryNode);
+
+        return s;
+        
+        
     }
 
     /**

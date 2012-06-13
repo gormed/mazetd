@@ -39,13 +39,16 @@ import com.jme3.scene.Node;
 import entities.Map;
 import entities.Map.MapSquare;
 import entities.Orb;
+import entities.Stone;
 import entities.Tower;
 import entities.base.EntityManager;
 import eventsystem.EventManager;
 import eventsystem.port.Collider3D;
 import eventsystem.port.ScreenRayCast3D;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 import logic.pathfinding.CreepAI;
 import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
@@ -120,7 +123,7 @@ public class Level {
 
         map.initialize();
         pathfinder.initialize();
-
+        createStones(map.getMapSquares());
         setupLevelContent();
 
         TowerListener t = new TowerListener();
@@ -225,11 +228,39 @@ public class Level {
         // add tower
         Tower t = entityManager.createTower(
                 "FirstTower", square);
-       t.placeOrb(Orb.ElementType.RED, 0);
-        t.placeOrb(Orb.ElementType.YELLOW, 1);
-        t.placeOrb(Orb.ElementType.GREEN,2);
+
+//        t.placeOrb(Orb.ElementType.RED, 0);
+//        t.placeOrb(Orb.ElementType.RED, 1);
+//        t.placeOrb(Orb.ElementType.RED, 2);
+
+
         creepAI.setChangeMapSquare(square, Pathfinder.TOWER_WEIGHT);
         return t;
+    }
+
+    private void createStones(HashSet<MapSquare> mapSquares) {
+        for (MapSquare s : mapSquares) {
+            if (Math.random() < 0.07) {
+                s.buildStoneOnField();
+            }
+
+        }
+    }
+
+    /**
+     * Erzeugt ein grafisches Stone-Objekt an der Position des übergebenen Squares
+     * - Stone-Objekte sind unzerstoerbar und durchquerbar
+     * 
+     * @param square 
+     */
+    public Stone buildStone(MapSquare square) {
+        // add tower
+        Stone s = entityManager.createStone(
+                "Stone", square);
+
+        getStaticLevelElements().attachChild(s.getGeometryNode());
+        square.getFieldInfo().incrementWeight(pathfinder.STONE_WEIGHT);
+        return s;
     }
 
     /**
