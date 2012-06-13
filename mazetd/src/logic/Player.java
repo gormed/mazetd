@@ -69,9 +69,8 @@ public class Player implements EntityListener,CreepListener {
     
     private int gold=500;
     
-    private MazeTDGame game= MazeTDGame.getInstance();
-    private HudScreen hudscreen = game.getHudScreenInstance();
     private Orb.ElementType type;
+    private boolean towerIsClicked;
     
     
     private ArrayList<Orb> inventory;
@@ -129,19 +128,19 @@ public class Player implements EntityListener,CreepListener {
             case YELLOW : yellowCount= yellowCount+1;
                 break;
             case WHITE : whiteCount= whiteCount+1;
-            break;
+                break;
             default:
-            break;     
+                break;     
   
   }
     }
     
     public void addGold(int gains){
-    gold=gold+gains;
+        gold=gold+gains;
     }
     
     public void chargeGold(int costs){
-    gold=gold-costs;
+        gold=gold-costs;
     }
     
     public void buyOrb(){
@@ -149,28 +148,34 @@ public class Player implements EntityListener,CreepListener {
     }
      
     public int getGold(){
-    return gold;
+        return gold;
     }
 
     public int getRedCount(){
-    return redCount;
+        return redCount;
     }
     
     public int getBlueCount(){
-    return blueCount;
+        return blueCount;
     }
       
     public int getGreenCount(){
-    return greenCount;
+        return greenCount;
     }
     
     public int getYellowCount(){
-    return yellowCount;
+        return yellowCount;
     }
    
     public int getWhiteCount(){
-    return whiteCount;
+        return whiteCount;
     }
+
+    public boolean isTowerIsClicked() {
+        return towerIsClicked;
+    }
+    
+    
     
    @Override
     public void onAction(EntityEvent entityEvent) {
@@ -183,7 +188,7 @@ public class Player implements EntityListener,CreepListener {
             Tower tower = (Tower) e;
             selectedTower = tower;
             System.out.println("Tower clicked:" + tower.getName());
-            hudscreen.showContext();
+            towerIsClicked=true;
         }
     }
     

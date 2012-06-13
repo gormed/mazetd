@@ -68,9 +68,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
   gamestateManager.pause();
   }
  
- public void showContext(){
+ public void showContext(float tpf){
+ if(player.isTowerIsClicked()){
  Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
  towerContext.show();
+ }
  }
  
   
@@ -164,7 +166,9 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     @Override
     public void update(float tpf) { 
         if(!paused){
-        updateTextLabels(tpf);   
+        updateTextLabels(tpf); 
+        showContext(tpf);
+        
         time+=tpf;
         timeElapsed=(int)(time+0.5f);
         if(timeElapsed>=59){
