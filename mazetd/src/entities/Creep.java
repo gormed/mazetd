@@ -60,6 +60,7 @@ import entities.Orb.ElementType;
 import entities.base.CollidableEntity;
 import entities.base.EntityManager;
 import entities.effects.AbstractOrbEffect;
+import entities.effects.RastaOrbEffect;
 import entities.geometry.ClickableGeometry;
 import entities.nodes.CollidableEntityNode;
 import eventsystem.CreepHandler;
@@ -121,7 +122,7 @@ public class Creep extends CollidableEntity {
     private float speed = CREEP_BASE_SPEED;
     private boolean moving = true;
     private boolean attacking = false;
-        public boolean reverted = false;
+    public boolean reverted = false;
     private int goldDrop = 0;
     private float orbDropRate = CREEP_BASE_ORB_DROP;
     private float damage = CREEP_BASE_DAMAGE;
@@ -137,7 +138,6 @@ public class Creep extends CollidableEntity {
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-
 
     /**
      * The constructor of the entity with a given name, hp and position.
@@ -201,12 +201,12 @@ public class Creep extends CollidableEntity {
             }
         }
     }
-    
-    public boolean isReverse(){
+
+    public boolean isReverse() {
         return reverted;
     }
-    
-        public void setReverse(boolean reverted){
+
+    public void setReverse(boolean reverted) {
         this.reverted = reverted;
     }
 
@@ -400,12 +400,23 @@ public class Creep extends CollidableEntity {
                     moveTo(path.poll().getLocalTranslation());
                 } else {
 
-                    // TODO: handle tower-attacking or greep-enters-goal event
-                    // otherwise we are attacking a tower or are at the goal.
-                    CreepHandler.getInstance().invokeCreepAction(
-                            CreepEventType.ReachedEnd, this, null);
-                    moving = false;
-                    destroy();
+
+                    if (!orbEffects.isEmpty()) {
+                        // remove orb effects if there are some
+                        for (AbstractOrbEffect e : orbEffects) {
+                            if (e instanceof RastaOrbEffect) {
+                                removeOrbEffect(e);
+                            }
+                        }
+                    } else {
+                        // TODO: handle tower-attacking or greep-enters-goal 
+                        // event otherwise we are attacking a tower or are 
+                        // at the goal.
+                        CreepHandler.getInstance().invokeCreepAction(
+                                CreepEventType.ReachedEnd, this, null);
+                        moving = false;
+                        destroy();
+                    }
                 }
             } else {
                 if (currentSquare.hasTower()) {
@@ -574,7 +585,7 @@ public class Creep extends CollidableEntity {
         goldEmitter.emitAllParticles();
         goldEmitter.setParticlesPerSec(0);
     }
-    
+
     private void triggerDestroyedEmitter() {
         collidableEntityNode.attachChild(destroyedEmitter);
         destroyedEmitter.emitAllParticles();

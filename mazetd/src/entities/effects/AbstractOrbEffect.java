@@ -38,6 +38,7 @@ package entities.effects;
 import entities.Creep;
 import entities.Orb;
 import entities.Orb.ElementType;
+import entities.Orb.SpecialElementType;
 import entities.Tower;
 
 /**
@@ -62,8 +63,6 @@ public abstract class AbstractOrbEffect {
                 return new RangeOrbEffect(level);
             case YELLOW:
                 return new SpeedOrbEffect(level);
-            case LILA:
-                return new RastaOrbEffect(level);
             default:
                 return null;
         }
@@ -71,6 +70,19 @@ public abstract class AbstractOrbEffect {
 
     public static AbstractOrbEffect getOrbEffect(ElementType type, int level) {
         return createOrbEffect(type, level);
+    }
+
+    public static AbstractOrbEffect getSpecialOrbEffect(SpecialElementType type, int level) {
+        switch (type) {
+            case MULTI:
+                return null;
+            case RASTA:
+                return new RastaOrbEffect(level);
+
+            case SPLASH:
+            default:
+                return null;
+        }
     }
     public static final ElementType[] TOWER_ELEMENT_TYPES = {ElementType.WHITE, ElementType.YELLOW};
 
@@ -91,6 +103,7 @@ public abstract class AbstractOrbEffect {
     //==========================================================================
     protected OrbEffectType effectType;
     protected Orb.ElementType elementType;
+    protected Orb.SpecialElementType specialElementType;
     protected int level;
     protected Creep infected;
     protected Tower enhanced;
@@ -107,6 +120,19 @@ public abstract class AbstractOrbEffect {
      */
     public AbstractOrbEffect(OrbEffectType effectType, ElementType elementType, int level) {
         this.elementType = elementType;
+        this.effectType = effectType;
+        this.level = level;
+    }
+
+    /**
+     * Creates an AbstractOrbEffect by the effect type and the orbs level.
+     * 
+     * @see OrbEffectType
+     * @param specialElementType the desired type
+     * @param level the desired level
+     */
+    public AbstractOrbEffect(OrbEffectType effectType, SpecialElementType specialElementType, int level) {
+        this.specialElementType = specialElementType;
         this.effectType = effectType;
         this.level = level;
     }

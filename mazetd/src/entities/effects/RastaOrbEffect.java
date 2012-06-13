@@ -41,7 +41,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import entities.Creep;
-import entities.Orb.ElementType;
+import entities.Orb.SpecialElementType;
 import logic.pathfinding.CreepAI;
 import mazetd.MazeTDGame;
 
@@ -69,7 +69,7 @@ public class RastaOrbEffect extends AbstractOrbEffect {
     //==========================================================================
 
     public RastaOrbEffect(int level) {
-        super(OrbEffectType.RASTA, ElementType.LILA, level);
+        super(OrbEffectType.RASTA, SpecialElementType.RASTA, level);
         createPoisonEmitter(MazeTDGame.getInstance());
     }
 

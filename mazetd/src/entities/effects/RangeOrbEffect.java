@@ -44,7 +44,7 @@ import entities.Tower;
  */
 public class RangeOrbEffect extends AbstractOrbEffect {
 
-    private float[] range = { 3.3f , 3.7f, 4.2f };
+    private float[] range = { 2.5f , 3.5f, 5f };
     private float oldRange = 0;
     
     public RangeOrbEffect(int level) {

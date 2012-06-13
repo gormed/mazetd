@@ -78,10 +78,15 @@ public class Orb extends ClickableEntity {
         /** The yellow orb type, equals OrbEffectType.RANGE */
         YELLOW,
         /** The white orb type, equals OrbEffectType.RATE */
-        WHITE,
-        /** The lila orb type, equals OrbEffectType.RASTA */
-        LILA
+        WHITE
     }
+    
+    public enum SpecialElementType {
+        RASTA,
+        SPLASH,
+        MULTI
+    }
+    
     //==========================================================================
     //===   Constants
     //==========================================================================
@@ -226,8 +231,6 @@ public class Orb extends ClickableEntity {
                 return Element.getYellowElement();
             case WHITE:
                 return Element.getWhiteElement();
-            case LILA:
-                return Element.getLilaElement();
             default:
                 return Element.getBlueElement();
         }

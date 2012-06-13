@@ -55,6 +55,7 @@ import entities.base.AbstractEntity;
 import entities.base.ClickableEntity;
 import entities.base.EntityManager;
 import entities.effects.AbstractOrbEffect;
+import entities.effects.OrbEffectManager;
 import entities.nodes.CollidableEntityNode;
 import eventsystem.port.Collider3D;
 import eventsystem.port.ScreenRayCast3D;
@@ -120,6 +121,7 @@ public class Tower extends ClickableEntity {
     private float orbRotation = 0;
     private ArrayList<AbstractOrbEffect> orbEffects =
             new ArrayList<AbstractOrbEffect>();
+    private OrbEffectManager effectManager = OrbEffectManager.getInstance();
     //jme3
     private Node attackRangeCollisionNode;
     //particle
@@ -393,7 +395,7 @@ public class Tower extends ClickableEntity {
                     target,
                     damage,
                     projectileColor,
-                    getOrbEffects());
+                    effectManager.getOrbEffects(firstOrb, secondOrb, thirdOrb));
             p.createNode(GAME);
             EntityManager.getInstance().addEntity(p);
             intervalCounter = 0;
@@ -636,7 +638,7 @@ public class Tower extends ClickableEntity {
         for (AbstractOrbEffect e : clone) {
             removeOrbEffect(e);
         }
-        AbstractOrbEffect[] effects = getOrbEffects();
+        AbstractOrbEffect[] effects = effectManager.getOrbEffects(firstOrb, secondOrb, thirdOrb);
         for (AbstractOrbEffect aoe : effects) {
             if (aoe != null && AbstractOrbEffect.isTowerElement(aoe.getElementType())) {
                 addOrbEffect(aoe);
@@ -797,74 +799,9 @@ public class Tower extends ClickableEntity {
                         -TOWER_SIZE+0.05f),
                         type);
                 break;
-//            case 0:
-//                o = new Orb(name + "Orb_1",
-//                        new Vector3f(
-//                        TOWER_SIZE,
-//                        TOWER_HEIGHT + 0.1f,
-//                        -TOWER_SIZE / 2),
-//                        type);
-//                break;
-//            case 1:
-//                o = new Orb(name + "Orb_2",
-//                        new Vector3f(
-//                        -TOWER_SIZE,
-//                        TOWER_HEIGHT + 0.1f,
-//                        -TOWER_SIZE / 2),
-//                        type);
-//                break;
-//            case 2:
-//            default:
-//                o = new Orb(name + "Orb_3",
-//                        new Vector3f(
-//                        0,
-//                        TOWER_HEIGHT + 0.1f,
-//                        TOWER_SIZE),
-//                        type);
-//                break;
         }
         orbNodeRot.attachChild(o.createNode(GAME));
 //        o.applyTowerOrbMaterial();
         return o;
-    }
-
-    /** 
-     * Checks all Orbs and gets the Effects in an array by level.
-     * @return an array with OrbEffects by level
-     */
-    private AbstractOrbEffect[] getOrbEffects() {
-        ArrayList<AbstractOrbEffect> effects =
-                new ArrayList<AbstractOrbEffect>();
-        Orb.ElementType[] elements = new Orb.ElementType[3];
-        int[] orbTypeCount = {0, 0, 0, 0, 0,0};
-
-
-        if (firstOrb != null) {
-            elements[0] = firstOrb.getElementType();
-        }
-        if (secondOrb != null) {
-            elements[1] = secondOrb.getElementType();
-        }
-        if (thirdOrb != null) {
-            elements[2] = thirdOrb.getElementType();
-        }
-
-
-        for (Orb.ElementType e : elements) {
-            if (e != null) {
-                orbTypeCount[e.ordinal()]++;
-            }
-        }
-
-        for (int i = 0; i < orbTypeCount.length; i++) {
-            if (orbTypeCount[i] > 0 && orbTypeCount[i] <= 3) {
-                effects.add(
-                        AbstractOrbEffect.getOrbEffect(
-                        Orb.ElementType.values()[i], orbTypeCount[i] - 1));
-            }
-        }
-
-        AbstractOrbEffect[] effectArray = new AbstractOrbEffect[3];
-        return effects.toArray(effectArray);
     }
 }
