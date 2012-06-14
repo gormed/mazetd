@@ -86,7 +86,7 @@ public class Creep extends CollidableEntity {
     //==========================================================================
 
     public static final float CREEP_BASE_DAMAGE = 50.0f;
-    public static final float CREEP_BASE_ORB_DROP = 0.01f;
+    public static final float CREEP_BASE_ORB_DROP = 0.0f;
     public static final float CREEP_BASE_SPEED = 1.1f;
     public static final float CREEP_DECAY = 1f;
     public static final int CREEP_DESTROY_PARTICLES = 10;
@@ -122,6 +122,7 @@ public class Creep extends CollidableEntity {
     private boolean moving = true;
     private boolean attacking = false;
     public boolean reverted = false;
+    private boolean dropping = false;
     private int goldDrop = 0;
     private float orbDropRate = CREEP_BASE_ORB_DROP;
     private float damage = CREEP_BASE_DAMAGE;
@@ -548,7 +549,9 @@ public class Creep extends CollidableEntity {
         // stop movement
         stop();
         // drop an orb if chance is high enough
-        dropOrb();
+        
+            dropOrb();
+        
         // Path debugging
         if (Pathfinder.DEBUG_PATH) {
             if (debugPathToggle) {
@@ -559,13 +562,18 @@ public class Creep extends CollidableEntity {
         }
     }
 
+    public boolean isDropping() {
+        return dropping;
+    }
+
     /**
      * Drops an orb by random on creeps death.
      */
     private void dropOrb() {
         Random r = new Random(System.currentTimeMillis());
 
-        if (r.nextFloat() <= this.orbDropRate) {
+        if (dropping) {
+
             ElementType random;
             random = ElementType.values()[
                     r.nextInt(ElementType.values().length)];
@@ -747,6 +755,10 @@ public class Creep extends CollidableEntity {
 
     public float getSpeed() {
         return speed;
+    }
+
+    public void setIsDropping(boolean dropOrb) {
+        this.dropping = dropOrb;
     }
 
     //==========================================================================

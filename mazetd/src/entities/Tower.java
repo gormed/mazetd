@@ -84,7 +84,7 @@ public class Tower extends ClickableEntity {
     public static final int TOWER_ADDITIONAL_DAMAGE = 1;
     public static final float TOWER_BASE_RANGE = 2;
     public static final int TOWER_DECAY = 2;
-    public static final int TOWER_HP = 500;
+    public static final int TOWER_HP = 200;
     public static final float TOWER_ORB_ROTATION_SPEED = 0.5f;
     public static final float TOWER_RANGE_RADIUS_HEIGHT = 0.15f;
     private static final float RANGE_CYLINDER_HEIGHT = 0.01f;

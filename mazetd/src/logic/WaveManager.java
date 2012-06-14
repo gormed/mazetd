@@ -36,13 +36,18 @@
 package logic;
 
 import entities.Creep;
+import entities.Orb;
 import entities.base.EntityManager;
 import eventsystem.EventManager;
 import eventsystem.events.TimerEvent;
 import eventsystem.listener.TimerEventListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import logic.pathfinding.Pathfinder;
 
 /**
@@ -94,10 +99,10 @@ public class WaveManager {
     private EntityManager entityManager = EntityManager.getInstance();
     private HashMap<Integer, Creep> creeps =
             EntityManager.getInstance().getCreepHashMap();
+
     //==========================================================================
     //===   Methods
     //==========================================================================
-
     public void initialize() {
         if (initialized) {
             return;
@@ -163,7 +168,13 @@ public class WaveManager {
 
         if (waveCompletlySpawned) {
             if (stillCreeps) {
-                // no creeps have to be generated, because the old wave still lives
+                if (currentWave.numberOfOrbDrobs > 0) {
+                    for(Creep c : creeps.values())
+                        if(!c.isDropping() && currentWave.numberOfOrbDrobs > 0){
+                        c.setIsDropping(true);
+                    currentWave.numberOfOrbDrobs--;
+                        }
+                }
             } else {
                 waveKilled();
             }
@@ -195,6 +206,7 @@ public class WaveManager {
         float creepDamage = currentWave.creepDamage;
         float creepOrbDropRate = currentWave.creepOrbDropRate;
         int creepGoldDrop = currentWave.creepGoldDrop;
+        boolean dropping = currentWave.dropOrb();
         Creep c =
                 entityManager.createCreep(
                 "Wave#" + currentWaveCount + "-Creep#" + creepGenerationCount,
@@ -203,6 +215,7 @@ public class WaveManager {
                 maxCreepHealthPoints,
                 maxCreepHealthPoints);
         c.setSpeed(creepSpeed);
+        c.setIsDropping(dropping);
         c.setGoldDrop(creepGoldDrop);
         c.setOrbDropRate(creepOrbDropRate);
         c.setDamage(creepDamage);
@@ -267,6 +280,7 @@ public class WaveManager {
         public float bossOrbDropRate;
         public float bossOrbDropCount;
         public float bossGoldDrop;
+        public int numberOfOrbDrobs;
 
         public WaveDescription() {
         }
@@ -276,7 +290,7 @@ public class WaveManager {
                 float creepDamage, float creepOrbDropRate, int creepGoldDrop,
                 boolean hasBoss, boolean bossAtFirst, int bossCount,
                 float maxBossHealthPoints, float bossSpeed, float bossDamage,
-                float bossOrbDropRate, float bossOrbDropCount, float bossGoldDrop) {
+                float bossOrbDropRate, float bossOrbDropCount, float bossGoldDrop, int numberOfOrbDrobs) {
             this.creepCount = creepCount;
             this.maxCreepHealthPoints = maxCreepHealthPoints;
             this.creepSpeed = creepSpeed;
@@ -292,6 +306,16 @@ public class WaveManager {
             this.bossOrbDropRate = bossOrbDropRate;
             this.bossOrbDropCount = bossOrbDropCount;
             this.bossGoldDrop = bossGoldDrop;
+            this.numberOfOrbDrobs = numberOfOrbDrobs;
+        }
+
+        private boolean dropOrb() {
+            if (Math.random() <= 0.25f && numberOfOrbDrobs > 0) {
+                numberOfOrbDrobs--;
+                return true;
+            }
+            return false;
+
         }
     }
 }
