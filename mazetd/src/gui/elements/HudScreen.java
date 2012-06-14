@@ -76,14 +76,30 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         ElementType element= ElementType.values()[type];
         inventory.replaceOrb(slotI, element);
         
-        Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection");
-        orbSelection.hide();
+        Element orbSelection1 = nifty.getCurrentScreen().findElementByName("orbSelection1");
+        orbSelection1.hide();
+        
+        Element orbSelection2 = nifty.getCurrentScreen().findElementByName("orbSelection2");
+        orbSelection2.hide();
+        
+        Element orbSelection3 = nifty.getCurrentScreen().findElementByName("orbSelection3");
+        orbSelection3.hide();
         
   }
   
    
-    public void orbSelection(){
-        Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection");
+    public void orbSelection1(){
+        Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection1");
+        orbSelection.show();
+  }
+    
+      public void orbSelection2(){
+        Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection2");
+        orbSelection.show();
+  }
+      
+        public void orbSelection3(){
+        Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection3");
         orbSelection.show();
   }
     public void showContext(float tpf) {
@@ -137,26 +153,27 @@ public class HudScreen extends AbstractAppState implements ScreenController {
                             NiftyImage redOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/redOrbSlot.png", false);
                             slot3.getRenderer(ImageRenderer.class).setImage(redOrbSlot);
                             slot3.show();
-                           
+                           break;
                         case BLUE:
                             NiftyImage blueOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/blueOrbSlot.png", false);
                             slot3.getRenderer(ImageRenderer.class).setImage(blueOrbSlot);
                             slot3.show();
-                            
+                            break;
                         case GREEN:
                             NiftyImage greenOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/greenOrbSlot.png", false);
                             slot3.getRenderer(ImageRenderer.class).setImage(greenOrbSlot);
                             slot3.show();
-                            
+                            break;
                         case YELLOW:            
                             NiftyImage yellowOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/yellowOrbSlot.png", false);
                             slot3.getRenderer(ImageRenderer.class).setImage(yellowOrbSlot);
                             slot3.show();
-                            
+                            break;
                         case WHITE:
                             NiftyImage whiteOrbSlot = nifty.getRenderEngine().createImage("Interface/Textures/Orbs/whiteOrbSlot.png", false);
                             slot3.getRenderer(ImageRenderer.class).setImage(whiteOrbSlot);
                             slot3.show();
+                            break;
                             
                     }
                 } else {

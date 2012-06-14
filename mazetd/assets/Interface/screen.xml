@@ -166,17 +166,17 @@
             
                                 <panel id="Slot1" width="26%" height="100%" childLayout="center" backgroundImage="Interface/Textures/panel_bottom.png">
                                     <image id="Orb1" filename="Interface/Textures/Orbs/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" visible="false" ></image>  
-                                    <interact onClick="orbSelection()"/> 
+                                    <interact onClick="orbSelection1()"/> 
                                 </panel>
             
                                 <panel id="Slot2" width="26%" height="100%" childLayout="center" backgroundImage="Interface/Textures/panel_bottom.png">
                                     <image id="Orb2" filename="Interface/Textures/Orbs/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" visible="false" ></image>
-                                    <interact onClick="orbSelection()"/>
+                                    <interact onClick="orbSelection2()"/>
                                 </panel>
             
                                 <panel id="Slot3" width="26%" height="100%" childLayout="center" backgroundImage="Interface/Textures/panel_bottom.png">
                                     <image id="Orb3" filename="Interface/Textures/Orbs/whiteOrbSlot.png" valign="center" align="center" height="100%" width="100%" visible="false" ></image>
-                                    <interact onClick="orbSelection()"/>
+                                    <interact onClick="orbSelection3()"/>
                                 </panel>
             
             
@@ -200,7 +200,7 @@
             </panel>
         </layer>
    
-        <layer id="orbSelection" childLayout="vertical" visible="false">
+        <layer id="orbSelection1" childLayout="vertical" visible="false">
             <panel id="panel_top" width="100%" height="75%" childLayout="horizontal" visible="false"></panel>
             <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" >
                 <panel id="panel_bot_left" width="20%" height="100%" childLayout="center"></panel>
@@ -246,7 +246,100 @@
             </panel>
    
         </layer>
+        
+         <layer id="orbSelection2" childLayout="vertical" visible="false">
+            <panel id="panel_top" width="100%" height="75%" childLayout="horizontal" visible="false"></panel>
+            <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" >
+                <panel id="panel_bot_left" width="20%" height="100%" childLayout="center"></panel>
+                <panel id="panel_bot_mid" width="60%" height="100%" childLayout="vertical">
+                    <panel id="panel_bot_mid_top" width="100%" height="45%" childLayout="horizontal" >
+                        <panel id="spacer" width="15%" height="100%" childLayout="center"></panel>
+     
+                        <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
+                            <image filename="Interface/Textures/Orbs/redOrb.png" valign="center" align="center" height="90%" width="90%" >
+                             <interact onClick="replaceOrb(2,1)"/>      
+                            </image>
+                        </panel>
+     
+                        <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
+                            <image filename="Interface/Textures/Orbs/blueOrb.png" valign="center" align="center" height="90%" width="90%" >
+                                <interact onClick="replaceOrb(1,1)"/>   
+                            </image>
+                        </panel>
+     
+                        <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
+                            <image filename="Interface/Textures/Orbs/greenOrb.png" valign="center" align="center" height="90%" width="90%" >
+                                <interact onClick="replaceOrb(0,1)"/>   
+                            </image>
+                        </panel>
+     
+                        <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
+                            <image filename="Interface/Textures/Orbs/yellowOrb.png" valign="center" align="center" height="90%" width="90%" >
+                                <interact onClick="replaceOrb(3,1)"/>
+                            </image>
+                        </panel>
+     
+                        <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
+                            <image filename="Interface/Textures/Orbs/whiteOrb.png" valign="center" align="center" height="90%" width="90%" >
+                                <interact onClick="replaceOrb(4,1)"/> 
+                            </image>
+                        </panel>
+    
+                        <panel id="spacer" width="15%" height="100%" childLayout="center"></panel>
+                    </panel>   
+                    <panel id="panel_mid_bot" width="100%" height="45%" childLayout="horizontal" > </panel>
+                </panel>
+                <panel id="panel_bot_right" width="20%" height="100%" childLayout="center"> </panel>
+            </panel>
+   
+        </layer>
 
+ <layer id="orbSelection3" childLayout="vertical" visible="false">
+            <panel id="panel_top" width="100%" height="75%" childLayout="horizontal" visible="false"></panel>
+            <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" >
+                <panel id="panel_bot_left" width="20%" height="100%" childLayout="center"></panel>
+                <panel id="panel_bot_mid" width="60%" height="100%" childLayout="vertical">
+                    <panel id="panel_bot_mid_top" width="100%" height="45%" childLayout="horizontal" >
+                        <panel id="spacer" width="15%" height="100%" childLayout="center"></panel>
+     
+                        <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
+                            <image filename="Interface/Textures/Orbs/redOrb.png" valign="center" align="center" height="90%" width="90%" >
+                             <interact onClick="replaceOrb(2,2)"/>      
+                            </image>
+                        </panel>
+     
+                        <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
+                            <image filename="Interface/Textures/Orbs/blueOrb.png" valign="center" align="center" height="90%" width="90%" >
+                                <interact onClick="replaceOrb(1,2)"/>   
+                            </image>
+                        </panel>
+     
+                        <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
+                            <image filename="Interface/Textures/Orbs/greenOrb.png" valign="center" align="center" height="90%" width="90%" >
+                                <interact onClick="replaceOrb(0,2)"/>   
+                            </image>
+                        </panel>
+     
+                        <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
+                            <image filename="Interface/Textures/Orbs/yellowOrb.png" valign="center" align="center" height="90%" width="90%" >
+                                <interact onClick="replaceOrb(3,2)"/>
+                            </image>
+                        </panel>
+     
+                        <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
+                            <image filename="Interface/Textures/Orbs/whiteOrb.png" valign="center" align="center" height="90%" width="90%" >
+                                <interact onClick="replaceOrb(4,2)"/> 
+                            </image>
+                        </panel>
+    
+                        <panel id="spacer" width="15%" height="100%" childLayout="center"></panel>
+                    </panel>   
+                    <panel id="panel_mid_bot" width="100%" height="45%" childLayout="horizontal" > </panel>
+                </panel>
+                <panel id="panel_bot_right" width="20%" height="100%" childLayout="center"> </panel>
+            </panel>
+   
+        </layer>
 
     </screen>
  
