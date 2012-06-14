@@ -57,7 +57,7 @@ public class RastaOrbEffect extends AbstractOrbEffect {
     //==========================================================================
     private float[] damage = {4, 6, 10};
     private float[] particlePeriod = {0.9f, 0.9f, 0.9f};
-    private float[] duration = {1, 2, 3};
+    private float[] duration = {3, 2, 3};
     private float particleCounter = 0;
     private float durationCounter = 0;
     private boolean decaying = false;
