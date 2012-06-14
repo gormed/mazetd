@@ -220,9 +220,8 @@ public class BuildTowerHUD implements TimerEventListener {
     }
 
     public void show(MapSquare square) {
-        if (initialized && square != null && 
-                Player.getInstance().getGold() > Level.TOWER_GOLD_COST &&
-                square.getFieldInfo().getWeight() <= Pathfinder.NORMAL_WEIGHT) {
+        if (initialized && square != null &&
+                square.getTower() == null) {
             EventManager.getInstance().addTimerEventListener(this);
             clickPosition = ScreenRayCast3D.getInstance().getLastWorldHit().clone();
             ScreenRayCast3D.getInstance().addClickableObject(translationNode);

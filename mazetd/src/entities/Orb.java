@@ -170,7 +170,7 @@ public class Orb extends ClickableEntity {
     public void onMouseLeft() {
     }
 
-    private void explodes() {
+    void explodes() {
         emittExplosion();
         // set decaying
         deacying = true;
@@ -262,6 +262,8 @@ public class Orb extends ClickableEntity {
 
         element.geometry.setMaterial(element.material);
     }
+    
+    
     //==========================================================================
     //===   Inner Classes
     //==========================================================================

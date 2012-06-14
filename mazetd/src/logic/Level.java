@@ -62,8 +62,9 @@ public class Level {
     //==========================================================================
     //===   Constants
     //==========================================================================
+
     public static final int TOWER_GOLD_COST = 20;
-    
+
     //==========================================================================
     //===   Singleton
     //==========================================================================
@@ -167,12 +168,12 @@ public class Level {
 
         for (int i = 0; i < 30; i++) {
             description = waveManager.new WaveDescription();
-            description.creepCount = 5 + (i * 5);
+            description.creepCount = 5 + Math.round(0.1f * i * i);
             description.creepDamage = 80 + 15 * i;
             description.creepGoldDrop = 5 + 2 * i;
-            description.creepOrbDropRate = 0.03f + 0.01f * i;
+            description.creepOrbDropRate = 0.06f + 0.0075f * i;
             description.creepSpeed = 0.8f + 0.05f * i;
-            description.maxCreepHealthPoints = 20 + 12.5f * i;
+            description.maxCreepHealthPoints = 20 + 15f * i;
 
             waveDescriptions.add(description);
         }
@@ -225,20 +226,19 @@ public class Level {
     public void buildTower(MapSquare square) {
         // add tower
         if (enoughGold()) {
-            
-        Tower t = entityManager.createTower(
-                "FirstTower", square);
+            Tower t = entityManager.createTower(
+                    "FirstTower", square);
 //        t.replaceOrb(Orb.ElementType.RED, 0);
 //        t.replaceOrb(Orb.ElementType.RED, 1);
 //        t.replaceOrb(Orb.ElementType.GREEN, 2);
-        player.addGold(-TOWER_GOLD_COST);
-        creepAI.addTowerToSquare(square, Pathfinder.TOWER_WEIGHT);
-        return;
+            player.addGold(-TOWER_GOLD_COST);
+            creepAI.addTowerToSquare(square, Pathfinder.TOWER_WEIGHT);
+            return;
         }
     }
-    
-    public boolean enoughGold(){
-            return player.getGold() >= TOWER_GOLD_COST;
+
+    public boolean enoughGold() {
+        return player.getGold() >= TOWER_GOLD_COST;
     }
 
     /**

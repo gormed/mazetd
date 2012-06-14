@@ -185,7 +185,7 @@ public class Map extends Node {
 
         groundPlane.setMaterial(groundMaterial);
         groundPlane.setQueueBucket(Bucket.Translucent);
-        
+
         float[] angles = {3 * (float) Math.PI / 2, 0, 0};
         Vector3f pos = new Vector3f(
                 -totalWidth / 2 - SQUARE_SIZE / 2,
@@ -506,26 +506,23 @@ public class Map extends Node {
             }
 
             if (field.getWeight() < Pathfinder.TOWER_WEIGHT) {
-                material.setColor("Ambient", fadeColor);   // ... color of this object
-                material.setColor("Diffuse", fadeColor);   // ... color of light being reflected
+                if (creepOn) {
+                    material.setColor("Ambient", ColorRGBA.Red);   // ... color of this object
+                    material.setColor("Diffuse", ColorRGBA.Red);   // ... color of light being reflected
+
+                } else if (creepPath && Pathfinder.DEBUG_PATH) {
+                    material.setColor("Ambient", ColorRGBA.Orange);   // ... color of this object
+                    material.setColor("Diffuse", ColorRGBA.Orange);   // ... color of light being reflected
+
+                } else {
+                    material.setColor("Ambient", fadeColor);   // ... color of this object
+                    material.setColor("Diffuse", fadeColor);   // ... color of light being reflected
+                }
             } else {
-                material.setColor("Ambient", ColorRGBA.BlackNoAlpha);   // ... color of this object
-                material.setColor("Diffuse", ColorRGBA.BlackNoAlpha);   // ... color of light being reflected
+                material.setColor("Ambient", ColorRGBA.BlackNoAlpha);
+                material.setColor("Diffuse", ColorRGBA.BlackNoAlpha);
             }
-            if (creepOn) {
 
-                material.setColor("Ambient", ColorRGBA.Red);   // ... color of this object
-                material.setColor("Diffuse", ColorRGBA.Red);   // ... color of light being reflected
-
-            } else if (creepPath && Pathfinder.DEBUG_PATH) {
-                material.setColor("Ambient", ColorRGBA.Orange);   // ... color of this object
-                material.setColor("Diffuse", ColorRGBA.Orange);   // ... color of light being reflected
-
-            } else if (mainPath && Pathfinder.DEBUG_PATH) {
-                material.setColor("Ambient", ColorRGBA.Cyan);   // ... color of this object
-                material.setColor("Diffuse", ColorRGBA.Cyan);   // ... color of light being reflected
-
-            }
         }
 
         @Override

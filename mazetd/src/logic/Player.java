@@ -241,6 +241,7 @@ public class Player implements EntityListener, CreepListener {
             // cast to tower
             Tower tower = (Tower) e;
             selectedTower = tower;
+            Tower.TowerSelection.getInstance().attachToTower(selectedTower);
             System.out.println("Tower clicked:" + tower.getName());
             towerIsClicked = true;
         }

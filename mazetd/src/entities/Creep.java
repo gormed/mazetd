@@ -39,7 +39,6 @@ import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
-import com.jme3.effect.shapes.EmitterPointShape;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
@@ -550,8 +549,6 @@ public class Creep extends CollidableEntity {
         stop();
         // drop an orb if chance is high enough
         dropOrb();
-        // drop gold
-        player.addGold(goldDrop);
         // Path debugging
         if (Pathfinder.DEBUG_PATH) {
             if (debugPathToggle) {
