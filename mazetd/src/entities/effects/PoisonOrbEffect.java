@@ -54,8 +54,8 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private float[] damage = {4, 6, 10};
-    private float[] damagePeriod = {0.9f, 0.9f, 0.9f};
+    private float[] damage = {0.01f, 0.0125f, 0.02f};
+    private float[] damagePeriod = {0.4f, 0.4f, 0.4f};
     private float[] duration = {3, 4, 5};
     private float damageCounter = 0;
     private float durationCounter = 0;
@@ -98,7 +98,8 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
     @Override
     public void onEffect() {
         emittPoisonParticles();
-        infected.applyDamge(damage[level]);
+        float hp = infected.getMaxHealthPoints();
+        infected.applyDamge(hp * damage[level]);
     }
 
     @Override

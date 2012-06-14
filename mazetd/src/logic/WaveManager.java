@@ -176,6 +176,7 @@ public class WaveManager {
                         }
                 }
             } else {
+                Player.getInstance().addGold(currentWave.goldAtEnd);
                 waveKilled();
             }
         } else {
@@ -262,8 +263,10 @@ public class WaveManager {
     }
 
     public class WaveDescription {
+        // Gold
+        public int goldAtEnd;
+        
         //Creeps
-
         public int creepCount;
         public float maxCreepHealthPoints;
         public float creepSpeed;
@@ -285,12 +288,13 @@ public class WaveManager {
         public WaveDescription() {
         }
 
-        public WaveDescription(
+        public WaveDescription( int goldAtStart,
                 int creepCount, float maxCreepHealthPoints, float creepSpeed,
                 float creepDamage, float creepOrbDropRate, int creepGoldDrop,
                 boolean hasBoss, boolean bossAtFirst, int bossCount,
                 float maxBossHealthPoints, float bossSpeed, float bossDamage,
                 float bossOrbDropRate, float bossOrbDropCount, float bossGoldDrop, int numberOfOrbDrobs) {
+            this.goldAtEnd = goldAtStart;
             this.creepCount = creepCount;
             this.maxCreepHealthPoints = maxCreepHealthPoints;
             this.creepSpeed = creepSpeed;

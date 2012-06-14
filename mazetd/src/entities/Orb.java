@@ -81,6 +81,8 @@ public class Orb extends ClickableEntity {
         WHITE
     }
     
+    
+    
     public enum SpecialElementType {
         RASTA,
         SPLASH,
@@ -93,7 +95,7 @@ public class Orb extends ClickableEntity {
     private static final float HEIGHT_OVER_GROUND = 0.4f;
     public static final int ORB_DECAY = 2;
     private static final int ORB_SAMPLES = 10;
-    private static final float ORB_SIZE = 0.1f;
+    private static final float ORB_SIZE = 0.15f;
     private static MazeTDGame game = MazeTDGame.getInstance();
     //==========================================================================
     //===   Private Fields
@@ -263,6 +265,9 @@ public class Orb extends ClickableEntity {
         element.geometry.setMaterial(element.material);
     }
     
+    public void applyTowerOrbSize() {
+        element.setScale(0.66f);
+    }
     
     //==========================================================================
     //===   Inner Classes
@@ -376,6 +381,10 @@ public class Orb extends ClickableEntity {
             geometry.setLocalTranslation(0, HEIGHT_OVER_GROUND, 0);
             geometry.setQueueBucket(Bucket.Transparent);
             geometry.setShadowMode(ShadowMode.CastAndReceive);
+        }
+        
+        public void setScale(float scale) {
+            geometry.setLocalScale(scale);
         }
     }
 }

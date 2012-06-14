@@ -50,7 +50,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Line;
-import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
 import entities.Orb.ElementType;
 import entities.base.AbstractEntity;
@@ -80,8 +79,8 @@ public class Tower extends ClickableEntity {
     //===   Constants
     //========================================================================== 
     public static final float TOWER_BASE_DAMAGE_INTERVAL = 1.2f;
-    public static final int TOWER_BASE_DAMAGE = 5;
-    public static final int TOWER_ADDITIONAL_DAMAGE = 1;
+    public static final int TOWER_BASE_DAMAGE = 6;
+    public static final int TOWER_ADDITIONAL_DAMAGE = 2;
     public static final float TOWER_BASE_RANGE = 2;
     public static final int TOWER_DECAY = 2;
     public static final int TOWER_HP = 200;
@@ -464,6 +463,8 @@ public class Tower extends ClickableEntity {
         if (thirdOrb != null) {
             thirdOrb.explodes();
         }
+        
+        TowerSelection.getInstance().detachFromTower();
 
         towerGeometry.setQueueBucket(Bucket.Translucent);
         towerGeometry.setShadowMode(ShadowMode.Off);
@@ -739,10 +740,8 @@ public class Tower extends ClickableEntity {
             case 0:
                 if (firstOrb != null) {
                     removedOrbType = firstOrb.getElementType();
-
                     orbNodeRot.detachChild(firstOrb.getClickableEntityNode());
                     firstOrb = createTowerOrb(replaceType, slot);
-                    orbNodeRot.attachChild(firstOrb.createNode(GAME));
 
                 } else {
                     firstOrb = createTowerOrb(replaceType, slot);
@@ -752,10 +751,8 @@ public class Tower extends ClickableEntity {
             case 1:
                 if (secondOrb != null) {
                     removedOrbType = secondOrb.getElementType();
-
                     orbNodeRot.detachChild(secondOrb.getClickableEntityNode());
                     secondOrb = createTowerOrb(replaceType, slot);
-                    orbNodeRot.attachChild(secondOrb.createNode(GAME));
 
                 } else {
                     secondOrb = createTowerOrb(replaceType, slot);
@@ -765,10 +762,8 @@ public class Tower extends ClickableEntity {
             case 2:
                 if (thirdOrb != null) {
                     removedOrbType = thirdOrb.getElementType();
-
                     orbNodeRot.detachChild(thirdOrb.getClickableEntityNode());
                     thirdOrb = createTowerOrb(replaceType, slot);
-                    orbNodeRot.attachChild(thirdOrb.createNode(GAME));
 
                 } else {
                     thirdOrb = createTowerOrb(replaceType, slot);
@@ -785,29 +780,6 @@ public class Tower extends ClickableEntity {
         calculateProjectileColor();
         return removedOrbType;
 
-    }
-
-    /**
-     * Replaces an orb from the tower with a new orb.
-     * @param orb the orb to be replaced
-     * @param replaceType the type of the new orb to place
-     * @param slot the slot where the old or should be removed and the new orb
-     * should be placed
-     * @return the removed orb-type if the orb was replaced and the 
-     * given replacement type otherwise
-     */
-    private ElementType replaceOrb(Orb orb, ElementType replaceType, int slot) {
-        ElementType type = orb.getElementType();
-
-        orbNodeRot.detachChild(orb.getClickableEntityNode());
-        orb = createTowerOrb(replaceType, slot);
-        orbNodeRot.attachChild(orb.createNode(GAME));
-
-//        // refreshes the towers orb effects if there are some
-//        refreshTowerOrbEffects();
-//        // recalculates the projectiles and its particles color
-//        calculateProjectileColor();
-        return type;
     }
 
     /**
@@ -840,7 +812,6 @@ public class Tower extends ClickableEntity {
             float multi = 1.f / colorList.size();
             for (ColorRGBA c : colorList) {
                 newColor.addLocal(c.mult(multi));
-                //newColor.clamp();
             }
         }
         newColor.clamp();
@@ -882,6 +853,7 @@ public class Tower extends ClickableEntity {
                 break;
         }
         orbNodeRot.attachChild(o.createNode(GAME));
+        o.applyTowerOrbSize();
 //        o.applyTowerOrbMaterial();
         return o;
     }
@@ -931,6 +903,12 @@ public class Tower extends ClickableEntity {
             selectedTower = t;
 
             selectedTower.clickableEntityNode.attachChild(this);
+        }
+
+        public void detachFromTower() {
+            if (selectedTower != null) {
+                selectedTower.clickableEntityNode.detachChild(this);
+            }
         }
 
         private Node createGeometry(MazeTDGame game) {

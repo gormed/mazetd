@@ -54,11 +54,9 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private float[] slowValue = {0.5f, 0.4f, 0.2f};
-    private float[] particelPeriod = {0.4f, 0.4f, 0.4f};
+    private float[] slowValue = {0.8f, 0.6f, 0.4f};
     private float[] duration = {4, 5, 6};
     private float durationCounter = 0;
-    private float particelCounter = 0;
     private boolean decaying = false;
     private float tempSpeed;
     // Particle
@@ -75,7 +73,6 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
     @Override
     public void update(float tpf) {
         durationCounter += tpf;
-        particelCounter += tpf;
 
         if (decaying) {
             if (freezeEmitter.getNumVisibleParticles() == 0) {
@@ -101,7 +98,7 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
         infected = c;
         infected.getCollidableEntityNode().attachChild(freezeEmitter);
         tempSpeed = infected.getSpeed();
-        infected.setSpeed(slowValue[level]);
+        infected.setSpeed(tempSpeed * slowValue[level]);
         freezeEmitter.setParticlesPerSec(5);
         freezeEmitter.emitAllParticles();
     }

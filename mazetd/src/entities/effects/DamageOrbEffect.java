@@ -50,7 +50,7 @@ import mazetd.MazeTDGame;
  */
 public class DamageOrbEffect extends AbstractOrbEffect {
 
-    private float[] damage = {5f, 10f, 20f};
+    private float[] damage = {0.05f, 0.075f, 0.15f};
     // Particle
     private ParticleEmitter fireEmitter;
 
@@ -70,7 +70,8 @@ public class DamageOrbEffect extends AbstractOrbEffect {
     @Override
     public void onStart(Creep c) {
         infected = c;
-        infected.applyDamge(damage[level]);
+        float hp = infected.getMaxHealthPoints();
+        infected.applyDamge(hp * damage[level]);
         infected.getCollidableEntityNode().attachChild(fireEmitter);
         emittFireParticles();
         infected.removeOrbEffect(this);

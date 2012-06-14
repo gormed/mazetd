@@ -408,15 +408,15 @@ public class Creep extends CollidableEntity {
                                 removeOrbEffect(e);
                             }
                         }
-                    } else {
-                        // TODO: handle tower-attacking or greep-enters-goal 
-                        // event otherwise we are attacking a tower or are 
-                        // at the goal.
-                        CreepHandler.getInstance().invokeCreepAction(
-                                CreepEventType.ReachedEnd, this, null);
-                        moving = false;
-                        destroy();
                     }
+                    // TODO: handle tower-attacking or greep-enters-goal 
+                    // event otherwise we are attacking a tower or are 
+                    // at the goal.
+                    CreepHandler.getInstance().invokeCreepAction(
+                            CreepEventType.ReachedEnd, this, null);
+                    moving = false;
+                    destroy();
+
                 }
             } else {
                 if (currentSquare.hasTower()) {
@@ -549,9 +549,9 @@ public class Creep extends CollidableEntity {
         // stop movement
         stop();
         // drop an orb if chance is high enough
-        
-            dropOrb();
-        
+
+        dropOrb();
+
         // Path debugging
         if (Pathfinder.DEBUG_PATH) {
             if (debugPathToggle) {
