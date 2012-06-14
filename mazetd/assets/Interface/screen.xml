@@ -210,7 +210,7 @@
      
                         <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
                             <image filename="Interface/Textures/Orbs/redOrb.png" valign="center" align="center" height="90%" width="90%" >
-                             <interact onClick="replaceOrb(2,0)"/>      
+                                <interact onClick="replaceOrb(2,0)"/>      
                             </image>
                         </panel>
      
@@ -247,7 +247,7 @@
    
         </layer>
         
-         <layer id="orbSelection2" childLayout="vertical" visible="false">
+        <layer id="orbSelection2" childLayout="vertical" visible="false">
             <panel id="panel_top" width="100%" height="75%" childLayout="horizontal" visible="false"></panel>
             <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" >
                 <panel id="panel_bot_left" width="20%" height="100%" childLayout="center"></panel>
@@ -257,7 +257,7 @@
      
                         <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
                             <image filename="Interface/Textures/Orbs/redOrb.png" valign="center" align="center" height="90%" width="90%" >
-                             <interact onClick="replaceOrb(2,1)"/>      
+                                <interact onClick="replaceOrb(2,1)"/>      
                             </image>
                         </panel>
      
@@ -294,7 +294,7 @@
    
         </layer>
 
- <layer id="orbSelection3" childLayout="vertical" visible="false">
+        <layer id="orbSelection3" childLayout="vertical" visible="false">
             <panel id="panel_top" width="100%" height="75%" childLayout="horizontal" visible="false"></panel>
             <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" >
                 <panel id="panel_bot_left" width="20%" height="100%" childLayout="center"></panel>
@@ -304,7 +304,7 @@
      
                         <panel id="panel_Slot1" width="14%" height="100%" childLayout="center">  
                             <image filename="Interface/Textures/Orbs/redOrb.png" valign="center" align="center" height="90%" width="90%" >
-                             <interact onClick="replaceOrb(2,2)"/>      
+                                <interact onClick="replaceOrb(2,2)"/>      
                             </image>
                         </panel>
      
@@ -340,7 +340,7 @@
             </panel>
    
         </layer>
-
+        
     </screen>
  
  
@@ -369,6 +369,23 @@
     </screen>
 
 <!--================================POPUP====================================--> 
+
+    <screen id="gameover" controller="gui.elements.HudScreen">
+
+        <layer id="foreground" childLayout="vertical" backgroundImage="Interface/Textures/gameOver.png">
+            <panel id="panel_bottom_1" height="100%" width="100%" align="center" childLayout="vertical">
+                <panel id="Menu" height="50%" width="20%" align="center" childLayout="vertical">
+                </panel>
+                <panel id="Menu" height="15%" width="20%" align="center" childLayout="vertical">
+                    <text text="You died the most horrible death imaginable!" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
+                    <control name="button" label="Back to Menu//TODO" id="LeaveButton" align="center" valign="center" 
+                    visibleToMouse="true" > 
+                        <interact onClick=""/>
+                    </control>
+                </panel>
+            </panel>
+        </layer>
+    </screen>
 </nifty>
 
 

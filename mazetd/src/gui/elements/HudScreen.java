@@ -135,11 +135,8 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
     
     public String getTowerHP(){
-    float hpF = player.getSelectedTower().getHealthPoints();
-    float maxHpF=player.getSelectedTower().getMaxHealthPoints();
-    
-    int hp=(int)(hpF+0.5f);
-    int maxHp=(int)(maxHpF+0.5f);
+    int hp=(int)(player.getSelectedTower().getHealthPoints()+0.5f);
+    int maxHp=(int)(player.getSelectedTower().getMaxHealthPoints()+0.5f);
     
     return hp+"/"+maxHp;
     }
@@ -184,11 +181,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
                     slot3.hide();
                 }
             }
-            /*else{ 
+            else{ 
             Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
             towerIsClicked=false;
             towerContext.hide();
-            }*/
+            }
         }
     }
 

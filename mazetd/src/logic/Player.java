@@ -47,6 +47,7 @@ import entities.Creep;
 import eventsystem.events.CreepEvent;
 import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.listener.CreepListener;
+import mazetd.MazeTDGame;
 
 /**
  * The class Player
@@ -69,6 +70,7 @@ public class Player implements EntityListener, CreepListener {
     private Orb.ElementType type;
     private boolean towerIsClicked;
     private ArrayList<Orb> inventory;
+    private MazeTDGame game=MazeTDGame.getInstance();
 
     public static Player getInstance() {
         if (instance != null) {
@@ -264,5 +266,6 @@ public class Player implements EntityListener, CreepListener {
     private void onDeath() {
         // TODO: Show GAME OVER hud
         System.out.println("PLAYER IS DEAD!");
+        game.getHudScreenInstance().pause("gameover");
     }
 }
