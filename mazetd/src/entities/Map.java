@@ -35,6 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities;
 
+import com.jme3.asset.AssetManager;
 import entities.geometry.ClickableGeometry;
 import eventsystem.port.ScreenRayCast3D;
 import com.jme3.collision.CollisionResult;
@@ -44,13 +45,16 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.network.serializing.Serializable;
-import com.jme3.network.serializing.Serializer;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
+import com.jme3.terrain.geomipmap.TerrainQuad;
+import com.jme3.terrain.heightmap.AbstractHeightMap;
+import com.jme3.terrain.heightmap.ImageBasedHeightMap;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.WrapMode;
 import entities.base.EntityManager;
 import eventsystem.EventManager;
 import eventsystem.events.TimerEvent;
@@ -119,6 +123,9 @@ public class Map extends Node {
     //==========================================================================
     private Geometry groundPlane;
     private Material groundMaterial;
+    private AbstractHeightMap heightMap;
+    private Material heightMapMaterial;
+    private TerrainQuad terrain;
     private Node clickableMapElements;
     private Node decorativeMapElemetns;
     private float totalHeight;
@@ -143,7 +150,8 @@ public class Map extends Node {
 
         buildTowerHUD.initialize();
 
-        createGround();
+        createGround(game);
+        createHeightMap(game);
         createSquares();
 
         this.attachChild(decorativeMapElemetns);
@@ -164,7 +172,7 @@ public class Map extends Node {
     /**
      * Creates the ground-plane of the map/level.
      */
-    private void createGround() {
+    private void createGround(MazeTDGame game) {
         Quad q = new Quad(totalWidth, totalHeight);
         groundPlane = new Geometry("GroundPlane", q);
 
@@ -185,7 +193,58 @@ public class Map extends Node {
         groundPlane.setLocalRotation(new Quaternion(angles));
         groundPlane.setLocalTranslation(pos);
         groundPlane.setShadowMode(ShadowMode.Receive);
-        decorativeMapElemetns.attachChild(groundPlane);
+        //decorativeMapElemetns.attachChild(groundPlane);
+    }
+
+    private void createHeightMap(MazeTDGame game) {
+        AssetManager assetManager = game.getAssetManager();
+        /** 1. Create terrain material and load four textures into it. */
+        heightMapMaterial = new Material(assetManager,
+                "Common/MatDefs/Terrain/Terrain.j3md");
+
+        /** 1.1) Add ALPHA map (for red-blue-green coded splat textures) */
+        heightMapMaterial.setTexture("Alpha", assetManager.loadTexture(
+                "Textures/Terrain/alphamap.png"));
+
+        /** 1.2) Add GRASS texture into the red layer (Tex1). */
+        Texture grass = assetManager.loadTexture(
+                "Textures/Terrain/grass.jpg");
+        grass.setWrap(WrapMode.Repeat);
+        heightMapMaterial.setTexture("Tex1", grass);
+        heightMapMaterial.setFloat("Tex1Scale", 64f);
+
+        /** 1.3) Add DIRT texture into the green layer (Tex2) */
+        Texture dirt = assetManager.loadTexture(
+                "Textures/Terrain/dirt.jpg");
+        dirt.setWrap(WrapMode.Repeat);
+        heightMapMaterial.setTexture("Tex2", dirt);
+        heightMapMaterial.setFloat("Tex2Scale", 32f);
+
+        /** 1.4) Add ROAD texture into the blue layer (Tex3) */
+        Texture rock = assetManager.loadTexture(
+                "Textures/Terrain/road.jpg");
+        rock.setWrap(WrapMode.Repeat);
+        heightMapMaterial.setTexture("Tex3", rock);
+        heightMapMaterial.setFloat("Tex3Scale", 32f);
+
+        /** 2. Create the height map */
+        AbstractHeightMap heightmap = null;
+        Texture heightMapImage = assetManager.loadTexture(
+                "Textures/Terrain/mountains128.png");
+        heightmap = new ImageBasedHeightMap(heightMapImage.getImage());
+        heightmap.load();
+
+        int patchSize = 17;
+        terrain = new TerrainQuad("MAZETD_Terrain", patchSize, 129, heightmap.getHeightMap());
+
+        /** 4. We give the terrain its material, position & scale it, and attach it. */
+        terrain.setMaterial(heightMapMaterial);
+        terrain.setLocalTranslation(0, 0.0f, 0);
+        terrain.setLocalScale(0.4f, 0.01f, 0.25f);
+//        terrain.setQueueBucket(Bucket.Translucent);
+        
+        decorativeMapElemetns.attachChild(terrain);
+        
     }
 
     /**
@@ -304,8 +363,8 @@ public class Map extends Node {
          * 
          */
         public void buildStoneOnField() {
-            if (this.getFieldInfo().getWeight() < Pathfinder.TOWER_WEIGHT 
-                    && !this.getFieldInfo().equals(grid.getEndField()) 
+            if (this.getFieldInfo().getWeight() < Pathfinder.TOWER_WEIGHT
+                    && !this.getFieldInfo().equals(grid.getEndField())
                     && !this.getFieldInfo().equals(grid.getStartField())
                     && !isCreepOnField(this.getFieldInfo(),
                     entityManager.getCreepHashMap())) {

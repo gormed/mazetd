@@ -35,6 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
+import entities.Orb.ElementType;
 import entities.Tower;
 import entities.base.AbstractEntity;
 import eventsystem.EventManager;
@@ -61,20 +62,27 @@ public class TowerListener implements EntityListener {
         // a listener with null as entity to listenen listens to all events, hopefully
         EventManager.getInstance().addEntityListener(this, (AbstractEntity) null);
     }
-    
-    
+
     @Override
     public void onAction(EntityEvent entityEvent) {
         // get the entity
         AbstractEntity e = entityEvent.getEntity();
         // check if tower an clicked
-        if (e instanceof Tower && 
-                entityEvent.getEventType().equals(EntityEventType.Click)) {
+        if (e instanceof Tower
+                && entityEvent.getEventType().equals(EntityEventType.Click)) {
             // cast to tower
             Tower tower = (Tower) e;
             selectedTower = tower;
             System.out.println("Tower clicked:" + tower.getName());
         }
+
+        ElementType e1 = ElementType.BLUE;
+
+        int elementIDX = e1.ordinal();
+
+        ElementType e2 = ElementType.values()[elementIDX];
+
+
     }
     //==========================================================================
     //===   Inner Classes

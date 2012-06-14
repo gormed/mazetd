@@ -56,7 +56,7 @@ public class IsoCameraControl implements ActionListener {
     //==========================================================================
 
     /** The Constant CAMERA_HEIGHT. */
-    public static float CAMERA_HEIGHT = 15;
+    public static float CAMERA_HEIGHT = 16.5f;
     /** The Constant CAMERA_ANGLE. */
     private static final float CAMERA_ANGLE = (float) Math.PI / 2.5f;
     /** The Constant CAMERA_ACTIVE_ZONE_X for the activation of camera movement in x-dir. */
@@ -150,7 +150,7 @@ public class IsoCameraControl implements ActionListener {
     public void reset() {
         float[] rot = {CAMERA_ANGLE, 0, 0};
         initialUpVec = cam.getUp().clone();
-        cam.setLocation(new Vector3f(0, CAMERA_HEIGHT, -CAMERA_HEIGHT / 2f));
+        cam.setLocation(new Vector3f(0, CAMERA_HEIGHT, -CAMERA_HEIGHT));
         cam.setRotation(new Quaternion(rot));
     }
 

@@ -721,7 +721,12 @@ public class Tower extends ClickableEntity {
         switch (slot) {
             case 0:
                 if (firstOrb != null) {
-                    removedOrbType = replaceOrb(firstOrb, replaceType, slot);
+                    removedOrbType = firstOrb.getElementType();
+
+                    orbNodeRot.detachChild(firstOrb.getClickableEntityNode());
+                    firstOrb = createTowerOrb(replaceType, slot);
+                    orbNodeRot.attachChild(firstOrb.createNode(GAME));
+                    
                 } else {
                     firstOrb = createTowerOrb(replaceType, slot);
                     removedOrbType = null;
@@ -729,7 +734,12 @@ public class Tower extends ClickableEntity {
                 break;
             case 1:
                 if (secondOrb != null) {
-                    removedOrbType = replaceOrb(secondOrb, replaceType, slot);
+                    removedOrbType = secondOrb.getElementType();
+
+                    orbNodeRot.detachChild(secondOrb.getClickableEntityNode());
+                    secondOrb = createTowerOrb(replaceType, slot);
+                    orbNodeRot.attachChild(secondOrb.createNode(GAME));
+                    
                 } else {
                     secondOrb = createTowerOrb(replaceType, slot);
                     removedOrbType = null;
@@ -737,7 +747,12 @@ public class Tower extends ClickableEntity {
                 break;
             case 2:
                 if (thirdOrb != null) {
-                    removedOrbType = replaceOrb(thirdOrb, replaceType, slot);
+                    removedOrbType = thirdOrb.getElementType();
+
+                    orbNodeRot.detachChild(thirdOrb.getClickableEntityNode());
+                    thirdOrb = createTowerOrb(replaceType, slot);
+                    orbNodeRot.attachChild(thirdOrb.createNode(GAME));
+                    
                 } else {
                     thirdOrb = createTowerOrb(replaceType, slot);
                     removedOrbType = null;
@@ -752,7 +767,7 @@ public class Tower extends ClickableEntity {
         // recalculates the projectiles and its particles color
         calculateProjectileColor();
         return removedOrbType;
-    
+
     }
 
     /**
