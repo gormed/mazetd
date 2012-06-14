@@ -59,7 +59,11 @@ import mazetd.MazeTDGame;
  * @author Hans Ferchland
  */
 public class Level {
-
+    //==========================================================================
+    //===   Constants
+    //==========================================================================
+    public static final int TOWER_GOLD_COST = 20;
+    
     //==========================================================================
     //===   Singleton
     //==========================================================================
@@ -148,20 +152,6 @@ public class Level {
         waveManager.loadWaves(testWaves());
 //        waveManager.setStartWave(6);
         waveManager.initialize();
-
-//        Orb o = entityManager.createOrb(
-//                "FirstOrb", new Vector3f(2, 0, 1), Orb.ElementType.GREEN);
-
-//        Tower t = buildTower(Pathfinder.getInstance().getStartField().getSquare());
-//        t.placeOrb(Orb.ElementType.RED);
-//        t.placeOrb(Orb.ElementType.GREEN);
-//        t.placeOrb(Orb.ElementType.YELLOW);
-
-//        Creep c = entityManager.createCreep("FirstCreep",
-//                Pathfinder.getInstance().getStartField().getSquare().getLocalTranslation(),
-//                100, 100);
-
-
     }
 
     /**
@@ -232,16 +222,30 @@ public class Level {
      * 
      * @param square 
      */
-    public Tower buildTower(MapSquare square) {
+    public void buildTower(MapSquare square) {
         // add tower
+        if (player.getGold() < TOWER_GOLD_COST) 
+            return;
         Tower t = entityManager.createTower(
                 "FirstTower", square);
-        t.replaceOrb(Orb.ElementType.RED, 0);
-        t.replaceOrb(Orb.ElementType.RED, 1);
-        t.replaceOrb(Orb.ElementType.GREEN,2);
+//        t.replaceOrb(Orb.ElementType.RED, 0);
+//        t.replaceOrb(Orb.ElementType.RED, 1);
+//        t.replaceOrb(Orb.ElementType.GREEN, 2);
+        player.addGold(-TOWER_GOLD_COST);
+        creepAI.addTowerToSquare(square, Pathfinder.TOWER_WEIGHT);
+        return;
+    }
 
-        creepAI.setChangeMapSquare(square, Pathfinder.TOWER_WEIGHT);
-        return t;
+    /**
+     * Removes a tower from a given MapSquare and 
+     * recalculates the creep-pathes.
+     * 
+     * @param square the square containing the tower
+     */
+    public void removeTower(MapSquare square) {
+        if (square != null && square.getTower() != null) {
+            creepAI.removeTowerFromSquare(square, -Pathfinder.TOWER_WEIGHT);
+        }
     }
 
     private void createStones(HashSet<MapSquare> mapSquares) {
@@ -264,19 +268,8 @@ public class Level {
                 "Stone", square);
 
         getStaticLevelElements().attachChild(s.getGeometryNode());
-        square.getFieldInfo().incrementWeight(pathfinder.STONE_WEIGHT);
+        square.getFieldInfo().incrementWeight(Pathfinder.STONE_WEIGHT);
         return s;
-    }
-
-    /**
-     * Removes a tower from a given MapSquare and recalculates the creep-pathes.
-     * 
-     * @param square the square containing the tower
-     */
-    public void removeTower(MapSquare square) {
-        if (square != null && square.getTower() != null) {
-            creepAI.setChangeMapSquare(square, -Pathfinder.TOWER_WEIGHT);
-        }
     }
 
     /**

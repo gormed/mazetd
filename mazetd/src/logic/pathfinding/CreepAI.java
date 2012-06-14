@@ -83,6 +83,8 @@ public class CreepAI {
     private MapSquare changedSquare = null;
     private boolean changed = false;
     private boolean someReverse = false;
+    private boolean towerAdded = false;
+    private boolean towerRemoved = false;
     private int changedWeight = 1;
 //    private Queue<MapSquare> currentMainPath;
     //==========================================================================
@@ -112,10 +114,15 @@ public class CreepAI {
     private void updateCreepPathes(float tpf, MapSquare square, int newWeight) {
 
         //Liegt der Turm auf dem aktuellen MainPath?
-        if (pathfinder.getLastPath().contains(square)) {
+        if (pathfinder.getLastPath().contains(square) && towerAdded) {
             //NeuerPfad wird generiert
             checkCreeps(entityManager.getCreepHashMap(),
                     pathfinder.getMainPath());
+            towerAdded = false;
+        } else if (towerRemoved) {
+            checkCreeps(entityManager.getCreepHashMap(),
+                    pathfinder.getMainPath());
+            towerRemoved = false;
         }
         //currentMainPath = new LinkedList<MapSquare>(pathfinder.getMainPath());
     }
@@ -202,11 +209,21 @@ public class CreepAI {
         }
     }
 
-    public void setChangeMapSquare(MapSquare square, int newWight) {
+    public void setChangeMapSquare(MapSquare square, int newWeight) {
         this.changedSquare = square;
-        this.changedWeight = newWight;
-        pathfinder.setChangedMapSquare(square, newWight);
+        this.changedWeight = newWeight;
+        pathfinder.setChangedMapSquare(square, newWeight);
         this.changed = true;
+    }
+    
+    public void addTowerToSquare(MapSquare square, int newWeight) {
+        setChangeMapSquare(square, newWeight);
+        towerAdded = true;
+    }
+    
+    public void removeTowerFromSquare(MapSquare square, int newWeight) {
+        setChangeMapSquare(square, newWeight);
+        towerRemoved = true;
     }
 
     public void setSomeReverse(boolean isRevert) {

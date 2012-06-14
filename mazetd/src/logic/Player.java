@@ -63,7 +63,7 @@ public class Player implements EntityListener, CreepListener {
     private int greenCount = 0;
     private int yellowCount = 0;
     private int whiteCount = 0;
-    private int gold = 500;
+    private int gold = 100;
     private int maxLives = PLAYRER_HEALTH;
     private int lives = PLAYRER_HEALTH;
     private Orb.ElementType type;

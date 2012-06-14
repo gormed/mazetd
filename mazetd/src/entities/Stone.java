@@ -44,12 +44,9 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Sphere;
-import com.jme3.texture.Texture;
 import entities.Map.MapSquare;
 import entities.base.AbstractEntity;
 import jme3tools.optimize.GeometryBatchFactory;
-import logic.Level;
 import mazetd.MazeTDGame;
 
 /**
@@ -101,7 +98,7 @@ public class Stone extends AbstractEntity {
     private void createGeometry(MazeTDGame game) {
         // apply map square
         Vector3f pos = square.getLocalTranslation();
-        this.position = new Vector3f(pos.x, 0.25f, pos.z);
+        this.position = new Vector3f(pos.x, 0.0f, pos.z);
         square.setStone(this);
 
 
@@ -122,17 +119,16 @@ public class Stone extends AbstractEntity {
         }
 
         // Geometry
-        float[] angles = {(float) -Math.PI / 2f, 0, 0};
-        float[] randomAngles = {(float)( Math.PI *2 * Math.random()),0, 0};
+        float[] randomAngles = {0, (float) (Math.PI * 2 * Math.random()), 0};
 
         // Stone Model
         Spatial stone =
                 game.getAssetManager().loadModel("Models/Stone/Stone_1.j3o");
 
         stone.setLocalScale(0.003f);
-        
-        
-        
+
+
+
         stone.setMaterial(material);
         stone.setLocalRotation(new Quaternion(randomAngles));
 

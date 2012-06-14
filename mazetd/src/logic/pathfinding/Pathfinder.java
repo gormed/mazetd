@@ -153,10 +153,10 @@ public class Pathfinder {
         }
     }
 
-    void setChangedMapSquare(MapSquare square, int newWight) {
+    void setChangedMapSquare(MapSquare square, int newWeight) {
         changedSquare = square;
         gridChanged = true;
-        changedWeight = newWight;
+        changedWeight = newWeight;
     }
 
     public void setMainPath(Queue<MapSquare> path) {

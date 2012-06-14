@@ -211,7 +211,7 @@ public class Map extends Node {
                 "Textures/Terrain/grass.jpg");
         grass.setWrap(WrapMode.Repeat);
         heightMapMaterial.setTexture("Tex1", grass);
-        heightMapMaterial.setFloat("Tex1Scale", 64f);
+        heightMapMaterial.setFloat("Tex1Scale", 16f);
 
         /** 1.3) Add DIRT texture into the green layer (Tex2) */
         Texture dirt = assetManager.loadTexture(
@@ -241,6 +241,7 @@ public class Map extends Node {
         terrain.setMaterial(heightMapMaterial);
         terrain.setLocalTranslation(0, 0.0f, 0);
         terrain.setLocalScale(0.4f, 0.01f, 0.25f);
+        terrain.setShadowMode(ShadowMode.Receive);
 //        terrain.setQueueBucket(Bucket.Translucent);
         
         decorativeMapElemetns.attachChild(terrain);
