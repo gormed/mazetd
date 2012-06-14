@@ -306,7 +306,7 @@ public class Tower extends ClickableEntity {
 
             if (fadeColor.a >= 0.0f) {
                 fadeColor.a -= tpf * 1f;
-                
+
                 wallMaterial.setColor("Ambient", fadeColor);   // ... color of this object
                 wallMaterial.setColor("Diffuse", fadeColor);   // ... color of light being reflected
                 towerGeometry.setMaterial(wallMaterial);
@@ -682,6 +682,7 @@ public class Tower extends ClickableEntity {
      * Places an orb at the next free position (max. three orbs.
      * @param type the desired orb-type to add
      */
+    @Deprecated
     public void placeOrb(Orb.ElementType type, int slot) {
         switch (slot) {
             case 1:
@@ -716,26 +717,42 @@ public class Tower extends ClickableEntity {
      * given replacement type otherwise
      */
     public ElementType replaceOrb(ElementType replaceType, int slot) {
+        ElementType removedOrbType = null;
         switch (slot) {
             case 0:
                 if (firstOrb != null) {
-                    return replaceOrb(firstOrb, replaceType, slot);
+                    removedOrbType = replaceOrb(firstOrb, replaceType, slot);
+                } else {
+                    firstOrb = createTowerOrb(replaceType, slot);
+                    removedOrbType = null;
                 }
-                return replaceType;
+                break;
             case 1:
                 if (secondOrb != null) {
-                    return replaceOrb(secondOrb, replaceType, slot);
+                    removedOrbType = replaceOrb(secondOrb, replaceType, slot);
+                } else {
+                    secondOrb = createTowerOrb(replaceType, slot);
+                    removedOrbType = null;
                 }
-                return replaceType;
+                break;
             case 2:
                 if (thirdOrb != null) {
-                    return replaceOrb(thirdOrb, replaceType, slot);
+                    removedOrbType = replaceOrb(thirdOrb, replaceType, slot);
+                } else {
+                    thirdOrb = createTowerOrb(replaceType, slot);
+                    removedOrbType = null;
                 }
-                return replaceType;
+                break;
             default:
-
-                return replaceType;
+                removedOrbType = null;
         }
+
+        // refreshes the towers orb effects if there are some
+        refreshTowerOrbEffects();
+        // recalculates the projectiles and its particles color
+        calculateProjectileColor();
+        return removedOrbType;
+    
     }
 
     /**
@@ -754,10 +771,10 @@ public class Tower extends ClickableEntity {
         orb = createTowerOrb(replaceType, slot);
         orbNodeRot.attachChild(orb.createNode(GAME));
 
-        // refreshes the towers orb effects if there are some
-        refreshTowerOrbEffects();
-        // recalculates the projectiles and its particles color
-        calculateProjectileColor();
+//        // refreshes the towers orb effects if there are some
+//        refreshTowerOrbEffects();
+//        // recalculates the projectiles and its particles color
+//        calculateProjectileColor();
         return type;
     }
 

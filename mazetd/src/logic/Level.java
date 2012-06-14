@@ -236,9 +236,9 @@ public class Level {
         // add tower
         Tower t = entityManager.createTower(
                 "FirstTower", square);
-        t.placeOrb(Orb.ElementType.RED, 0);
-        t.placeOrb(Orb.ElementType.RED, 1);
-        t.placeOrb(Orb.ElementType.GREEN,2);
+        t.replaceOrb(Orb.ElementType.RED, 0);
+        t.replaceOrb(Orb.ElementType.RED, 1);
+        t.replaceOrb(Orb.ElementType.GREEN,2);
 
         creepAI.setChangeMapSquare(square, Pathfinder.TOWER_WEIGHT);
         return t;
