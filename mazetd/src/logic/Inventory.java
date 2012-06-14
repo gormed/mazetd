@@ -4,8 +4,8 @@
  */
 package logic;
 import entities.Orb;
+import entities.Orb.ElementType;
 import entities.Tower;
-import logic.Player;
 
 /**
  *
@@ -38,8 +38,7 @@ public class Inventory {
    return null;
    }
    else{
-   orb1.getElementType();
-   return type;   
+   return orb1.getElementType();   
   }
    }
    
@@ -51,8 +50,8 @@ public class Inventory {
    return null;
    }
    else{
-   orb2.getElementType();
-   return type;   
+   ;
+   return orb2.getElementType();   
   }
    }
    
@@ -64,52 +63,32 @@ public class Inventory {
    return null;
    }
    else{
-   orb3.getElementType();
-   return type;   
+   return orb3.getElementType();   
   }
    }
    
-    
-   public void placeOrb(int slot, Orb.ElementType type) {
-        
-       tower=player.getSelectedTower();
-        
-        if(player.hasType(type)){
-            
-            switch (slot) {
-            case 0:
-            tower.placeOrb(type, 0);
-            case 1:
-            tower.placeOrb(type, 1); 
-            case 2:
-            tower.placeOrb(type, 2);
-            default:
-            }
-        }
-        else{
-        System.out.println("Player does not have this Orb");
-        }
-   }
-
-    
-    public void replaceOrb(int slot, Orb.ElementType type) {
+  
+    public void replaceOrb(int slot, ElementType type) {
         tower=player.getSelectedTower();
       
-        if(player.hasType(type)){
+        //if(player.hasType(type)){
             
             switch (slot) {
             case 0:
             tower.replaceOrb(type, 0);
+            break;
             case 1:
             tower.replaceOrb(type, 1); 
+            break;
             case 2:
             tower.replaceOrb(type, 2);
+            break;
             default:
             }
-        }
+        /*}
         else{
         System.out.println("Player does not have this Orb");
-        }
+        }*/
   }
     
 
