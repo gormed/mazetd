@@ -344,7 +344,10 @@ public class Map extends Node {
          * Method, that is invoked if this squares geometry is clicked.
          */
         public void squareClicked() {
-            buildTowerHUD.show(this);
+            if (this.getFieldInfo().getWeight() < Pathfinder.TOWER_WEIGHT
+                    && Level.getInstance().enoughGold()) {
+                buildTowerHUD.show(this);
+            }
         }
 
         /**
@@ -413,7 +416,7 @@ public class Map extends Node {
 
                 @Override
                 public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
-                    System.out.println(name + " hovered!");
+
                     hovered = true;
                 }
 
@@ -490,7 +493,7 @@ public class Map extends Node {
 
         @Override
         public void onTimedEvent(TimerEvent t) {
-            if (hovered && fadeColor.a < MAX_ALPHA_FADE) {
+            if (Level.getInstance().enoughGold() && hovered && fadeColor.a < MAX_ALPHA_FADE) {
 
                 fadeColor.a += 0.05f;
                 //fadeColor.clamp();

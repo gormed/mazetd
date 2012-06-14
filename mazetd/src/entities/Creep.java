@@ -87,7 +87,7 @@ public class Creep extends CollidableEntity {
     //==========================================================================
 
     public static final float CREEP_BASE_DAMAGE = 50.0f;
-    public static final float CREEP_BASE_ORB_DROP = 0.0f;
+    public static final float CREEP_BASE_ORB_DROP = 0.01f;
     public static final float CREEP_BASE_SPEED = 1.1f;
     public static final float CREEP_DECAY = 1f;
     public static final int CREEP_DESTROY_PARTICLES = 10;

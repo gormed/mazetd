@@ -224,8 +224,8 @@ public class Level {
      */
     public void buildTower(MapSquare square) {
         // add tower
-        if (player.getGold() < TOWER_GOLD_COST) 
-            return;
+        if (enoughGold()) {
+            
         Tower t = entityManager.createTower(
                 "FirstTower", square);
 //        t.replaceOrb(Orb.ElementType.RED, 0);
@@ -234,6 +234,11 @@ public class Level {
         player.addGold(-TOWER_GOLD_COST);
         creepAI.addTowerToSquare(square, Pathfinder.TOWER_WEIGHT);
         return;
+        }
+    }
+    
+    public boolean enoughGold(){
+            return player.getGold() >= TOWER_GOLD_COST;
     }
 
     /**
