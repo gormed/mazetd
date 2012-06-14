@@ -135,9 +135,13 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
     
     public String getTowerHP(){
-    float hp = player.getSelectedTower().getHealthPoints();
-    float maxHp=player.getSelectedTower().getMaxHealthPoints();
-        return hp+"/"+maxHp;
+    float hpF = player.getSelectedTower().getHealthPoints();
+    float maxHpF=player.getSelectedTower().getMaxHealthPoints();
+    
+    int hp=(int)(hpF+0.5f);
+    int maxHp=(int)(maxHpF+0.5f);
+    
+    return hp+"/"+maxHp;
     }
     
 
