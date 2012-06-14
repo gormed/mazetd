@@ -43,6 +43,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     public void disableGui() {
         nifty.exit();
     }
+    
+  public void leaveGame(String nextScreen) {
+  nifty.gotoScreen(nextScreen);
+  gamestateManager.enterState("Mainmenu");
+  }
 
     public void setPaused(boolean paused) {
         this.paused = paused;

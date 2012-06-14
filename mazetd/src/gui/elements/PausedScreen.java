@@ -34,8 +34,9 @@ public class PausedScreen extends AbstractAppState implements ScreenController {
   
   }
    
-  public void LeaveGame(String nextScreen) {
-  //TODO
+  public void leaveGame(String nextScreen) {
+  nifty.gotoScreen(nextScreen);
+  gamestateManager.enterState("Mainmenu");
   }
   
   public void quitGame() {
