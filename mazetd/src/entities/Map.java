@@ -304,7 +304,9 @@ public class Map extends Node {
          * 
          */
         public void buildStoneOnField() {
-            if (this.getFieldInfo().getWeight() < Pathfinder.TOWER_WEIGHT
+            if (this.getFieldInfo().getWeight() < Pathfinder.TOWER_WEIGHT 
+                    && !this.getFieldInfo().equals(grid.getEndField()) 
+                    && !this.getFieldInfo().equals(grid.getStartField())
                     && !isCreepOnField(this.getFieldInfo(),
                     entityManager.getCreepHashMap())) {
                 Level.getInstance().buildStone(this);

@@ -99,8 +99,11 @@ public class Grid {
             }
         }
         //Startfield
-        grid[0][height / 2].setWeight(0);
-
+        startField =grid[0][height / 2];
+        startField.setWeight(0);
+        
+        //Endfield
+        endField =grid[width-1][height / 2];
         //Test Tower
       /*  setTower(2,0);
         setTower(2, 1);
@@ -148,6 +151,15 @@ public class Grid {
 
 
     }
+
+    public static FieldInfo getEndField() {
+        return endField;
+    }
+
+    public static FieldInfo getStartField() {
+        return startField;
+    }
+    
 
     public int getTotalWidth() {
         return totalWidth;

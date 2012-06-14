@@ -125,6 +125,7 @@ public class Level {
         map.initialize();
         pathfinder.initialize();
         createStones(map.getMapSquares());
+        pathfinder.setMainPath(pathfinder.createMainPath());
         setupLevelContent();
 
         TowerListener t = new TowerListener();
@@ -235,7 +236,7 @@ public class Level {
         // add tower
         Tower t = entityManager.createTower(
                 "FirstTower", square);
-       t.placeOrb(Orb.ElementType.RED, 0);
+        t.placeOrb(Orb.ElementType.RED, 0);
         t.placeOrb(Orb.ElementType.RED, 1);
         t.placeOrb(Orb.ElementType.GREEN,2);
 
@@ -245,10 +246,9 @@ public class Level {
 
     private void createStones(HashSet<MapSquare> mapSquares) {
         for (MapSquare s : mapSquares) {
-            if (Math.random() < 0.07) {
+            if (Math.random() < 0.05) {
                 s.buildStoneOnField();
             }
-
         }
     }
 

@@ -101,7 +101,7 @@ public class Stone extends AbstractEntity {
     private void createGeometry(MazeTDGame game) {
         // apply map square
         Vector3f pos = square.getLocalTranslation();
-        this.position = new Vector3f(pos.x, 0.30f, pos.z);
+        this.position = new Vector3f(pos.x, 0.40f, pos.z);
         square.setStone(this);
 
    
@@ -128,7 +128,7 @@ public class Stone extends AbstractEntity {
                     //TODO Rotate randomly 
         double rotation =360* Math.random();
         stone.rotate(0  ,  0,(float)rotation);
-        stone.setLocalScale(0.2f);
+        stone.setLocalScale(0.25f);
              //
         stone.setMaterial(material);
         stone.setLocalRotation(new Quaternion(angles));
