@@ -18,15 +18,7 @@ public class Inventory {
     private Orb.ElementType type;
     
     public static Inventory instance;
-       
-    public enum Slot {
-        SLOT1,
-        SLOT2,
-        SLOT3,
-    }
-            
-
-    
+  
     public Inventory(){
 
     }
@@ -78,18 +70,18 @@ public class Inventory {
    }
    
     
-   public void placeOrb(Slot slot, Orb.ElementType type) {
+   public void placeOrb(int slot, Orb.ElementType type) {
         
        tower=player.getSelectedTower();
         
         if(player.hasType(type)){
             
             switch (slot) {
-            case SLOT1:
+            case 0:
             tower.placeOrb(type, 0);
-            case SLOT2:
+            case 1:
             tower.placeOrb(type, 1); 
-            case SLOT3:
+            case 2:
             tower.placeOrb(type, 2);
             default:
             }
@@ -100,17 +92,17 @@ public class Inventory {
    }
 
     
-    public void replaceOrb(Slot slot, Orb.ElementType type) {
+    public void replaceOrb(int slot, Orb.ElementType type) {
         tower=player.getSelectedTower();
       
         if(player.hasType(type)){
             
             switch (slot) {
-            case SLOT1:
+            case 0:
             tower.replaceOrb(type, 0);
-            case SLOT2:
+            case 1:
             tower.replaceOrb(type, 1); 
-            case SLOT3:
+            case 2:
             tower.replaceOrb(type, 2);
             default:
             }

@@ -69,6 +69,24 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         gamestateManager.pause();
     }
 
+    public void placeOrb(int slot){
+        Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection");
+        type=inventory.Slot1Context();
+        inventory.placeOrb(slot, type);
+         orbSelection.hide();
+  }
+  
+    public void replaceOrb(int slot){
+        Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection");
+        type=inventory.Slot1Context();
+        inventory.replaceOrb(slot, type);
+        orbSelection.hide();
+  }
+   
+    public void orbSelection(){
+        Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection");
+        orbSelection.show();
+  }
     public void showContext(float tpf) {
         if (player.towerIsClicked()) {
             Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
