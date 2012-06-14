@@ -53,7 +53,7 @@ public class Pathfinder {
     public static boolean DEBUG_PATH = true;
     public static int TOWER_WEIGHT = 10000;
     public static int STONE_WEIGHT = 50000;
-    public static int NORMAL_WEIGHT = 1;
+    public static int NORMAL_WEIGHT = 1000;
     //==========================================================================
     //===   Singleton
     //==========================================================================

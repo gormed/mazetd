@@ -179,21 +179,23 @@ public class Map extends Node {
         groundMaterial = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         groundMaterial.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
         groundMaterial.setColor("Specular", ColorRGBA.White);
-        groundMaterial.setColor("Ambient", new ColorRGBA(0.4f, 0.9f, 0.4f, 1));   // ... color of this object
-        groundMaterial.setColor("Diffuse", new ColorRGBA(0f, 0.5f, 0, 1));   // ... color of light being reflected
+        groundMaterial.setColor("Ambient", new ColorRGBA(0.4f, 0.9f, 0.4f, 0.2f));   // ... color of this object
+        groundMaterial.setColor("Diffuse", new ColorRGBA(0f, 0.5f, 0, 0.2f));   // ... color of light being reflected
+        groundMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 
         groundPlane.setMaterial(groundMaterial);
-
+        groundPlane.setQueueBucket(Bucket.Translucent);
+        
         float[] angles = {3 * (float) Math.PI / 2, 0, 0};
         Vector3f pos = new Vector3f(
                 -totalWidth / 2 - SQUARE_SIZE / 2,
-                0,
+                0.1f,
                 (totalHeight / 2 - SQUARE_SIZE / 2));
 
         groundPlane.setLocalRotation(new Quaternion(angles));
         groundPlane.setLocalTranslation(pos);
-        groundPlane.setShadowMode(ShadowMode.Receive);
-        //decorativeMapElemetns.attachChild(groundPlane);
+        groundPlane.setShadowMode(ShadowMode.Off);
+//        decorativeMapElemetns.attachChild(groundPlane);
     }
 
     private void createHeightMap(MazeTDGame game) {
@@ -243,9 +245,9 @@ public class Map extends Node {
         terrain.setLocalScale(0.4f, 0.01f, 0.25f);
         terrain.setShadowMode(ShadowMode.Receive);
 //        terrain.setQueueBucket(Bucket.Translucent);
-        
+
         decorativeMapElemetns.attachChild(terrain);
-        
+
     }
 
     /**

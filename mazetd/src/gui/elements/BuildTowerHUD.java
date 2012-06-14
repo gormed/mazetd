@@ -58,6 +58,9 @@ import eventsystem.EventManager;
 import eventsystem.events.TimerEvent;
 import eventsystem.listener.TimerEventListener;
 import eventsystem.port.ScreenRayCast3D;
+import logic.Level;
+import logic.Player;
+import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
 /**
@@ -217,7 +220,9 @@ public class BuildTowerHUD implements TimerEventListener {
     }
 
     public void show(MapSquare square) {
-        if (initialized && square != null) {
+        if (initialized && square != null && 
+                Player.getInstance().getGold() > Level.TOWER_GOLD_COST &&
+                square.getFieldInfo().getWeight() <= Pathfinder.NORMAL_WEIGHT) {
             EventManager.getInstance().addTimerEventListener(this);
             clickPosition = ScreenRayCast3D.getInstance().getLastWorldHit().clone();
             ScreenRayCast3D.getInstance().addClickableObject(translationNode);
