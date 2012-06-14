@@ -42,7 +42,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import entities.Creep;
 import entities.Orb.ElementType;
-import entities.Tower;
 import mazetd.MazeTDGame;
 
 /**
@@ -82,24 +81,27 @@ public class DamageOrbEffect extends AbstractOrbEffect {
     }
 
     private void createFireEmitter(MazeTDGame game) {
-    /** Uses Texture from jme3-test-data library! */
-    fireEmitter = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 30);
-    Material mat_red = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
-    mat_red.setTexture("Texture", game.getAssetManager().loadTexture("Textures/Effects/flame.png"));
-    fireEmitter.setMaterial(mat_red);
-    fireEmitter.setImagesX(2); 
-    fireEmitter.setImagesY(2); // 2x2 texture animation
-    fireEmitter.setEndColor(  new ColorRGBA(1f, 0f, 0f, 1f));   // red
-    fireEmitter.setStartColor(new ColorRGBA(1f, 1f, 0f, 0.2f)); // yellow
-    fireEmitter.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2, 0));
-    fireEmitter.setStartSize(0.3f);
-    fireEmitter.setEndSize(0.1f);
-    fireEmitter.setGravity(0f,1f,0f);
-    fireEmitter.setLowLife(0.3f);
-    fireEmitter.setHighLife(3f);
-    fireEmitter.getParticleInfluencer().setVelocityVariation(0.3f);
-
-
+        /** Uses Texture from jme3-test-data library! */
+        fireEmitter = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 15);
+        Material mat_red = new Material(game.getAssetManager(), 
+                "Common/MatDefs/Misc/Particle.j3md");
+        mat_red.setTexture("Texture", game.getAssetManager().loadTexture(
+                "Textures/Effects/flame.png"));
+        fireEmitter.setMaterial(mat_red);
+        fireEmitter.setImagesX(2);
+        fireEmitter.setImagesY(2); // 2x2 texture animation
+        fireEmitter.setEndColor(new ColorRGBA(1f, 1f, 0f, 1f));   // red
+        fireEmitter.setStartColor(new ColorRGBA(1f, 0f, 0f, 0.2f)); // yellow
+        fireEmitter.getParticleInfluencer().setInitialVelocity(
+                new Vector3f(0, 2, 1));
+        fireEmitter.setRandomAngle(true);
+        fireEmitter.setRotateSpeed(2);
+        fireEmitter.setStartSize(0.6f);
+        fireEmitter.setEndSize(0.2f);
+        fireEmitter.setGravity(0f, 3f, 0f);
+        fireEmitter.setLowLife(0.5f);
+        fireEmitter.setHighLife(2f);
+        fireEmitter.getParticleInfluencer().setVelocityVariation(0.25f);
 
     }
 

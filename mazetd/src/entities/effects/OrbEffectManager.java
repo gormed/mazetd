@@ -124,12 +124,10 @@ public class OrbEffectManager {
             }
         }
         // Rasta Orb Effect
-        boolean fits = false;
+        boolean fits = true;
         for (int i = 0; i < 3; i++) {
-            if (elements[i].equals(rastOrbCombo[i])) {
-                fits = true;
-            } else {
-                fits = false;
+            if (!elements[i].equals(rastOrbCombo[i])) {
+                return null;
             }
         }
 
