@@ -36,7 +36,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     private boolean paused;
     private Orb.ElementType type;
     private Inventory inventory = Inventory.getInstance();
-    private boolean towerIsClicked = false;
+
 
     public HudScreen() {
     }
@@ -64,10 +64,9 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         Tower sel = player.getSelectedTower();
         if (sel != null && !sel.isDead()) {
             sel.demolish();
-            player.addGold(Math.round(Level.TOWER_GOLD_COST * 0.4f));
-        }
-        // TODO: Ahmed, bau hier mal ein, dass die GUI für den 
-        // Tower wieder ausgeblendet wird.
+            player.addGold(Math.round(Level.TOWER_GOLD_COST * 0.4f)); 
+            player.setSelectedTower(null);
+        }  
     }
 
     public void pause(String nextScreen) {
@@ -111,12 +110,14 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
 
     public void showContext(float tpf) {
-        if (player.towerIsClicked()) {
+        if (player.getSelectedTower()!=null) {
             Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
             towerContext.show();
-            towerIsClicked = true;
-        } else {
-            towerIsClicked = false;
+        }
+        else  if (GamestateManager.getInstance().getCurrentState().
+                equals(GamestateManager.SINGLEPLAYER_STATE)) {
+        Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
+        towerContext.hide();
         }
     }
 
@@ -152,7 +153,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     private void slot3Context(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
-            if (towerIsClicked) {
+            if (player.getSelectedTower()!=null) {
                 Element slot3 = nifty.getCurrentScreen().findElementByName("Orb3");
                 Orb.ElementType type3 = inventory.Slot3Context();
                 if (type3 != null) {
@@ -188,18 +189,13 @@ public class HudScreen extends AbstractAppState implements ScreenController {
                     slot3.hide();
                 }
             }
-            else{ 
-            Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
-            towerIsClicked=false;
-            towerContext.hide();
-            }
         }
     }
 
     private void slot2Context(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
-            if (towerIsClicked) {
+            if (player.getSelectedTower()!=null) {
                 Element slot2 = nifty.getCurrentScreen().findElementByName("Orb2");
                 Orb.ElementType type2 = inventory.Slot2Context();
                 if (type2 != null) {
@@ -240,7 +236,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     private void slot1Context(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
-            if (towerIsClicked) {
+            if (player.getSelectedTower()!=null) {
 
                 Element towerHP = nifty.getCurrentScreen().findElementByName("towerHP");
                 towerHP.getRenderer(TextRenderer.class).setText(getTowerHP());

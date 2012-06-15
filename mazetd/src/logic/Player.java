@@ -69,7 +69,6 @@ public class Player implements EntityListener, CreepListener {
     private int maxLives = PLAYRER_HEALTH;
     private int lives = PLAYRER_HEALTH;
     private Orb.ElementType type;
-    private boolean towerIsClicked;
     private ArrayList<Orb> inventory;
     private MazeTDGame game = MazeTDGame.getInstance();
 
@@ -226,9 +225,11 @@ public class Player implements EntityListener, CreepListener {
         return whiteCount;
     }
 
-    public boolean towerIsClicked() {
-        return towerIsClicked;
+    public void setSelectedTower(Tower selectedTower) {
+        this.selectedTower = selectedTower;
     }
+    
+    
 
     public boolean isPlayerAlive() {
         return lives > 0;
@@ -246,7 +247,7 @@ public class Player implements EntityListener, CreepListener {
             selectedTower = tower;
             Tower.TowerSelection.getInstance().attachToTower(selectedTower);
             System.out.println("Tower clicked:" + tower.getName());
-            towerIsClicked = true;
+
         }
     }
 
