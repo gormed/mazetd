@@ -160,8 +160,7 @@ public class Orb extends ClickableEntity {
     @Override
     public void onClick() {
         explodes();
-        player = player.getInstance();
-        player.addOrb(this);
+        Player.getInstance().addOrb(this.getElementType());
     }
 
     @Override

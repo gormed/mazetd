@@ -34,9 +34,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     private int min;
     private float time;
     private boolean paused;
-    private Orb.ElementType type;
     private Inventory inventory = Inventory.getInstance();
-
 
     public HudScreen() {
     }
@@ -49,12 +47,12 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
-    
-    public void timerInit(){
-    timeElapsed=0;
-    time=0;
-    min=0;
-    
+
+    public void timerInit() {
+        timeElapsed = 0;
+        time = 0;
+        min = 0;
+
     }
 
     public void showMarketplace(String element, String ScreenID) {
@@ -71,9 +69,9 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         Tower sel = player.getSelectedTower();
         if (sel != null && !sel.isDead()) {
             sel.demolish();
-            player.addGold(Math.round(Level.TOWER_GOLD_COST * 0.4f)); 
+            player.addGold(Math.round(Level.TOWER_GOLD_COST * 0.4f));
             player.setSelectedTower(null);
-        }  
+        }
     }
 
     public void pause(String nextScreen) {
@@ -87,16 +85,26 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         int type = Integer.parseInt(orbType);
         int slotI = Integer.parseInt(slot);
 
-        ElementType element = ElementType.values()[type];
-        inventory.replaceOrb(slotI, element);
-
         Element orbSelection1 = nifty.getCurrentScreen().findElementByName("orbSelection1");
-        orbSelection1.hide();
-
         Element orbSelection2 = nifty.getCurrentScreen().findElementByName("orbSelection2");
-        orbSelection2.hide();
-
         Element orbSelection3 = nifty.getCurrentScreen().findElementByName("orbSelection3");
+
+        ElementType element = ElementType.values()[type];
+
+        if (!player.hasType(element)) {
+            orbSelection1.hide();
+            orbSelection2.hide();
+            orbSelection3.hide();
+            return;
+        }
+
+        ElementType removed = inventory.replaceOrb(slotI, element);
+
+        player.removeOrb(element);
+        player.addOrb(removed);
+
+        orbSelection1.hide();
+        orbSelection2.hide();
         orbSelection3.hide();
 
     }
@@ -117,14 +125,13 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
 
     public void showContext(float tpf) {
-        if (player.getSelectedTower()!=null) {
+        if (player.getSelectedTower() != null) {
             Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
             towerContext.show();
-        }
-        else  if (GamestateManager.getInstance().getCurrentState().
+        } else if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
-        Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
-        towerContext.hide();
+            Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
+            towerContext.hide();
         }
     }
 
@@ -149,20 +156,20 @@ public class HudScreen extends AbstractAppState implements ScreenController {
 
         return min + ":" + timeElapsed;
     }
-    
-    public String getTowerHP(){
-    int hp=(int)(player.getSelectedTower().getHealthPoints()+0.5f);
-    int maxHp=(int)(player.getSelectedTower().getMaxHealthPoints()+0.5f);
-    
-    return hp+"/"+maxHp;
+
+    public String getTowerHP() {
+        int hp = (int) (player.getSelectedTower().getHealthPoints() + 0.5f);
+        int maxHp = (int) (player.getSelectedTower().getMaxHealthPoints() + 0.5f);
+
+        return hp + "/" + maxHp;
     }
 
     private void slot3Context(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
-            if (player.getSelectedTower()!=null) {
+            if (player.getSelectedTower() != null) {
                 Element slot3 = nifty.getCurrentScreen().findElementByName("Orb3");
-                Orb.ElementType type3 = inventory.Slot3Context();
+                Orb.ElementType type3 = inventory.slot3Context();
                 if (type3 != null) {
                     switch (type3) {
                         case RED:
@@ -202,9 +209,9 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     private void slot2Context(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
-            if (player.getSelectedTower()!=null) {
+            if (player.getSelectedTower() != null) {
                 Element slot2 = nifty.getCurrentScreen().findElementByName("Orb2");
-                Orb.ElementType type2 = inventory.Slot2Context();
+                Orb.ElementType type2 = inventory.slot2Context();
                 if (type2 != null) {
                     switch (type2) {
                         case RED:
@@ -243,13 +250,13 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     private void slot1Context(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
-            if (player.getSelectedTower()!=null) {
+            if (player.getSelectedTower() != null) {
 
                 Element towerHP = nifty.getCurrentScreen().findElementByName("towerHP");
                 towerHP.getRenderer(TextRenderer.class).setText(getTowerHP());
 
                 Element slot1 = nifty.getCurrentScreen().findElementByName("Orb1");
-                Orb.ElementType type1 = inventory.Slot1Context();
+                Orb.ElementType type1 = inventory.slot1Context();
 
                 if (type1 != null) {
 

@@ -35,6 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
+import com.sun.corba.se.spi.oa.OADefault;
 import java.util.ArrayList;
 import entities.Orb;
 import entities.Tower;
@@ -69,7 +70,7 @@ public class Player implements EntityListener, CreepListener {
     private int maxLives = PLAYRER_HEALTH;
     private int lives = PLAYRER_HEALTH;
     private Orb.ElementType type;
-    private ArrayList<Orb> inventory;
+    private ArrayList<Orb.ElementType> inventory;
     private MazeTDGame game = MazeTDGame.getInstance();
 
     public static Player getInstance() {
@@ -80,7 +81,7 @@ public class Player implements EntityListener, CreepListener {
     }
 
     private Player() {
-        inventory = new ArrayList<Orb>();
+        inventory = new ArrayList<Orb.ElementType>();
         lives = maxLives;
         EventManager.getInstance().addCreepListener(this, (Creep) null);
         EventManager.getInstance().addEntityListener(this, (AbstractEntity) null);
@@ -119,11 +120,10 @@ public class Player implements EntityListener, CreepListener {
         //TODO
     }
 
-    public void removeOrb(Orb orb) {
-        inventory.remove(orb);
-        type = orb.getElementType();
+    public void removeOrb(Orb.ElementType orbType) {
+        inventory.remove(orbType);
 
-        switch (type) {
+        switch (orbType) {
             case RED:
                 redCount = redCount - 1;
                 break;
@@ -144,11 +144,10 @@ public class Player implements EntityListener, CreepListener {
         }
     }
 
-    public void addOrb(Orb orb) {
-        inventory.add(orb);
-        type = orb.getElementType();
+    public void addOrb(Orb.ElementType orbType) {
+        inventory.add(orbType);
 
-        switch (type) {
+        switch (orbType) {
             case RED:
                 redCount = redCount + 1;
                 break;
@@ -176,25 +175,31 @@ public class Player implements EntityListener, CreepListener {
                 if (redCount > 0) {
                     return true;
                 }
+                break;
             case BLUE:
                 if (blueCount > 0) {
                     return true;
                 }
+                break;
             case GREEN:
                 if (greenCount > 0) {
                     return true;
                 }
+                break;
             case YELLOW:
                 if (yellowCount > 0) {
                     return true;
                 }
+                break;
             case WHITE:
                 if (whiteCount > 0) {
                     return true;
                 }
+                break;
             default:
-                return false;
+                break;
         }
+        return false;
     }
 
     public Tower getSelectedTower() {
@@ -228,8 +233,6 @@ public class Player implements EntityListener, CreepListener {
     public void setSelectedTower(Tower selectedTower) {
         this.selectedTower = selectedTower;
     }
-    
-    
 
     public boolean isPlayerAlive() {
         return lives > 0;
