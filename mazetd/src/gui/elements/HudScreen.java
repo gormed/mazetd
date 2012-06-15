@@ -49,6 +49,13 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
+    
+    public void timerInit(){
+    timeElapsed=0;
+    time=0;
+    min=0;
+    
+    }
 
     public void showMarketplace(String element, String ScreenID) {
         Element marketPlace = nifty.getScreen(ScreenID).findElementByName(element);
