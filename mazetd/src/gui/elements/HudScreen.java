@@ -377,7 +377,6 @@ public class HudScreen extends AbstractAppState implements ScreenController {
             slot3Context(tpf);
             slot2Context(tpf);
             slot1Context(tpf);
-            // updateHealthglobe(tpf);
             time += tpf;
             timeElapsed = (int) (time + 0.5f);
             if (timeElapsed >= 59) {

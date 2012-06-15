@@ -266,8 +266,6 @@ public class Player implements EntityListener, CreepListener {
     }
 
     private void onDeath() {
-        // TODO: Show GAME OVER hud
-//        GamestateManager.getInstance().pause();
         System.out.println("PLAYER IS DEAD!");
         game.getHudScreenInstance().pause("gameover");
     }
