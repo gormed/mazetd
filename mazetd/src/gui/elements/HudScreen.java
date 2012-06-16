@@ -90,22 +90,20 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         Element orbSelection3 = nifty.getCurrentScreen().findElementByName("orbSelection3");
 
         ElementType element = ElementType.values()[type];
-
+        
+        orbSelection1.hide();
+        orbSelection2.hide();
+        orbSelection3.hide();
+       
         if (!player.hasType(element)) {
-            orbSelection1.hide();
-            orbSelection2.hide();
-            orbSelection3.hide();
             return;
         }
-
         ElementType removed = inventory.replaceOrb(slotI, element);
 
         player.removeOrb(element);
         player.addOrb(removed);
 
-        orbSelection1.hide();
-        orbSelection2.hide();
-        orbSelection3.hide();
+        
 
     }
 
@@ -125,14 +123,23 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
 
     public void showContext(float tpf) {
+ 
         if (player.getSelectedTower() != null) {
             Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
             towerContext.show();
         } else if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE) && 
                 player.getSelectedTower() == null) {
+            
             Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
             towerContext.hide();
+            
+            Element orbSelection1 = nifty.getCurrentScreen().findElementByName("orbSelection1");
+            Element orbSelection2 = nifty.getCurrentScreen().findElementByName("orbSelection2");
+            Element orbSelection3 = nifty.getCurrentScreen().findElementByName("orbSelection3");
+            orbSelection1.hide();
+            orbSelection2.hide();
+            orbSelection3.hide();
         }
     }
 
@@ -162,7 +169,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         int hp = (int) (player.getSelectedTower().getHealthPoints() + 0.5f);
         int maxHp = (int) (player.getSelectedTower().getMaxHealthPoints() + 0.5f);
 
-        return hp + "/" + maxHp;
+        return "HP: "+hp + "/" + maxHp;
     }
 
     private void slot3Context(float tpf) {
