@@ -171,6 +171,10 @@ public class HudScreen extends AbstractAppState implements ScreenController {
 
         return "HP: "+hp + "/" + maxHp;
     }
+    
+    public String getHealth(){
+    return "Health: "+player.getLives()+"/"+player.getMaxLives();
+    }
 
     private void slot3Context(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
@@ -361,7 +365,8 @@ public class HudScreen extends AbstractAppState implements ScreenController {
             Element gold = nifty.getCurrentScreen().findElementByName("gold");
             Element wave = nifty.getCurrentScreen().findElementByName("wave");
             Element time = nifty.getCurrentScreen().findElementByName("time");
-
+            Element health = nifty.getCurrentScreen().findElementByName("health");
+                
 
             //swap old with new text
             invSlot1.getRenderer(TextRenderer.class).setText(player.getRedCount() + "x");
@@ -373,6 +378,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
             gold.getRenderer(TextRenderer.class).setText("Gold: " + player.getGold());
             wave.getRenderer(TextRenderer.class).setText("Wave: " + getWave());
             time.getRenderer(TextRenderer.class).setText("Time: " + getTime());
+            health.getRenderer(TextRenderer.class).setText(getHealth());
 
         }
     }

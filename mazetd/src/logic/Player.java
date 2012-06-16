@@ -172,6 +172,12 @@ public class Player implements EntityListener, CreepListener {
         return lives;
     }
 
+    public int getMaxLives() {
+        return maxLives;
+    }
+    
+    
+
     public int getLivesLeft() {
         return maxLives - lives;
     }

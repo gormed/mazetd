@@ -82,8 +82,12 @@
         <!--Bot Panel-->
             <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" backgroundImage="Interface/Textures/panel_bottom.png">  
     
-                <panel id="panel_bot_left" width="20%" height="100%" childLayout="center"> 
-                    <image id="healthglobe" filename="Interface/Textures/Healthglobe/Healthglobe_Full.png" valign="center" align="center" height="90%" width="90%" ></image> 
+                <panel id="panel_bot_left" width="20%" height="100%" childLayout="vertical"> 
+                   <panel id="panel_bot_left" width="100%" height="10%" childLayout="center"> </panel>
+                   <panel id="panel_bot_left" width="100%" height="10%" childLayout="center"> 
+                   <control name="label" id="health" color="" text="${CALL.getHealth()}" width="100%" height="100%" />
+                   </panel>
+                   <image id="healthglobe" filename="Interface/Textures/Healthglobe/Healthglobe_Full.png" valign="center" align="center" height="80%" width="80%" ></image> 
                 </panel>
     
                 <panel id="panel_bot_mid" width="60%" height="100%" childLayout="vertical">  
