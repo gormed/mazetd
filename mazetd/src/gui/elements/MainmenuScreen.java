@@ -28,7 +28,7 @@ public class MainmenuScreen extends AbstractAppState implements ScreenController
   public void startGame(String nextScreen) {
   nifty.gotoScreen(nextScreen);
   gamestateManager = GamestateManager.getInstance();
-  gamestateManager.enterState("Singleplayer");
+  gamestateManager.enterState(GamestateManager.SINGLEPLAYER_STATE);
   game.getHudScreenInstance().timerInit();
   }
  

@@ -120,6 +120,7 @@ public class Level {
 
         rayCast3D.initialize();
         collider3D.initialize();
+        entityManager.initialize();
 
         mainLevelNode = new Node("MainLevelNode");
         staticLevelElements = new Node("StaticLevelElements");
@@ -127,13 +128,8 @@ public class Level {
         mainLevelNode.attachChild(staticLevelElements);
         mainLevelNode.attachChild(dynamicLevelElements);
 
-        map.initialize();
-        pathfinder.initialize();
-        createStones(map.getMapSquares());
-        pathfinder.setMainPath(pathfinder.createMainPath());
-        setupLevelContent();
 
-        TowerListener t = new TowerListener();
+        setupLevelContent();
 
         game.getIsoCameraControl().lookAtMapSquare(
                 pathfinder.getStartField().getSquare());
@@ -145,14 +141,49 @@ public class Level {
      * Setup the level for a new game.
      */
     private void setupLevelContent() {
-
-        // Setup Grid and Map
-
+        // Setup Grid, Pathfinder and Map
+        map.initialize();
+        pathfinder.initialize();
+        createStones(map.getMapSquares());
+        pathfinder.setMainPath(pathfinder.createMainPath());
+        // attach map
         staticLevelElements.attachChild(map);
-
+        // setup waves
         waveManager.loadWaves(testWaves());
-//        waveManager.setStartWave(6);
+//        waveManager.setStartWave(0);
         waveManager.initialize();
+        // finally init player
+        player.initialize();
+    }
+
+    /**
+     * Destroys all level attributes so it will have to be initialized again.
+     */
+    public void destroy() {
+        if (!initialized) {
+            return;
+        }
+
+        map.destroy();
+        waveManager.destroy();
+        player.destroy();
+
+        rayCast3D.destroy();
+        collider3D.destroy();
+        entityManager.destroy();
+
+        staticLevelElements.detachAllChildren();
+        staticLevelElements = null;
+
+        dynamicLevelElements.detachAllChildren();
+        dynamicLevelElements = null;
+
+        mainLevelNode.detachAllChildren();
+
+        game.getRootNode().detachChild(mainLevelNode);
+        mainLevelNode = null;
+        
+        initialized = false;
     }
 
     /**
@@ -170,11 +201,11 @@ public class Level {
             description = waveManager.new WaveDescription();
             description.creepCount = 5 + Math.round(0.1f * i * i);
             description.creepDamage = 80 + 15 * i;
-            description.creepGoldDrop = 5 + Math.round(1.5f * i);
+            description.creepGoldDrop = 5 + Math.round(0.2f * i);
 //            description.creepOrbDropRate = 0.08f + 0.01f * i;
-            description.creepSpeed = 0.8f + 0.025f * i;
-            description.maxCreepHealthPoints = 20 + 15f * i;
-            description.numberOfOrbDrobs = ((int)2+ i/10);
+            description.creepSpeed = 0.8f + 0.03f * i;
+            description.maxCreepHealthPoints = 15 + Math.round(3.3f * i * i);
+            description.numberOfOrbDrobs = 2 + Math.round(i * 0.15f);
 
             waveDescriptions.add(description);
         }
@@ -190,22 +221,6 @@ public class Level {
         pathfinder.update(tpf);
         creepAI.update(tpf);
         entityManager.update(tpf);
-    }
-
-    /**
-     * Destroys all level attributes so it will have to be initialized again.
-     */
-    public void destroy() {
-
-        collider3D.destroy();
-        rayCast3D.destroy();
-
-        staticLevelElements.detachAllChildren();
-        dynamicLevelElements.detachAllChildren();
-        mainLevelNode.detachAllChildren();
-
-        game.getRootNode().detachChild(mainLevelNode);
-        initialized = false;
     }
 
     /**

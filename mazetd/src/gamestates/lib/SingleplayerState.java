@@ -90,6 +90,9 @@ public class SingleplayerState extends Gamestate {
     protected void loadContent(MazeTDGame game) {
         this.game = game;
         
+        
+        game.getIsoCameraControl().reset();
+        
         // setup level
         this.level = Level.getInstance();
         level.initialize();
@@ -106,6 +109,7 @@ public class SingleplayerState extends Gamestate {
         game.getRootNode().addLight(pointLight);
         game.getRootNode().addLight(ambientLight);
         
+        game.setPause(false);
         //test();
     }
 
@@ -159,9 +163,12 @@ public class SingleplayerState extends Gamestate {
 
     @Override
     protected void unloadContent() {
+                
+        level.destroy();
         // remove all content from sg, gc will take care of the rest
         game.getRootNode().detachAllChildren();
         game.getRootNode().removeLight(ambientLight);
         game.getRootNode().removeLight(pointLight);
+
     }
 }

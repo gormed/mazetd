@@ -36,18 +36,13 @@
 package logic;
 
 import entities.Creep;
-import entities.Orb;
 import entities.base.EntityManager;
 import eventsystem.EventManager;
 import eventsystem.events.TimerEvent;
 import eventsystem.listener.TimerEventListener;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
-import java.util.Random;
 import logic.pathfinding.Pathfinder;
 
 /**
@@ -55,6 +50,9 @@ import logic.pathfinding.Pathfinder;
  * @author Hans Ferchland
  */
 public class WaveManager {
+
+    public static final float WAVE_CREEP_INTERVAL = 2f;
+    public static final float WAVE_PAUSE_TIME = 5f;
     //==========================================================================
     //===   Singleton
     //==========================================================================
@@ -63,9 +61,6 @@ public class WaveManager {
      * The hidden constructor of WaveManager.
      */
     private WaveManager() {
-        // setup the timers
-        setupStartTimer();
-        setupWaveTimer();
     }
 
     /**
@@ -89,11 +84,12 @@ public class WaveManager {
             new LinkedList<WaveDescription>();
     private boolean initialized;
     private int maxWaves;
+    private boolean completed = false;
     private int currentWaveCount = 0;
     private int creepGenerationCount = 0;
     private WaveDescription currentWave;
     /** is true if all creeps contained by the wave are spawned */
-    private boolean waveCompletlySpawned;
+    private boolean waveCompletlySpawned = false;
     private WaveTimer startTimer;
     private WaveTimer waveTimer;
     private EntityManager entityManager = EntityManager.getInstance();
@@ -107,8 +103,15 @@ public class WaveManager {
         if (initialized) {
             return;
         }
+        // setup the timers
+        setupStartTimer();
+        setupWaveTimer();
         // add the timer that starts game after 2 secs
         EventManager.getInstance().addTimerEventListener(startTimer);
+        completed = false;
+        currentWaveCount = 0;
+        creepGenerationCount = 0;
+        waveCompletlySpawned = false;
 
         initialized = true;
     }
@@ -124,7 +127,12 @@ public class WaveManager {
         }
         // remove both timers
         EventManager.getInstance().removeTimerEventListener(startTimer);
+        startTimer = null;
         EventManager.getInstance().removeTimerEventListener(waveTimer);
+        waveTimer = null;
+        waveDescriptions.clear();
+        creeps.clear();
+
         initialized = false;
     }
 
@@ -133,7 +141,7 @@ public class WaveManager {
     }
 
     private void setupStartTimer() {
-        startTimer = new WaveTimer(2) {
+        startTimer = new WaveTimer(WAVE_PAUSE_TIME) {
 
             @Override
             public void onTimedEvent(TimerEvent t) {
@@ -153,7 +161,7 @@ public class WaveManager {
     }
 
     private void setupWaveTimer() {
-        waveTimer = new WaveTimer(2f) {
+        waveTimer = new WaveTimer(WAVE_CREEP_INTERVAL) {
 
             @Override
             public void onTimedEvent(TimerEvent t) {
@@ -169,11 +177,12 @@ public class WaveManager {
         if (waveCompletlySpawned) {
             if (stillCreeps) {
                 if (currentWave.numberOfOrbDrobs > 0) {
-                    for(Creep c : creeps.values())
-                        if(!c.isDropping() && currentWave.numberOfOrbDrobs > 0){
-                        c.setIsDropping(true);
-                    currentWave.numberOfOrbDrobs--;
+                    for (Creep c : creeps.values()) {
+                        if (!c.isDropping() && currentWave.numberOfOrbDrobs > 0) {
+                            c.setIsDropping(true);
+                            currentWave.numberOfOrbDrobs--;
                         }
+                    }
                 }
             } else {
                 Player.getInstance().addGold(currentWave.goldAtEnd);
@@ -190,13 +199,14 @@ public class WaveManager {
     }
 
     private void waveKilled() {
-        if (currentWaveCount < maxWaves) {
+        if (currentWaveCount < maxWaves - 1) {
             currentWaveCount++;
             currentWave = waveDescriptions.poll();
             creepGenerationCount = 0;
             waveCompletlySpawned = false;
 
         } else {
+            completed = true;
         }
     }
 
@@ -242,6 +252,10 @@ public class WaveManager {
         }
     }
 
+    public boolean isCompleted() {
+        return completed;
+    }
+
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
@@ -264,8 +278,8 @@ public class WaveManager {
 
     public class WaveDescription {
         // Gold
+
         public int goldAtEnd;
-        
         //Creeps
         public int creepCount;
         public float maxCreepHealthPoints;
@@ -288,7 +302,7 @@ public class WaveManager {
         public WaveDescription() {
         }
 
-        public WaveDescription( int goldAtStart,
+        public WaveDescription(int goldAtStart,
                 int creepCount, float maxCreepHealthPoints, float creepSpeed,
                 float creepDamage, float creepOrbDropRate, int creepGoldDrop,
                 boolean hasBoss, boolean bossAtFirst, int bossCount,

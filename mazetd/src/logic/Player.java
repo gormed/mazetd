@@ -35,7 +35,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
-import com.sun.corba.se.spi.oa.OADefault;
 import java.util.ArrayList;
 import entities.Orb;
 import entities.Tower;
@@ -48,7 +47,6 @@ import entities.Creep;
 import eventsystem.events.CreepEvent;
 import eventsystem.events.CreepEvent.CreepEventType;
 import eventsystem.listener.CreepListener;
-import gamestates.GamestateManager;
 import mazetd.MazeTDGame;
 
 /**
@@ -57,21 +55,26 @@ import mazetd.MazeTDGame;
  * @version
  */
 public class Player implements EntityListener, CreepListener {
+    //==========================================================================
+    //===   Enums
+    //==========================================================================
 
-    public static final int PLAYRER_HEALTH = 15;
+    public enum PlayerState {
+
+        PREPARING,
+        PLAYING,
+        LOST,
+        WON
+    }
+    //==========================================================================
+    //===   Constants
+    //==========================================================================
+    public static final int PLAYER_START_GOLD = 100;
+    public static final int PLAYRER_LIVES = 5;
+    //==========================================================================
+    //===   Singleton
+    //==========================================================================
     private static Player instance;
-    private Tower selectedTower;
-    private int redCount = 0;
-    private int blueCount = 0;
-    private int greenCount = 0;
-    private int yellowCount = 0;
-    private int whiteCount = 0;
-    private int gold = 100;
-    private int maxLives = PLAYRER_HEALTH;
-    private int lives = PLAYRER_HEALTH;
-    private Orb.ElementType type;
-    private ArrayList<Orb.ElementType> inventory;
-    private MazeTDGame game = MazeTDGame.getInstance();
 
     public static Player getInstance() {
         if (instance != null) {
@@ -83,13 +86,84 @@ public class Player implements EntityListener, CreepListener {
     private Player() {
         inventory = new ArrayList<Orb.ElementType>();
         lives = maxLives;
-        EventManager.getInstance().addCreepListener(this, (Creep) null);
-        EventManager.getInstance().addEntityListener(this, (AbstractEntity) null);
+    }
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
+    private Tower selectedTower;
+    private int redCount = 0;
+    private int blueCount = 0;
+    private int greenCount = 0;
+    private int yellowCount = 0;
+    private int whiteCount = 0;
+    private int gold = 0;
+    private int maxLives = PLAYRER_LIVES;
+    private int lives = PLAYRER_LIVES;
+    private Orb.ElementType type;
+    private ArrayList<Orb.ElementType> inventory;
+    private MazeTDGame game = MazeTDGame.getInstance();
+    private boolean initialized = false;
+    private PlayerState playerState = PlayerState.PREPARING;
+
+    //==========================================================================
+    //===   Methods & Constructor
+    //==========================================================================
+    /**
+     * Initializes the player singleton for the first time or after 
+     * destroy was called.
+     */
+    void initialize() {
+        if (initialized) {
+            return;
+        }
+        // init gold
+        gold = PLAYER_START_GOLD;
+        // init lives
+        lives = maxLives;
+        // add listeners
+        EventManager.getInstance().
+                addCreepListener(this, (Creep) null);
+        EventManager.getInstance().
+                addEntityListener(this, (AbstractEntity) null);
+
+        initialized = true;
+    }
+
+    /**
+     * Resets the player-singleton.
+     */
+    void destroy() {
+        if (!initialized) {
+            return;
+        }
+        // remove listeners
+        EventManager.getInstance().
+                removeCreepListener(this);
+        EventManager.getInstance().
+                removeEntityListener(this);
+        // clear inventory
+        inventory.clear();
+        // reset orb counter
+        redCount = 0;
+        blueCount = 0;
+        greenCount = 0;
+        yellowCount = 0;
+        whiteCount = 0;
+
+        initialized = false;
     }
 
     public void update(float tpf) {
+        if (!initialized
+                || playerState == PlayerState.LOST
+                || playerState == PlayerState.WON) {
+            return;
+        }
         if (!isPlayerAlive()) {
             onDeath();
+        }
+        if (WaveManager.getInstance().isCompleted()) {
+            onWin();
         }
     }
 
@@ -230,6 +304,10 @@ public class Player implements EntityListener, CreepListener {
         return whiteCount;
     }
 
+    public PlayerState getPlayerState() {
+        return playerState;
+    }
+
     public void setSelectedTower(Tower selectedTower) {
         this.selectedTower = selectedTower;
     }
@@ -269,7 +347,13 @@ public class Player implements EntityListener, CreepListener {
     }
 
     private void onDeath() {
-        System.out.println("PLAYER IS DEAD!");
+        System.out.println("PLAYER HAS LOST!");
+        playerState = PlayerState.LOST;
         game.getHudScreenInstance().pause("gameover");
+    }
+
+    private void onWin() {
+        System.out.println("PLAYER HAS WON!");
+        playerState = PlayerState.WON;
     }
 }

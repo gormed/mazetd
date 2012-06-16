@@ -141,10 +141,12 @@ public class ScreenRayCast3D implements MouseInputListener {
 
         EventManager.getInstance().
                 removeMouseInputListener(this);
-
+        lastClicked = null;
+        lastHovered = null;
         clickable3D.detachAllChildren();
         game.getRootNode().detachChild(clickable3D);
         clickable3D = null;
+        lastMousePosition = Vector2f.ZERO.clone();
         initialized = false;
     }
 

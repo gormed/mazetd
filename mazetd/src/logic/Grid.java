@@ -46,6 +46,8 @@ import logic.pathfinding.Pathfinder;
  * @author Hady Khalifa
  */
 public class Grid {
+    public static final int GRID_HEIGHT = 9;
+    public static final int GRID_WIDTH = 27;
 
     /**
      * private data fields
@@ -59,8 +61,8 @@ public class Grid {
      * Constructor
      */
     private Grid() {
-        totalHeight = 9;
-        totalWidth = 27;
+        totalHeight = GRID_HEIGHT;
+        totalWidth = GRID_WIDTH;
         initGrid(totalWidth, totalHeight);
     }
 
@@ -81,6 +83,12 @@ public class Grid {
         private static final Grid INSTANCE = new Grid();
     }
 
+    public void initialize() {
+        totalHeight = GRID_HEIGHT;
+        totalWidth = GRID_WIDTH;
+        initGrid(totalWidth, totalHeight);
+    }
+
     /**
      * 
      * init method
@@ -99,11 +107,11 @@ public class Grid {
             }
         }
         //Startfield
-        startField =grid[0][height / 2];
+        startField = grid[0][height / 2];
         startField.setWeight(0);
-        
+
         //Endfield
-        endField =grid[width-1][height / 2];
+        endField = grid[width - 1][height / 2];
         //Test Tower
       /*  setTower(2,0);
         setTower(2, 1);
@@ -159,7 +167,6 @@ public class Grid {
     public static FieldInfo getStartField() {
         return startField;
     }
-    
 
     public int getTotalWidth() {
         return totalWidth;

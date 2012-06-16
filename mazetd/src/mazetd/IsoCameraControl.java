@@ -148,6 +148,7 @@ public class IsoCameraControl implements ActionListener {
      * Resets the camera to the initial position.
      */
     public void reset() {
+        setEnabled(true);
         float[] rot = {CAMERA_ANGLE, 0, 0};
         initialUpVec = cam.getUp().clone();
         cam.setLocation(new Vector3f(0, CAMERA_HEIGHT, -CAMERA_HEIGHT / 2.2f));

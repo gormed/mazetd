@@ -129,7 +129,8 @@ public class HudScreen extends AbstractAppState implements ScreenController {
             Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
             towerContext.show();
         } else if (GamestateManager.getInstance().getCurrentState().
-                equals(GamestateManager.SINGLEPLAYER_STATE)) {
+                equals(GamestateManager.SINGLEPLAYER_STATE) && 
+                player.getSelectedTower() == null) {
             Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
             towerContext.hide();
         }

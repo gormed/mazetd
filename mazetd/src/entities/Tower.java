@@ -67,6 +67,7 @@ import java.util.Random;
 import logic.Level;
 import mazetd.MazeTDGame;
 import jme3tools.optimize.GeometryBatchFactory;
+import logic.Player;
 
 /**
  * The class Tower for a basical tower in MazeTD.
@@ -463,8 +464,11 @@ public class Tower extends ClickableEntity {
         if (thirdOrb != null) {
             thirdOrb.explodes();
         }
-        
-        TowerSelection.getInstance().detachFromTower();
+
+        if (TowerSelection.getInstance().selectedTower.equals(this)) {
+            TowerSelection.getInstance().detachFromTower();
+            Player.getInstance().setSelectedTower(null);
+        }
 
         towerGeometry.setQueueBucket(Bucket.Translucent);
         towerGeometry.setShadowMode(ShadowMode.Off);
@@ -637,14 +641,26 @@ public class Tower extends ClickableEntity {
         return towerRange;
     }
 
+    /**
+     * Gets the first orb placed in this tower
+     * @return the orb in slot 0
+     */
     public Orb getFirstOrb() {
         return firstOrb;
     }
 
+    /**
+     * Gets the second orb placed in this tower
+     * @return the orb in slot 1
+     */
     public Orb getSecondOrb() {
         return secondOrb;
     }
 
+    /**
+     * Gets the third orb placed in this tower
+     * @return the orb in slot 2
+     */
     public Orb getThirdOrb() {
         return thirdOrb;
     }
@@ -697,7 +713,9 @@ public class Tower extends ClickableEntity {
     }
 
     /**
+     * Please use replaceOrb(). 
      * Places an orb at the next free position (max. three orbs.
+     * 
      * @param type the desired orb-type to add
      */
     @Deprecated
@@ -861,13 +879,18 @@ public class Tower extends ClickableEntity {
     //===   Inner Classes
     //==========================================================================
 
+    /**
+     * The class TowerSelection is a singleton that displays the selection-
+     * square for the selected tower.
+     * @author Hans Ferchland
+     */
     public static final class TowerSelection extends Node {
         //==========================================================================
         //===   Singleton
         //==========================================================================
 
         /**
-         * The hidden constructor of CreepHandler.
+         * The hidden constructor of TowerSelection.
          */
         private TowerSelection() {
             super("TowerSelection");
@@ -875,14 +898,14 @@ public class Tower extends ClickableEntity {
         }
 
         /**
-         * The static method to retrive the one and only instance of CreepHandler.
+         * The static method to retrive the one and only instance of TowerSelection.
          */
         public static TowerSelection getInstance() {
             return TowerSelectionHolder.INSTANCE;
         }
 
         /**
-         * The holder-class CreepHandlerHolder for the CreepHandler.
+         * The holder-class TowerSelectionHolder for the TowerSelection.
          */
         private static class TowerSelectionHolder {
 
@@ -899,18 +922,29 @@ public class Tower extends ClickableEntity {
         //===   Methods
         //==========================================================================
 
+        /**
+         * Attaches the TowerSelection to a tower.
+         * @param t the tower where the selection should be attached
+         */
         public void attachToTower(Tower t) {
             selectedTower = t;
-
             selectedTower.clickableEntityNode.attachChild(this);
         }
 
+        /**
+         * Detaches the selection from the current tower.
+         */
         public void detachFromTower() {
             if (selectedTower != null) {
                 selectedTower.clickableEntityNode.detachChild(this);
             }
         }
 
+        /**
+         * Creates the geometry for the TowerSelection indicator.
+         * @param game the reference to the MazeTDGame app
+         * @return the TowerSelection-node instance
+         */
         private Node createGeometry(MazeTDGame game) {
 
             // selection Material        
@@ -925,11 +959,22 @@ public class Tower extends ClickableEntity {
             Vector3f tr = new Vector3f(0.5f, height, 0.5f);
             Vector3f bl = new Vector3f(-0.5f, height, -0.5f);
             Vector3f br = new Vector3f(0.5f, height, -0.5f);
-            Line[] lines = new Line[4];
+            
+            Vector3f tl2 = new Vector3f(-0.51f, height, 0.51f);
+            Vector3f tr2 = new Vector3f(0.51f, height, 0.51f);
+            Vector3f bl2 = new Vector3f(-0.51f, height, -0.51f);
+            Vector3f br2 = new Vector3f(0.51f, height, -0.51f);
+            
+            Line[] lines = new Line[8];
             lines[0] = new Line(tl, tr);
             lines[1] = new Line(bl, br);
             lines[2] = new Line(tl, bl);
             lines[3] = new Line(tr, br);
+            lines[4] = new Line(tl2, tr2);
+            lines[5] = new Line(bl2, br2);
+            lines[6] = new Line(tl2, bl2);
+            lines[7] = new Line(tr2, br2);
+
 
             for (Line l : lines) {
                 Geometry line = new Geometry("line1", l);

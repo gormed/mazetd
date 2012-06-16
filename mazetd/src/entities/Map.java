@@ -65,6 +65,7 @@ import java.util.HashSet;
 import logic.Grid;
 import logic.Grid.FieldInfo;
 import logic.Level;
+import logic.Player;
 import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
@@ -107,7 +108,7 @@ public class Map extends Node {
     /** default color of a square */
     public static ColorRGBA SQUARE_COLOR = new ColorRGBA(0, 1, 0, 0.0f);
     /** default size of a square */
-    public static float SQUARE_SIZE = 0.9f;
+    public static float SQUARE_SIZE = 0.95f;
     /** running id of the squares */
     private static int runningSquareID = 0;
 
@@ -135,6 +136,7 @@ public class Map extends Node {
     private EntityManager entityManager = EntityManager.getInstance();
     private HashSet<MapSquare> mapSquares = new HashSet<MapSquare>();
     private BuildTowerHUD buildTowerHUD = BuildTowerHUD.getInstance();
+    private boolean initialized = false;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
@@ -143,6 +145,10 @@ public class Map extends Node {
      * Creates the Map, background of the level and grid for tower-placement.
      */
     public void initialize() {
+        if (initialized) {
+            return;
+        }
+        grid.initialize();
         totalHeight = grid.getTotalHeight();
         totalWidth = grid.getTotalWidth();
         decorativeMapElemetns = new Node("DorativeMapElemetns");
@@ -156,17 +162,27 @@ public class Map extends Node {
 
         this.attachChild(decorativeMapElemetns);
         ScreenRayCast3D.getInstance().addClickableObject(clickableMapElements);
+        initialized = true;
     }
 
     /**
      * Frees all resources aquired by the map.
      */
     public void destroy() {
+        if (!initialized) {
+            return;
+        }
+        
+        for (MapSquare m : mapSquares) {
+            EventManager.getInstance().removeTimerEventListener(m);
+        }
+        mapSquares.clear();
         decorativeMapElemetns.detachAllChildren();
         clickableMapElements.detachAllChildren();
         this.detachChild(decorativeMapElemetns);
         ScreenRayCast3D.getInstance().removeClickableObject(clickableMapElements);
         buildTowerHUD.destroy();
+        initialized = false;
     }
 
     /**
@@ -181,7 +197,7 @@ public class Map extends Node {
         groundMaterial.setColor("Specular", ColorRGBA.White);
         groundMaterial.setColor("Ambient", new ColorRGBA(0.4f, 0.9f, 0.4f, 0.2f));   // ... color of this object
         groundMaterial.setColor("Diffuse", new ColorRGBA(0f, 0.5f, 0, 0.2f));   // ... color of light being reflected
-        groundMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        groundMaterial.getAdditionalRenderState().setBlendMode(BlendMode.AlphaAdditive);
 
         groundPlane.setMaterial(groundMaterial);
         groundPlane.setQueueBucket(Bucket.Translucent);
@@ -189,7 +205,7 @@ public class Map extends Node {
         float[] angles = {3 * (float) Math.PI / 2, 0, 0};
         Vector3f pos = new Vector3f(
                 -totalWidth / 2 - SQUARE_SIZE / 2,
-                0.1f,
+                0.02f,
                 (totalHeight / 2 - SQUARE_SIZE / 2));
 
         groundPlane.setLocalRotation(new Quaternion(angles));
@@ -292,6 +308,14 @@ public class Map extends Node {
         return decorativeMapElemetns;
     }
 
+    /**
+     * Checks if the Map was already inititalized or not.
+     * @return true if initialized, false otherwise
+     */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
@@ -312,7 +336,6 @@ public class Map extends Node {
         private Material material;
         private ClickableGeometry geometry;
         private boolean hovered = false;
-        private boolean mainPath;
         private boolean creepPath;
         private boolean creepOn;
         private ColorRGBA fadeColor = SQUARE_COLOR.clone();
@@ -347,6 +370,8 @@ public class Map extends Node {
             if (this.getFieldInfo().getWeight() < Pathfinder.TOWER_WEIGHT
                     && Level.getInstance().enoughGold()) {
                 buildTowerHUD.show(this);
+                Player.getInstance().setSelectedTower(null);
+                Tower.TowerSelection.getInstance().detachFromTower();
             }
         }
 
@@ -410,7 +435,6 @@ public class Map extends Node {
                  */
                 @Override
                 public void onRayCastClick(Vector2f mouse, CollisionResult result) {
-                    // TODO: implement handling if a square is clicked #done
                     System.out.println(name + " clicked!");
                     System.out.println(field.toString());
                     squareClicked();
@@ -425,21 +449,17 @@ public class Map extends Node {
                 @Override
                 public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
                     hovered = false;
-//                    buildTowerHUD.hide();
                 }
             };
 
             // assign material
             material = new Material(game.getAssetManager(),
                     "Common/MatDefs/Light/Lighting.j3md");
-            material.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
+            material.setBoolean("UseMaterialColors", true);
             material.setColor("Specular", ColorRGBA.White);
-            material.setColor("Ambient", SQUARE_COLOR);   // ... color of this object
-            material.setColor("Diffuse", SQUARE_COLOR);   // ... color of light being reflected
+            material.setColor("Ambient", SQUARE_COLOR);
+            material.setColor("Diffuse", SQUARE_COLOR);
 
-//            material = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-//            material.setColor("Color", SQUARE_COLOR);
-//            material.setColor("GlowColor", SQUARE_COLOR);
             material.getAdditionalRenderState().setBlendMode(BlendMode.AlphaAdditive);
 
             geometry.setMaterial(material);
@@ -454,73 +474,102 @@ public class Map extends Node {
         }
 
         /**
-         * TODO: Hady
+         * Gets the pathfinding info from this mapsquare
+         * @return the map sqaures equivalent grind-field info
          */
         public FieldInfo getFieldInfo() {
             return field;
         }
 
-        public void setMainPathDebug(boolean value) {
-            mainPath = value;
-        }
-
+        /**
+         * Shows the creeps path if debugging
+         * @param value 
+         */
         public void setCreepPathDebug(boolean value) {
             creepPath = value;
         }
 
+        /**
+         * Gets the position of the map square in 2D.
+         * @return the x-z 2D vector of the position
+         */
         public Vector2f getPosition() {
             Vector3f pos3d = getLocalTranslation();
             return new Vector2f(pos3d.x, pos3d.z);
         }
 
+        /**
+         * Checks if map-square bears a tower
+         * @return true if tower on, false otherwise
+         */
         public boolean hasTower() {
             return tower != null;
         }
 
+        /**
+         * Gets the tower on this map-sqaure.
+         * @return the tower, if there is one, null otherwise
+         */
         public Tower getTower() {
             return tower;
         }
 
+        /**
+         * Applys a stone to this map-square
+         * @param stone the stont to apply
+         */
         void setStone(Stone stone) {
             this.stone = stone;
         }
 
+        /**
+         * Sets the tower on this map-square if placed
+         * @param t the tower to set
+         */
         void setTower(Tower t) {
             this.tower = t;
         }
 
+        /**
+         * Applys the hovered flag from outside.
+         * @param value true if field should be displayed as hovered, false otherwise
+         */
         public void setHovered(boolean value) {
             hovered = value;
         }
 
         @Override
         public void onTimedEvent(TimerEvent t) {
+            // fades the field in if enough gold, hovered and not faded to max value
             if (Level.getInstance().enoughGold() && hovered && fadeColor.a < MAX_ALPHA_FADE) {
 
                 fadeColor.a += 0.05f;
                 //fadeColor.clamp();
 
+                // else field fades out
             } else if (!hovered && fadeColor.a >= 0.0f) {
                 if (creepOn) {
                     creepOn = false;
                 }
                 fadeColor.a -= 0.01f;
             }
-
+            // show diffrent color for each case
             if (field.getWeight() < Pathfinder.TOWER_WEIGHT) {
+                // creep is on field
                 if (creepOn) {
                     material.setColor("Ambient", ColorRGBA.Red);   // ... color of this object
                     material.setColor("Diffuse", ColorRGBA.Red);   // ... color of light being reflected
-
+                    // show the debug path in debug mode
                 } else if (creepPath && Pathfinder.DEBUG_PATH) {
                     material.setColor("Ambient", ColorRGBA.Orange);   // ... color of this object
                     material.setColor("Diffuse", ColorRGBA.Orange);   // ... color of light being reflected
-
+                    // fade normally otherwise
                 } else {
                     material.setColor("Ambient", fadeColor);   // ... color of this object
                     material.setColor("Diffuse", fadeColor);   // ... color of light being reflected
                 }
             } else {
+                // if tower or stone on field, stay transparent
                 material.setColor("Ambient", ColorRGBA.BlackNoAlpha);
                 material.setColor("Diffuse", ColorRGBA.BlackNoAlpha);
             }

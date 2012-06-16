@@ -244,6 +244,13 @@ public class MazeTDGame extends SimpleApplication {
     }
 
     @Override
+    public void stop() {
+        
+        gamestateManager.terminate();
+        super.stop();
+    }
+
+    @Override
     public void loseFocus() {
         wasPaused = true;
         super.loseFocus();
@@ -308,8 +315,6 @@ public class MazeTDGame extends SimpleApplication {
             gamestateManager.update(tpf);
             // camera
             isoCameraControl.updateCamera(tpf);
-            // raycaster
-            rayCast3D.update(tpf);
             // events
             eventManager.update(tpf);
         }

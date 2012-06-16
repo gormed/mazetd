@@ -49,7 +49,7 @@ public class SpeedOrbEffect extends AbstractOrbEffect {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private float[] attackRate = { 1.1f, 0.9f, 0.6f };
+    private float[] attackRate = { 1.05f, 0.8f, 0.55f };
     private float oldAttackRate = 0;
     //==========================================================================
     //===   Methods & Constructor

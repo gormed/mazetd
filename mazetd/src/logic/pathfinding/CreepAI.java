@@ -36,12 +36,10 @@
 package logic.pathfinding;
 
 import entities.Creep;
-import entities.Map;
 import entities.Map.MapSquare;
 import entities.base.EntityManager;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -99,7 +97,7 @@ public class CreepAI {
         if (someReverse) {
             updateCreepPathesReverse(tpf);
 
-        } 
+        }
 
     }
 
@@ -154,29 +152,28 @@ public class CreepAI {
         }
     }
 
-    
     /**
      * 
      * @param creep 
      */
-    public void createUniqueCreepPath(Creep creep){
+    public void createUniqueCreepPath(Creep creep) {
         Queue<MapSquare> mainPath = pathfinder.getMainPath();
-                    Queue<MapSquare> path = new LinkedList<MapSquare>(mainPath);
-            //Ist der Creep auf dem MainPath?
-            if (mainPath.contains(creep.getCurrentSquare())) {
-                //Ziehe alle Squares aus der Queue bis das richtige am anfang steht
-                while (!path.poll().equals(creep.getCurrentSquare())) {
-                }
-
-                creep.setPath(path);
-            } else {
-                Queue<MapSquare> uniquePath =
-                        pathfinder.createCreepPath(
-                        creep.getCurrentSquare().getFieldInfo(), pathfinder.getEndField());
-                creep.setPath(uniquePath);
+        Queue<MapSquare> path = new LinkedList<MapSquare>(mainPath);
+        //Ist der Creep auf dem MainPath?
+        if (mainPath.contains(creep.getCurrentSquare())) {
+            //Ziehe alle Squares aus der Queue bis das richtige am anfang steht
+            while (!path.poll().equals(creep.getCurrentSquare())) {
             }
+
+            creep.setPath(path);
+        } else {
+            Queue<MapSquare> uniquePath =
+                    pathfinder.createCreepPath(
+                    creep.getCurrentSquare().getFieldInfo(), pathfinder.getEndField());
+            creep.setPath(uniquePath);
+        }
     }
-    
+
     /**
      * Ermittelt für alle Creeps den neuen Path
      * - wenn der Creep auf dem MainPath ist wird der MainPath ab der Creepposition übergeben
@@ -215,12 +212,12 @@ public class CreepAI {
         pathfinder.setChangedMapSquare(square, newWeight);
         this.changed = true;
     }
-    
+
     public void addTowerToSquare(MapSquare square, int newWeight) {
         setChangeMapSquare(square, newWeight);
         towerAdded = true;
     }
-    
+
     public void removeTowerFromSquare(MapSquare square, int newWeight) {
         setChangeMapSquare(square, newWeight);
         towerRemoved = true;

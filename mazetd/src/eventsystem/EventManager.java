@@ -194,7 +194,7 @@ public class EventManager {
      * Removes a EntityListener from its entity-events.
      * @param entityListener the listener
      */
-    public void removeEntityListener(EntityListener entityListener, AbstractEntity... entitys) {
+    public void removeEntityListener(EntityListener entityListener) {
 
         enitiyHandler.removeEntityListener(entityListener);
     }
@@ -212,7 +212,7 @@ public class EventManager {
      * Removes a CreepListener from its creep-events.
      * @param creepListener the listener
      */
-    public void removeCreepListener(CreepListener creepListener, Creep... creeps) {
+    public void removeCreepListener(CreepListener creepListener) {
 
         creepHandler.removeCreepListener(creepListener);
     }

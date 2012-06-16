@@ -100,9 +100,34 @@ public class EntityManager {
     private MazeTDGame game = MazeTDGame.getInstance();
     private ScreenRayCast3D rayCast3D = ScreenRayCast3D.getInstance();
     private Collider3D collider3D = Collider3D.getInstance();
+    private boolean initialized = false;
     //==========================================================================
     //===   Methods
     //==========================================================================
+
+    public void initialize() {
+        if (initialized) {
+            return;
+        }
+        entityHashMap.clear();
+        towerHashMap.clear();
+        creepHashMap.clear();
+        orbHashMap.clear();
+        stoneHashMap.clear();
+        initialized = true;
+    }
+
+    public void destroy() {
+        if (!initialized) {
+            return;
+        }
+        entityHashMap.clear();
+        towerHashMap.clear();
+        creepHashMap.clear();
+        orbHashMap.clear();
+        stoneHashMap.clear();
+        initialized = false;
+    }
 
     /**
      * This method adds any given AbstractEntity to the EntityManagers hashmap, 
@@ -138,6 +163,8 @@ public class EntityManager {
      * @param tpf the time between the last update call
      */
     public void update(float tpf) {
+        
+        rayCast3D.update(tpf);
         HashMap<Integer, AbstractEntity> clone = new HashMap<Integer, AbstractEntity>(entityHashMap);
         for (Map.Entry<Integer, AbstractEntity> e : clone.entrySet()) {
             e.getValue().update(tpf);
@@ -178,8 +205,8 @@ public class EntityManager {
         CreepHandler.getInstance().
                 invokeCreepAction(
                 CreepEventType.Created, c, null);
-        
-        
+
+
         return c;
     }
 
@@ -191,9 +218,9 @@ public class EntityManager {
      */
     public Creep createCreep(String name, Vector2f position, float healthPoints, float maxHealthPoints) {
         return createCreep(
-                name, 
+                name,
                 new Vector3f(position.x, 0, position.y),
-                healthPoints, 
+                healthPoints,
                 maxHealthPoints);
     }
 
@@ -226,11 +253,11 @@ public class EntityManager {
         addEntity(s);
         stoneHashMap.put(s.getEntityId(), s);
         Node geometryNode = s.createNode(game);
-        rayCast3D.addClickableObject(geometryNode);
+        Level.getInstance().getStaticLevelElements().attachChild(geometryNode);
 
         return s;
-        
-        
+
+
     }
 
     /**
