@@ -110,11 +110,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     public void buyOrb(String orbType) {
         int type = Integer.parseInt(orbType);
         ElementType element = ElementType.values()[type];
-        if (player.getGold() < 50) {
+        if (player.getGold() < 100) {
             return;
         }
         player.addOrb(element);
-        player.chargeGold(50);
+        player.chargeGold(100);
     }
 
     public void sellOrb(String orbType) {

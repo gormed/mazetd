@@ -193,7 +193,10 @@
                                 </image>
                             </panel>
                         </panel>
-                
+                        <panel id="" align="right" width="90%" height="20%" childLayout="vertical" >   
+                            <control name="label"  color="" text="sell value: 50g" width="100%" height="50%" />
+                             <control name="label" color="" text="cost: 100g" width="100%" height="50%" />
+                        </panel>
                     </panel>
                 </panel>
             </panel>
