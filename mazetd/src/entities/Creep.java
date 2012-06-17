@@ -202,10 +202,18 @@ public class Creep extends CollidableEntity {
         }
     }
 
+    /**
+     * Checks if the creep has a reverted path, means that it runs backward.
+     * @return true if runs backward, false otherwise
+     */
     public boolean isReverse() {
         return reverted;
     }
 
+    /**
+     * Sets the flag for going backwards.
+     * @param reverted true to go backwards, false to go forward
+     */
     public void setReverse(boolean reverted) {
         this.reverted = reverted;
     }
@@ -274,6 +282,10 @@ public class Creep extends CollidableEntity {
         goldEmitter.setLocalTranslation(0, CREEP_HEIGHT + 0.2f, 0);
     }
 
+    /**
+     * Creates the emitter for destroy animation on reached end.
+     * @param game the mazetd game
+     */
     private void createDestroyedEmitter(MazeTDGame game) {
         destroyedEmitter = new ParticleEmitter("DestroyedEmitter",
                 ParticleMesh.Type.Triangle, CREEP_DESTROY_PARTICLES);
@@ -562,8 +574,20 @@ public class Creep extends CollidableEntity {
         }
     }
 
+    /**
+     * Checks if the creep drops an orb.
+     * @return true if orb will be dropped, false otherwise
+     */
     public boolean isDropping() {
         return dropping;
+    }
+
+    /**
+     * Sets the flag for orb-dropping.
+     * @param dropOrb true if an orb should be droppen, false otherwise
+     */
+    public void setDropping(boolean dropOrb) {
+        this.dropping = dropOrb;
     }
 
     /**
@@ -585,12 +609,18 @@ public class Creep extends CollidableEntity {
         }
     }
 
+    /**
+     * Triggers the emitter for the gold-particles.
+     */
     private void triggerGoldEmitter() {
         collidableEntityNode.attachChild(goldEmitter);
         goldEmitter.emitAllParticles();
         goldEmitter.setParticlesPerSec(0);
     }
 
+    /**
+     * Triggers the emitter for the destroy-particles.
+     */
     private void triggerDestroyedEmitter() {
         collidableEntityNode.attachChild(destroyedEmitter);
         destroyedEmitter.emitAllParticles();
@@ -714,6 +744,14 @@ public class Creep extends CollidableEntity {
     }
 
     /**
+     * Gets the current movement-speed of the creep.
+     * @return the amount to move per time-gap
+     */
+    public float getSpeed() {
+        return speed;
+    }
+
+    /**
      * Sets the gold dropped by this creep on death.
      * @param value 
      */
@@ -722,67 +760,97 @@ public class Creep extends CollidableEntity {
     }
 
     /**
+     * Gets the gold dropped by this creep on death.
+     * @return the amount of gold to drop
+     */
+    public int getGoldDrop() {
+        return goldDrop;
+    }
+
+    /**
      * Sets the orb drop rate by this creep on death.
      * @param value 
      */
+    @Deprecated
     public void setOrbDropRate(float value) {
         orbDropRate = value;
     }
 
     /**
+     * Gets the drop-rate for orbs of this creep.
+     * @return the probability to drop an orb between 0..1
+     */
+    @Deprecated
+    public float getOrbDropRate() {
+        return orbDropRate;
+    }
+
+    /**
      * Sets the damage done to towers.
-     * @param value 
+     * @param value the new value for the creeps damage
      */
     public void setDamage(float value) {
         damage = value;
     }
 
+    /**
+     * Gets the damage done to towers.
+     * @return the damage one creep does in one attack action
+     */
     public float getDamage() {
         return damage;
     }
 
-    public int getGoldDrop() {
-        return goldDrop;
-    }
-
+    /**
+     * Gets the maximum health this creep can have.
+     * @return the max. hp amount
+     */
     public float getMaxHealthPoints() {
         return maxHealthPoints;
-    }
-
-    public float getOrbDropRate() {
-        return orbDropRate;
-    }
-
-    public float getSpeed() {
-        return speed;
-    }
-
-    public void setIsDropping(boolean dropOrb) {
-        this.dropping = dropOrb;
     }
 
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+    /**
+     * The class HealthBar for the HP-visualization from creeps.
+     * @author Hans Ferchland
+     */
     private class HealthBar extends Node {
-
+        //==========================================================================
+        //===   Constants
+        //==========================================================================
         public static final float BAR_HEIGHT = 0.1f;
         public static final float BAR_WIDTH = 0.5f;
         public static final float FRAME_HEIGHT = 0.15f;
         public static final float FRAME_WIDTH = 0.55f;
+        //==========================================================================
+        //===   Private Fields
+        //==========================================================================
         private Material barMaterial;
         private Material frameMaterial;
         private Geometry barGeometry;
         private Geometry frameGeometry;
         private Creep creep;
         private Camera cam;
+        //==========================================================================
+        //===   Methods & Constructor
+        //==========================================================================
 
+        /**
+         * Contructor for a new health bar for a given creep.
+         * @param creep the creep to attach the hp-bar
+         */
         public HealthBar(Creep creep) {
             super();
             this.creep = creep;
             createBar();
         }
 
+        /**
+         * Refreshes the bar in state and destroys itsself if the creep is dead.
+         * @param tpf the time-gap
+         */
         public void update(float tpf) {
             if (creep != null && creep.isDead()) {
                 this.detachAllChildren();
@@ -793,6 +861,10 @@ public class Creep extends CollidableEntity {
             barGeometry.setLocalScale(creep.healthPoints / creep.maxHealthPoints, 1, 1);
         }
 
+        /**
+         * Positions the bar so that it always looks to the camera and stays 
+         * horizontally.
+         */
         private void orientate() {
             Vector3f barOffset =
                     new Vector3f(BAR_WIDTH / 2, 0.01f, -BAR_HEIGHT / 2);
@@ -812,6 +884,9 @@ public class Creep extends CollidableEntity {
             barGeometry.setLocalTransform(new Transform(barOffset, look));
         }
 
+        /**
+         * Creates the geometry and material for the hp-bar.
+         */
         private void createBar() {
             MazeTDGame game = MazeTDGame.getInstance();
             cam = game.getCamera();

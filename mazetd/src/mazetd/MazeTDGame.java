@@ -57,6 +57,7 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.shadow.PssmShadowRenderer;
+import com.jme3.system.JmeSystem;
 import de.lessvoid.nifty.screen.ScreenController;
 import gui.elements.MainmenuScreen;
 import gui.elements.HudScreen;
@@ -73,8 +74,8 @@ import java.util.HashMap;
  * @see SimpleApplication
  */
 public class MazeTDGame extends SimpleApplication {
-    private HudScreen HudScreenInstance;
 
+    private HudScreen HudScreenInstance;
     public static final String HUD_SCREEN = "HUDScreen";
     public static final String MAIN_MENU_SCREEN = "MainMenueScreen";
     //==========================================================================
@@ -93,6 +94,9 @@ public class MazeTDGame extends SimpleApplication {
 
     /** The hidden contructor of the game*/
     private MazeTDGame() {
+        super();
+        assetManager = JmeSystem.newAssetManager(Thread.currentThread().getContextClassLoader().getResource("com/jme3/asset/Desktop.cfg"));
+        
     }
 
     /**
@@ -245,7 +249,7 @@ public class MazeTDGame extends SimpleApplication {
 
     @Override
     public void stop() {
-        
+
         gamestateManager.terminate();
         super.stop();
     }
@@ -309,7 +313,7 @@ public class MazeTDGame extends SimpleApplication {
         for (AbstractAppState s : appStates.values()) {
             s.update(tpf);
         }
-        
+
         if (!pause) {
             // frequently updates the games current state
             gamestateManager.update(tpf);
@@ -357,9 +361,9 @@ public class MazeTDGame extends SimpleApplication {
     public IsoCameraControl getIsoCameraControl() {
         return isoCameraControl;
     }
-    
-    public HudScreen getHudScreenInstance(){
-    return HudScreenInstance;
+
+    public HudScreen getHudScreenInstance() {
+        return HudScreenInstance;
     }
 
     public boolean isPause() {
@@ -372,6 +376,7 @@ public class MazeTDGame extends SimpleApplication {
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+
     /**
      * The class GameActionListener listens to debug actions for the game.
      * Exiting, display FPS, memory shots, enable debug camera 

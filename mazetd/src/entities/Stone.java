@@ -142,7 +142,7 @@ public class Stone extends AbstractEntity {
         // apply position to main node
         geometryNode.attachChild(stone);
         geometryNode.setLocalTranslation(position);
-        stone.setShadowMode(ShadowMode.Cast);
+        stone.setShadowMode(ShadowMode.CastAndReceive);
 
     }
 }

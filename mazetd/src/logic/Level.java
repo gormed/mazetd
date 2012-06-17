@@ -201,11 +201,11 @@ public class Level {
             description = waveManager.new WaveDescription();
             description.creepCount = 5 + Math.round(0.1f * i * i);
             description.creepDamage = 80 + 15 * i;
-            description.creepGoldDrop = 5 + Math.round(0.2f * i);
+            description.creepGoldDrop = 5 + Math.round(0.1f * i);
 //            description.creepOrbDropRate = 0.08f + 0.01f * i;
             description.creepSpeed = 0.8f + 0.03f * i;
-            description.maxCreepHealthPoints = 15 + Math.round(3.3f * i * i);
-            description.numberOfOrbDrobs = 2 + Math.round(i * 0.15f);
+            description.maxCreepHealthPoints = 15 + Math.round(4.1f * i * i);
+            description.numberOfOrbDrobs = 2 + Math.round(i * 0.17f);
 
             waveDescriptions.add(description);
         }

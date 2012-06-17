@@ -405,14 +405,17 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
 
     /** Nifty GUI ScreenControl methods */
+    @Override
     public void bind(Nifty nifty, Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
     }
 
+    @Override
     public void onStartScreen() {
     }
 
+    @Override
     public void onEndScreen() {
     }
 

@@ -179,7 +179,7 @@ public class WaveManager {
                 if (currentWave.numberOfOrbDrobs > 0) {
                     for (Creep c : creeps.values()) {
                         if (!c.isDropping() && currentWave.numberOfOrbDrobs > 0) {
-                            c.setIsDropping(true);
+                            c.setDropping(true);
                             currentWave.numberOfOrbDrobs--;
                         }
                     }
@@ -226,7 +226,7 @@ public class WaveManager {
                 maxCreepHealthPoints,
                 maxCreepHealthPoints);
         c.setSpeed(creepSpeed);
-        c.setIsDropping(dropping);
+        c.setDropping(dropping);
         c.setGoldDrop(creepGoldDrop);
         c.setOrbDropRate(creepOrbDropRate);
         c.setDamage(creepDamage);
