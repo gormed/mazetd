@@ -50,9 +50,11 @@ import eventsystem.listener.CreepListener;
 import mazetd.MazeTDGame;
 
 /**
- * The class Player
- * @author Ahmed
- * @version
+ * The class Player represents the single player of the MazeTD game.
+ * A player can select a Tower,owns gold and has a List of Elementtypes.
+ * Beyond that a player can take in diffrent States in the game.
+ *
+ * @author Ahmed Arous
  */
 public class Player implements EntityListener, CreepListener {
     //==========================================================================
@@ -60,7 +62,8 @@ public class Player implements EntityListener, CreepListener {
     //==========================================================================
 
     /**
-     * The enum PlayerState describes the different states that exists for the player.
+     * The enum PlayerState describes the different states that exists for the 
+     * player.
      */
     public enum PlayerState {
 
@@ -72,13 +75,23 @@ public class Player implements EntityListener, CreepListener {
     //==========================================================================
     //===   Constants
     //==========================================================================
+    /**
+     * The initial gold the player starts with.
+     */
     public static final int PLAYER_START_GOLD = 100;
+    /**
+     * The initial live the player starts with.
+     */
     public static final int PLAYRER_LIVES = 5;
     //==========================================================================
     //===   Singleton
     //==========================================================================
     private static Player instance;
 
+    /**
+     * Gets the single reference to the player.
+     * @return the Player reference
+     */
     public static Player getInstance() {
         if (instance != null) {
             return instance;
@@ -171,10 +184,18 @@ public class Player implements EntityListener, CreepListener {
     }
 
     // Live
+    /**
+     * Gets the current live of the Player.
+     * @return the current live.
+     */
     public int getLives() {
         return lives;
     }
 
+    /**
+     * Gets the maximal live of the Player.
+     * @return the maximal live.
+     */
     public int getMaxLives() {
         return maxLives;
     }
@@ -183,20 +204,36 @@ public class Player implements EntityListener, CreepListener {
         return maxLives - lives;
     }
 
+    /**
+     * Sets the new Lives of a player, both max and current lives to the new value.
+     * @param lives the new Lives of the player
+     */
     public void setMaxLives(int lives) {
         this.maxLives = lives;
         this.lives = maxLives;
     }
 
     // Gold
+    /**
+     * Adds an amount of gold to the player.
+     * @param gains the gold that will be added to the player
+     */
     public void addGold(int gains) {
         gold = gold + gains;
     }
 
+    /**
+     * Removes an amount of gold from the player.
+     * @param costs the gold that will be removed from the player
+     */
     public void chargeGold(int costs) {
         gold = gold - costs;
     }
 
+    /**
+     * Removes an Elementtype from the player inventory.
+     * @param orbType the Elementtype to be removed.
+     */
     public void removeOrb(Orb.ElementType orbType) {
         inventory.remove(orbType);
 
@@ -221,6 +258,10 @@ public class Player implements EntityListener, CreepListener {
         }
     }
 
+    /**
+     * Adds an Elementtype to the player inventory.
+     * @param orbType the Elementtype to be added.
+     */
     public void addOrb(Orb.ElementType orbType) {
         inventory.add(orbType);
 
@@ -245,6 +286,12 @@ public class Player implements EntityListener, CreepListener {
         }
     }
 
+    /**
+     * Checks if the player owns a certain Elementtype.
+     * @param type the Elementtype that is searched for.
+     * @return {@code true} if the player owns the type
+     * {@code false} else
+     */
     public boolean hasType(Orb.ElementType type) {
 
         switch (type) {
@@ -279,42 +326,82 @@ public class Player implements EntityListener, CreepListener {
         return false;
     }
 
+    /**
+     * Gets the currently selected Tower by the player.
+     * @return the selected tower.
+     */
     public Tower getSelectedTower() {
         return selectedTower;
     }
 
+    /**
+     * Gets the gold owned by the player.
+     * @return gold.
+     */
     public int getGold() {
         return gold;
     }
 
+    /**
+     * Gets the amount of red Elementtypes the player owns.
+     * @return the amount of red Elementtypes.
+     */
     public int getRedCount() {
         return redCount;
     }
 
+    /**
+     * Gets the amount of blue Elementtypes the player owns.
+     * @return the amount of blue Elementtypes.
+     */
     public int getBlueCount() {
         return blueCount;
     }
 
+    /**
+     * Gets the amount of green Elementtypes the player owns.
+     * @return the amount of green Elementtypes.
+     */
     public int getGreenCount() {
         return greenCount;
     }
 
+    /**
+     * Gets the amount of yellow Elementtypes the player owns.
+     * @return the amount of yellow Elementtypes.
+     */
     public int getYellowCount() {
         return yellowCount;
     }
 
+    /**
+     * Gets the amount of white Elementtypes the player owns.
+     * @return the amount of white Elementtypes.
+     */
     public int getWhiteCount() {
         return whiteCount;
     }
 
+    /**
+     * Gets the current Playerstate of the player.
+     * @return the playerstate.
+     */
     public PlayerState getPlayerState() {
         return playerState;
     }
 
+    /**
+     * Sets the selected Tower of the player.
+     * @param selectedTower the new selectedTower
+     */
     public void setSelectedTower(Tower selectedTower) {
         this.selectedTower = selectedTower;
     }
-
+  /**
+     * Checks if the player is alive.
+     * @return {@code true} if the player is alive
+     * {@code false} else
+     */
     public boolean isPlayerAlive() {
         return lives > 0;
     }

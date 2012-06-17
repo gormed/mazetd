@@ -66,8 +66,6 @@ public class Inventory {
     public ElementType replaceOrb(int slot, ElementType type) {
         tower = player.getSelectedTower();
         ElementType removedType;
-        //if(player.hasType(type)){
-
         switch (slot) {
             case 0:
                 removedType = tower.replaceOrb(type, 0);
@@ -81,10 +79,6 @@ public class Inventory {
                 break;
         }
         return removedType;
-        
-        /*}
-        else{
-        System.out.println("Player does not have this Orb");
-        }*/
+
     }
 }
