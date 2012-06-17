@@ -75,7 +75,7 @@
                 </panel>
             </panel>
         <!--Mid Panel-->
-            <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="true">  
+            <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="false">  
                 <panel id="panel_mid_right"  backgroundImage="Interface/Textures/Shopbackground.png" height="75%" width="15%" align="right" valign="center" childLayout="vertical" > 
                     <panel id="panel_mid_right"  height="80%" width="90%" childLayout="vertical" > 
                    
