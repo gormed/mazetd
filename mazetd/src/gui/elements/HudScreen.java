@@ -90,11 +90,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         Element orbSelection3 = nifty.getCurrentScreen().findElementByName("orbSelection3");
 
         ElementType element = ElementType.values()[type];
-        
+
         orbSelection1.hide();
         orbSelection2.hide();
         orbSelection3.hide();
-       
+
         if (!player.hasType(element)) {
             return;
         }
@@ -103,8 +103,29 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         player.removeOrb(element);
         player.addOrb(removed);
 
-        
 
+
+    }
+
+    public void buyOrb(String orbType) {
+        int type = Integer.parseInt(orbType);
+        ElementType element = ElementType.values()[type];
+        if (player.getGold() < 50) {
+            return;
+        }
+        player.addOrb(element);
+        player.chargeGold(50);
+    }
+
+    public void sellOrb(String orbType) {
+        int type = Integer.parseInt(orbType);
+        ElementType element = ElementType.values()[type];
+
+        if (!player.hasType(element)) {
+            return;
+        }
+        player.removeOrb(element);
+        player.addGold(50);
     }
 
     public void orbSelection1() {
@@ -123,17 +144,17 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
 
     public void showContext(float tpf) {
- 
+
         if (player.getSelectedTower() != null) {
             Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
             towerContext.show();
         } else if (GamestateManager.getInstance().getCurrentState().
-                equals(GamestateManager.SINGLEPLAYER_STATE) && 
-                player.getSelectedTower() == null) {
-            
+                equals(GamestateManager.SINGLEPLAYER_STATE)
+                && player.getSelectedTower() == null) {
+
             Element towerContext = nifty.getCurrentScreen().findElementByName("tower_context");
             towerContext.hide();
-            
+
             Element orbSelection1 = nifty.getCurrentScreen().findElementByName("orbSelection1");
             Element orbSelection2 = nifty.getCurrentScreen().findElementByName("orbSelection2");
             Element orbSelection3 = nifty.getCurrentScreen().findElementByName("orbSelection3");
@@ -169,11 +190,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         int hp = (int) (player.getSelectedTower().getHealthPoints() + 0.5f);
         int maxHp = (int) (player.getSelectedTower().getMaxHealthPoints() + 0.5f);
 
-        return "HP: "+hp + "/" + maxHp;
+        return "HP: " + hp + "/" + maxHp;
     }
-    
-    public String getHealth(){
-    return "Health: "+player.getLives()+"/"+player.getMaxLives();
+
+    public String getHealth() {
+        return "Health: " + player.getLives() + "/" + player.getMaxLives();
     }
 
     private void slot3Context(float tpf) {
@@ -366,7 +387,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
             Element wave = nifty.getCurrentScreen().findElementByName("wave");
             Element time = nifty.getCurrentScreen().findElementByName("time");
             Element health = nifty.getCurrentScreen().findElementByName("health");
-                
+
 
             //swap old with new text
             invSlot1.getRenderer(TextRenderer.class).setText(player.getRedCount() + "x");

@@ -59,6 +59,9 @@ public class Player implements EntityListener, CreepListener {
     //===   Enums
     //==========================================================================
 
+    /**
+     * The enum PlayerState describes the different states that exists for the player.
+     */
     public enum PlayerState {
 
         PREPARING,
@@ -175,8 +178,6 @@ public class Player implements EntityListener, CreepListener {
     public int getMaxLives() {
         return maxLives;
     }
-    
-    
 
     public int getLivesLeft() {
         return maxLives - lives;
@@ -194,10 +195,6 @@ public class Player implements EntityListener, CreepListener {
 
     public void chargeGold(int costs) {
         gold = gold - costs;
-    }
-
-    public void buyOrb() {
-        //TODO
     }
 
     public void removeOrb(Orb.ElementType orbType) {

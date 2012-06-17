@@ -75,8 +75,126 @@
                 </panel>
             </panel>
         <!--Mid Panel-->
-            <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="false">  
-                <panel id="panel_mid_right"  backgroundImage="Interface/Textures/Shopbackground.png" height="75%" width="15%" align="right" valign="center" childLayout="center" >  
+            <panel id="panel_mid" height="70%" width="100%" align="center" childLayout="center" visible="true">  
+                <panel id="panel_mid_right"  backgroundImage="Interface/Textures/Shopbackground.png" height="75%" width="15%" align="right" valign="center" childLayout="vertical" > 
+                    <panel id="panel_mid_right"  height="80%" width="90%" childLayout="vertical" > 
+                   
+                        <panel id="buyRedOrb_panel" width="100%" height="20%" childLayout="horizontal" >    
+                            <panel id="" width="33%" height="100%" childLayout="center" >    
+                                <image filename="Interface/Textures/Orbs/redOrb.png" valign="center" align="center" height="60%" width="60%" >    
+                                </image>
+                            </panel>
+                            <panel id="" width="33%" height="100%" childLayout="vertical" >    
+                                <panel id="" width="100%" height="50%" childLayout="center" >    
+                                    <image filename="Interface/Textures/Shop/arrow_right.png" valign="center" align="center" height="60%" width="60%" >
+                                        <interact onClick="sellOrb(2)"/>    
+                                    </image>
+                                </panel>
+                                <panel id="" width="100%" height="50%" childLayout="center">    
+                                    <image filename="Interface/Textures/Shop/arrow_left.png" valign="center" align="center" height="60%" width="60%" >
+                                        <interact onClick="buyOrb(2)"/>    
+                                    </image>
+                                </panel>
+                            </panel>
+                            <panel id="" width="33%" height="100%" childLayout="center" >    
+                                <image filename="Interface/Textures/Shop/gold.png" valign="center" align="center" height="60%" width="60%" >   
+                                </image>
+                            </panel>
+                        </panel>
+                    
+                        <panel id="buyBlueOrb_panel" width="100%" height="20%" childLayout="horizontal">    
+                            <panel id="" width="33%" height="100%" childLayout="center">    
+                                <image filename="Interface/Textures/Orbs/blueOrb.png" valign="center" align="center" height="60%" width="60%" >    
+                                </image>
+                            </panel>
+                            <panel id="" width="33%" height="100%" childLayout="vertical" >    
+                                <panel id="" width="100%" height="50%" childLayout="center" >    
+                                    <image filename="Interface/Textures/Shop/arrow_right.png" valign="center" align="center" height="60%" width="60%" >
+                                        <interact onClick="sellOrb(1)"/>    
+                                    </image>
+                                </panel>
+                                <panel id="" width="100%" height="50%" childLayout="center">    
+                                    <image filename="Interface/Textures/Shop/arrow_left.png" valign="center" align="center" height="60%" width="60%" >
+                                        <interact onClick="buyOrb(1)"/>    
+                                    </image>
+                                </panel>
+                            </panel>
+                            <panel id="" width="33%" height="100%" childLayout="center" >    
+                                <image filename="Interface/Textures/Shop/gold.png" valign="center" align="center" height="60%" width="60%" >   
+                                </image>
+                            </panel>
+                        </panel>
+                    
+                        <panel id="buyGreenOrb_panel" width="100%" height="20%" childLayout="horizontal">    
+                            <panel id="" width="33%" height="100%" childLayout="center" >    
+                                <image filename="Interface/Textures/Orbs/greenOrb.png" valign="center" align="center" height="60%" width="60%" >    
+                                </image>
+                            </panel>
+                            <panel id="" width="33%" height="100%" childLayout="vertical" >    
+                                <panel id="" width="100%" height="50%" childLayout="center" >    
+                                    <image filename="Interface/Textures/Shop/arrow_right.png" valign="center" align="center" height="60%" width="60%" >
+                                        <interact onClick="sellOrb(0)"/>    
+                                    </image>
+                                </panel>
+                                <panel id="" width="100%" height="50%" childLayout="center">    
+                                    <image filename="Interface/Textures/Shop/arrow_left.png" valign="center" align="center" height="60%" width="60%" >
+                                        <interact onClick="buyOrb(0)"/>    
+                                    </image>
+                                </panel>
+                            </panel>
+                            <panel id="" width="33%" height="100%" childLayout="center" >    
+                                <image filename="Interface/Textures/Shop/gold.png" valign="center" align="center" height="60%" width="60%" >   
+                                </image>
+                            </panel>
+                        </panel>
+                    
+                        <panel id="buyYellowOrb_panel" width="100%" height="20%" childLayout="horizontal">    
+                            <panel id="" width="33%" height="100%" childLayout="center" >    
+                                <image filename="Interface/Textures/Orbs/yellowOrb.png" valign="center" align="center" height="60%" width="60%" >    
+                                </image>
+                            </panel>
+                            <panel id="" width="33%" height="100%" childLayout="vertical" >    
+                                <panel id="" width="100%" height="50%" childLayout="center" >    
+                                    <image filename="Interface/Textures/Shop/arrow_right.png" valign="center" align="center" height="60%" width="60%" >
+                                        <interact onClick="sellOrb(3)"/>    
+                                    </image>
+                                </panel>
+                                <panel id="" width="100%" height="50%" childLayout="center">    
+                                    <image filename="Interface/Textures/Shop/arrow_left.png" valign="center" align="center" height="60%" width="60%" >
+                                        <interact onClick="buyOrb(3)"/>    
+                                    </image>
+                                </panel>
+                            </panel>
+                            <panel id="" width="33%" height="100%" childLayout="center">    
+                                <image filename="Interface/Textures/Shop/gold.png" valign="center" align="center" height="60%" width="60%" >   
+                                </image>
+                            </panel>
+                        </panel>
+                   
+                        <panel id="buyWhiteOrb_panel" width="100%" height="20%" childLayout="horizontal">    
+                            <panel id="" width="33%" height="100%" childLayout="center" >    
+                                <image filename="Interface/Textures/Orbs/whiteOrb.png" valign="center" align="center" height="60%" width="60%" >    
+                                </image>
+                            </panel>
+                            <panel id="" width="33%" height="100%" childLayout="vertical" >    
+                                <panel id="" width="100%" height="50%" childLayout="center" >    
+                                    <image filename="Interface/Textures/Shop/arrow_right.png" valign="center" align="center" height="60%" width="60%" >
+                                        <interact onClick="sellOrb(4)"/>    
+                                    </image>
+                                </panel>
+                                <panel id="" width="100%" height="50%" childLayout="center">    
+                                    <image filename="Interface/Textures/Shop/arrow_left.png" valign="center" align="center" height="60%" width="60%" >
+                                        <interact onClick="buyOrb(4)"/>    
+                                    </image>
+                                </panel>
+                            </panel>
+                            <panel id="" width="33%" height="100%" childLayout="center">    
+                                <image filename="Interface/Textures/Shop/gold.png" valign="center" align="center" height="60%" width="60%" >   
+                                </image>
+                            </panel>
+                        </panel>
+                
+                    </panel>
                 </panel>
             </panel>
         <!--Bot Panel-->
@@ -220,7 +338,7 @@
         </layer>
    
         <layer id="orbSelection1" childLayout="vertical" visible="true">
-             <panel id="panel_top" width="100%" height="75%" childLayout="horizontal" visible="false"></panel>
+            <panel id="panel_top" width="100%" height="75%" childLayout="horizontal" visible="false"></panel>
             <panel id="panel_bot" width="100%" height="25%" childLayout="horizontal" >
                 <panel id="panel_bot_left" width="20%" height="100%" childLayout="center"></panel>
                 <panel id="panel_bot_mid" width="60%" height="100%" childLayout="vertical">
