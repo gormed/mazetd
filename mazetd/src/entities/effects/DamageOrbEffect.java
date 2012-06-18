@@ -45,8 +45,8 @@ import entities.Orb.ElementType;
 import mazetd.MazeTDGame;
 
 /**
- *
- * @author Hans Ferchland
+ * The class DamageOrbEffect.
+ * @author Hady Khalifa
  */
 public class DamageOrbEffect extends AbstractOrbEffect {
 
@@ -81,6 +81,10 @@ public class DamageOrbEffect extends AbstractOrbEffect {
     public void onEnd(Creep c) {
     }
 
+    /**
+     * Creates the emitter for fire particles.
+     * @param game the mazetdgame reference
+     */
     private void createFireEmitter(MazeTDGame game) {
         /** Uses Texture from jme3-test-data library! */
         fireEmitter = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 15);
@@ -106,6 +110,9 @@ public class DamageOrbEffect extends AbstractOrbEffect {
 
     }
 
+    /**
+     * Emitts the fire particles on hit.
+     */
     private void emittFireParticles() {
         fireEmitter.setParticlesPerSec(2);
         fireEmitter.emitAllParticles();

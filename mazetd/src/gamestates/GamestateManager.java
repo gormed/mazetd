@@ -53,13 +53,13 @@ public class GamestateManager {
     public static final String OPTIONS_STATE = "Options";
     /** The Constant TUTORIAL_STATE. */
     public static final String TUTORIAL_STATE = "Tutorial";
-    /** The instance. */
+    /** The instance of the gamestate manager. */
     private static GamestateManager instance;
-    /** The gamestates. */
+    /** The gamestates to hold. */
     private HashMap<String, Gamestate> gamestates;
-    /** The current state. */
+    /** The current state, that will be updated. */
     private Gamestate currentState;
-    /** The next state. */
+    /** The next state if there is a next state to enter. */
     private Gamestate nextState;
     /** The flag to lock the updateing of the current state */
     private static volatile boolean lockUpdate = false;
@@ -99,7 +99,7 @@ public class GamestateManager {
     }
 
     /**
-     * Initializes the.
+     * Initializes the GamestateManager for the first time.
      *
      * @param startState the start state
      */
@@ -109,7 +109,7 @@ public class GamestateManager {
     }
 
     /**
-     * Start.
+     * Start the GamestateManager with the initial state.
      */
     public void start() {
         currentState.enter();
@@ -117,9 +117,9 @@ public class GamestateManager {
     }
 
     /**
-     * Enter state.
+     * Enter the next gamestate, uload the old one and load the new one.
      *
-     * @param nextState the next state
+     * @param nextState the next state to enter
      */
     public synchronized void enterState(String nextState) {
         lock();
@@ -137,9 +137,10 @@ public class GamestateManager {
     }
 
     /**
-     * Adds the state.
+     * Adds a Gamestate to the GamestateManager so it can be entered with 
+     * the name of the gamestate.
      *
-     * @param g the g
+     * @param g the gamestate to add
      */
     public void addState(Gamestate g) {
         gamestates.put(g.getName(), g);
@@ -147,9 +148,10 @@ public class GamestateManager {
     }
 
     /**
-     * Removes the state.
+     * Removes a Gamestate from the GamestateManager so it can't be entered 
+     * anymore.
      *
-     * @param g the g
+     * @param g the gamestate to remove
      */
     public void removeState(Gamestate g) {
         gamestates.remove(g.getName());
@@ -157,10 +159,11 @@ public class GamestateManager {
     }
 
     /**
-     * Gets the gamestate.
+     * Gets a gamestate by the name.
      *
-     * @param name the name
-     * @return the gamestate
+     * @param name the name of the state to get
+     * @return the gamestate if actually in the list of gamestates (was added 
+     * via addState()), null otherwise
      */
     public Gamestate getGamestate(String name) {
         if (!gamestates.containsKey(name)) {
@@ -169,6 +172,10 @@ public class GamestateManager {
         return gamestates.get(name);
     }
     
+    /**
+     * Gets the currently set gamestates name.
+     * @return the name of the currently active gamestate
+     */
     public String getCurrentState() {
         if (currentState == null)
             return null;
@@ -176,7 +183,7 @@ public class GamestateManager {
     }
 
     /**
-     * Updates the.
+     * Updates the GamestateManger, means the currently active gamestate.
      *
      * @param tpf the tpf
      */
@@ -187,7 +194,8 @@ public class GamestateManager {
     }
 
     /**
-     * Pause.
+     * Pauses the updateing of the GamestateManager and the 
+     * whole application/game.
      */
     public void pause() {
         if (currentState != null) {
@@ -197,7 +205,8 @@ public class GamestateManager {
     }
 
     /**
-     * Resume.
+     * Resumes the updateing of the GamestateManager and unpauses the 
+     * application/game.
      */
     public void resume() {
         if (currentState != null) {
@@ -207,7 +216,7 @@ public class GamestateManager {
     }
 
     /**
-     * Reset.
+     * Resets the currently active gamestate if implemented for the state.
      */
     public void reset() {
         if (currentState != null) {
@@ -216,7 +225,8 @@ public class GamestateManager {
     }
 
     /**
-     * Terminate.
+     * Terminates the currently active gamestate so it can unload resources on
+     * exit.
      */
     public void terminate() {
         if (currentState != null) {

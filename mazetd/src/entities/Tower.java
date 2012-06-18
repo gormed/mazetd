@@ -79,18 +79,52 @@ public class Tower extends ClickableEntity {
     //==========================================================================
     //===   Constants
     //========================================================================== 
+    /**
+     * The base-interval for a tower to apply damage to a creep.
+     */
     public static final float TOWER_BASE_DAMAGE_INTERVAL = 1.2f;
+    /**
+     * The base-damage to do on a creep. This plus the TOWER_ADDITIONAL_DAMAGE
+     * is the maximum damage a tower can do without orbs. This is the number of
+     * sides of the dice that is rolled each attack.
+     */
     public static final int TOWER_BASE_DAMAGE = 6;
+    /**
+     * The additional damage added to the base damage to get the maximum value.
+     */
     public static final int TOWER_ADDITIONAL_DAMAGE = 2;
+    /**
+     * The standard range of a tower without orbs.
+     */
     public static final float TOWER_BASE_RANGE = 2;
+    /**
+     * The time to fadeout the tower on destruction.
+     */
     public static final int TOWER_DECAY = 2;
+    /**
+     * The base-hp of a tower.
+     */
     public static final int TOWER_HP = 200;
+    /**
+     * Used for animation of orbs.
+     * @deprecated
+     */
+    @Deprecated
     public static final float TOWER_ORB_ROTATION_SPEED = 0.5f;
+    /**
+     * The height of the visual for the tower-range display.
+     */
     public static final float TOWER_RANGE_RADIUS_HEIGHT = 0.15f;
+    /**
+     * The base-height of the tower.
+     */
+    public static final float TOWER_HEIGHT = 1.0f;
+    /**
+     * The base-width of the tower.
+     */
+    public static final float TOWER_SIZE = 0.3f;
     private static final float RANGE_CYLINDER_HEIGHT = 0.01f;
     private static final int TOWER_SAMPLES = 15;
-    public static final float TOWER_HEIGHT = 1.0f;
-    public static final float TOWER_SIZE = 0.3f;
     private static final float ROOF_SIZE = 0.35f;
     private static final MazeTDGame GAME = MazeTDGame.getInstance();
     private static Tower hoveredTower = null;
@@ -706,7 +740,7 @@ public class Tower extends ClickableEntity {
         }
         AbstractOrbEffect[] effects = effectManager.getOrbEffects(firstOrb, secondOrb, thirdOrb);
         for (AbstractOrbEffect aoe : effects) {
-            if (aoe != null && AbstractOrbEffect.isTowerElement(aoe.getElementType())) {
+            if (aoe != null && OrbEffectManager.isTowerElement(aoe.getElementType())) {
                 addOrbEffect(aoe);
             }
         }
@@ -959,12 +993,12 @@ public class Tower extends ClickableEntity {
             Vector3f tr = new Vector3f(0.5f, height, 0.5f);
             Vector3f bl = new Vector3f(-0.5f, height, -0.5f);
             Vector3f br = new Vector3f(0.5f, height, -0.5f);
-            
+
             Vector3f tl2 = new Vector3f(-0.51f, height, 0.51f);
             Vector3f tr2 = new Vector3f(0.51f, height, 0.51f);
             Vector3f bl2 = new Vector3f(-0.51f, height, -0.51f);
             Vector3f br2 = new Vector3f(0.51f, height, -0.51f);
-            
+
             Line[] lines = new Line[8];
             lines[0] = new Line(tl, tr);
             lines[1] = new Line(bl, br);

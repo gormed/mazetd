@@ -60,9 +60,21 @@ class Projectile extends AbstractEntity {
     //===   Constants
     //==========================================================================
 
+    /**
+     * The base speed of a Projectile to move per time gap.
+     */
     public static final float PROJECTILE_BASE_SPEED = 3.f;
+    /**
+     * The maximum fade amount.
+     */
     public static final float MAX_FADE = 0.8f;
+    /**
+     * The particles used for the floating emitter.
+     */
     public static int FLOATING_PARTICLE_COUNT = 10;
+    /**
+     * The particles used for the impact emitter.
+     */
     public static int IMPACT_PARTICLE_COUNT = 5;
     //==========================================================================
     //===   Private Fields
@@ -136,6 +148,10 @@ class Projectile extends AbstractEntity {
         return geometryNode;
     }
 
+    /**
+     * Creates the emitter for floating particles.
+     * @param game the refernce to the mazeTDgame
+     */
     private void createFloatingParticleEmitter(MazeTDGame game) {
         /** Uses Texture from jme3-test-data library! */
         floatingEmitter = new ParticleEmitter(
@@ -170,6 +186,10 @@ class Projectile extends AbstractEntity {
 
     }
 
+    /**
+     * Creates the emitter for impact particles.
+     * @param game the refernce to the mazeTDgame
+     */
     private void createImpactParticleEmitter(MazeTDGame game) {
         /** Explosion effect. Uses Texture from jme3-test-data library! */
         impactEmitter = new ParticleEmitter(
@@ -205,11 +225,8 @@ class Projectile extends AbstractEntity {
         Sphere s = new Sphere(5, 5, 0.1f);
 
         material = new Material(game.getAssetManager(),
-                    "Common/MatDefs/Misc/Unshaded.j3md");
-//        material.setBoolean("UseMaterialColors", true);  // Set some parameters, e.g. blue.
-//        material.setColor("Specular", ColorRGBA.White);
-        material.setColor("Color", color);   // ... color of this object
-//        material.setColor("Diffuse", color);   // ... color of light being reflected
+                "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", color);
 
         geometry = new Geometry("ProjectileGeometry", s);
         geometry.setMaterial(material);
@@ -227,16 +244,6 @@ class Projectile extends AbstractEntity {
         Level.getInstance().getDynamicLevelElements().detachChild(geometryNode);
         impactEmitter.emitAllParticles();
         impactEmitter.setParticlesPerSec(0);
-
-
-//            Level.getInstance().getDynamicLevelElements().attachChild(impactEmitter);
-//
-//            //impactEmitter.setEnabled(true);
-//            impactEmitter.setShape(new EmitterPointShape(position));
-//
-//            impactEmitter.setParticlesPerSec(20);
-//            impactEmitter.emitAllParticles();
-//            impactEmitter.setParticlesPerSec(0);
     }
 
     /**

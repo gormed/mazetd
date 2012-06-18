@@ -39,7 +39,7 @@ import entities.Orb.ElementType;
 import entities.Tower;
 
 /**
- *
+ * The class RangeOrbEffect.
  * @author Hans Ferchland
  */
 public class RangeOrbEffect extends AbstractOrbEffect {

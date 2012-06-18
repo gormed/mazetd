@@ -40,24 +40,24 @@ import mazetd.MazeTDGame;
 /**
  * The Class Gamestate as a base for all states of the game.
  * @author Hans Ferchland
- * @version 0.1
+ * @version 0.2
  */
 public abstract class Gamestate {
 
-    /** The name. */
+    /** The name of the gamestate. */
     private String name;
 
     /**
      * Instantiates a new gamestate.
      *
-     * @param name the name
+     * @param name the name to use
      */
     public Gamestate(String name) {
         this.name = name;
     }
 
     /**
-     * Gets the name.
+     * Gets the name of the gamestate.
      *
      * @return the name
      */
@@ -66,59 +66,66 @@ public abstract class Gamestate {
     }
 
     /**
-     * Enter.
+     * This method is called on starting the state so it can load resources.
      */
     void enter() {
         loadContent(MazeTDGame.getInstance());
     }
 
     /**
-     * Leave.
+     * This method is called on exiting the state so it can unload resources.
      */
     void leave() {
         unloadContent();
     }
 
+    
     /**
-     * Pause.
+     * Pause is called by the GamestateManager if the gamestate is 
+     * currently active so it could stop updating.
      */
     public void pause() {
     }
 
     /**
-     * Resume.
+     * Resume is called by the GamestateManager if the gamestate is 
+     * currently active and was paused so it can start updating again.
      */
     public void resume() {
     }
 
     /**
-     * Reset.
+     * Reset is called by the GamestateManager so the state could reset itself
+     * to its initial state.
      */
     public void reset() {
     }
 
     /**
-     * Terminate.
+     * Terminate is called by the GamestateManager so the gamestate can free or
+     * save resources on a quick exit.
      */
     public void terminate() {
     }
 
     /**
-     * Updates the.
+     * Updates the gamestate, this is called by the GamestateManager on 
+     * every call with the given time-gap as parameter.
      *
-     * @param tpf the tpf
+     * @param tpf the time gap
      */
     public abstract void update(float tpf);
 
     /**
-     * Load content.
+     * Loads the content of this state, need to be implemented for each child-
+     * gamestate; called by the GamestateManager.
      *
-     * @param game the game
+     * @param game the mazetdgame to load resources easier
      */
     protected abstract void loadContent(MazeTDGame game);
 
     /**
-     * Unload content.
+     * Unloads the states content on exit, called by the GamestateManager.
      */
     protected abstract void unloadContent();
 }

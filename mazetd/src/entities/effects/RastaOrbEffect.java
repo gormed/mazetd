@@ -46,8 +46,8 @@ import logic.pathfinding.CreepAI;
 import mazetd.MazeTDGame;
 
 /**
- * The class PoisonOrbEffect.
- * @author Hans Ferchland
+ * The class RastaOrbEffect.
+ * @author Hady Khalifa
  * @version
  */
 public class RastaOrbEffect extends AbstractOrbEffect {

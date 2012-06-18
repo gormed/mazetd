@@ -51,53 +51,6 @@ import entities.Tower;
  */
 public abstract class AbstractOrbEffect {
 
-    private static AbstractOrbEffect createOrbEffect(ElementType type, int level) {
-        switch (type) {
-            case BLUE:
-                return new FreezeOrbEffect(level);
-            case GREEN:
-                return new PoisonOrbEffect(level);
-            case RED:
-                return new DamageOrbEffect(level);
-            case WHITE:
-                return new RangeOrbEffect(level);
-            case YELLOW:
-                return new SpeedOrbEffect(level);
-            default:
-                return null;
-        }
-    }
-
-    public static AbstractOrbEffect getOrbEffect(ElementType type, int level) {
-        return createOrbEffect(type, level);
-    }
-
-    public static AbstractOrbEffect getSpecialOrbEffect(SpecialElementType type, int level) {
-        switch (type) {
-            case MULTI:
-                return null;
-            case RASTA:
-                return new RastaOrbEffect(level);
-
-            case SPLASH:
-            default:
-                return null;
-        }
-    }
-    public static final ElementType[] TOWER_ELEMENT_TYPES = {ElementType.WHITE, ElementType.YELLOW};
-
-    public static boolean isTowerElement(ElementType elementType) {
-        for (ElementType e : TOWER_ELEMENT_TYPES) {
-            if (e.equals(elementType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isCreepElement(ElementType elementType) {
-        return !isTowerElement(elementType);
-    }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
@@ -151,34 +104,58 @@ public abstract class AbstractOrbEffect {
     public abstract void onEffect();
 
     /**
-     * Will be called if the projectile hits and the effect happens 
-     * the first time. Usefull for one-time effects.
+     * Will be called if the effect is added to the creep the first time, 
+     * and the projectile hits. Usefull for one-time effects.
+     * @param creep the creep that suffers this effect currently the first time
      */
-    public void onStart(Creep c) {
-        this.infected = c;
+    public void onStart(Creep creep) {
+        this.infected = creep;
     }
 
-    public void onStart(Tower t) {
-        this.enhanced = t;
+    /**
+     * Will be called if the effect is added to the tower the first time.
+     * @param tower the tower that gets this effect for the first time
+     */
+    public void onStart(Tower tower) {
+        this.enhanced = tower;
     }
 
     /**
      * Is called if the effect is removed.
+     * @param creep the creep where the effect is removed
      */
-    public void onEnd(Creep c) {
+    public void onEnd(Creep creep) {
     }
 
-    public void onEnd(Tower t) {
+    /**
+     * Is called if the effect is removed.
+     * @param tower the tower where the effect is removed
+     */
+    public void onEnd(Tower tower) {
     }
 
+    /**
+     * Gets the OrbEffectType of this OrbEffect.
+     * Basicly this is the type of effect.
+     * @return the type of effect
+     */
     public OrbEffectType getEffectType() {
         return effectType;
     }
 
+    /**
+     * Gets the ElementType of this orb effect.
+     * Basicly this is the type of orb of this effect.
+     * @return the type of element
+     */
     public ElementType getElementType() {
         return elementType;
     }
 
+    /**
+     * The level this OrbEffect has.
+     * @return the level from 0..2
+     */
     public int getLevel() {
         return level;
     }

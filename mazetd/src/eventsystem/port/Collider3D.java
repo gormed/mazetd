@@ -43,7 +43,8 @@ import eventsystem.interfaces.Collidable3D;
 import mazetd.MazeTDGame;
 
 /**
- *
+ * The class Collider3D is a singleton for 3D collision checks and firing 
+ * the connected collision events.
  * @author Hans Ferchland
  */
 public class Collider3D {
@@ -133,6 +134,14 @@ public class Collider3D {
         collisionNode.detachChild(object);
     }
 
+    /**
+     * Lets any BoundingVolume collide with all geometry that was added as
+     * collision object to get a colliding node. The object that collides 
+     * (the BoundingVolume) does not have to be added to the collider!
+     * 
+     * @param boundingVolume the BoundingVolume to check for collision
+     * @return the jme3-results of the collision
+     */
     public CollisionResults objectCollides(BoundingVolume boundingVolume) {
         currentCollidable = boundingVolume;
 
@@ -153,14 +162,29 @@ public class Collider3D {
         }
     }
 
+    /**
+     * Gets the last calculated collision results.
+     * @return the last results
+     */
     public CollisionResults getCurrentCollisionResults() {
         return collisionResults;
     }
 
+    /**
+     * Gets the last object (BoundingVolume) that collided.
+     * @return the last results
+     */
     public BoundingVolume getCurrentCollidable() {
         return currentCollidable;
     }
 
+    /**
+     * The Node where all objects are stored that can be collided with.
+     * @return the jme3-node
+     */
+    public Node getCollisionNode() {
+        return collisionNode;
+    }
 //    private void searchForCollidable3D(Spatial spatial, CollisionResult collisionResult) {
 //        if (spatial != null) {
 //            Spatial parent;
@@ -179,7 +203,4 @@ public class Collider3D {
 //            c.onCollision3D(collisionResults);
 //        }
 //    }
-    public Node getCollisionNode() {
-        return collisionNode;
-    }
 }

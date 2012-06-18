@@ -92,6 +92,7 @@ public class Orb extends ClickableEntity {
     //==========================================================================
     //===   Constants
     //==========================================================================
+    
     private static final float HEIGHT_OVER_GROUND = 0.4f;
     public static final int ORB_DECAY = 2;
     private static final int ORB_SAMPLES = 10;
@@ -177,6 +178,9 @@ public class Orb extends ClickableEntity {
         deacying = true;
     }
 
+    /**
+     * Emitt particles on click.
+     */
     private void emittExplosion() {
         explodesEmitter.setLocalTranslation(element.geometry.getLocalTranslation());
         clickableEntityNode.attachChild(explodesEmitter);
@@ -185,6 +189,10 @@ public class Orb extends ClickableEntity {
         explodesEmitter.setParticlesPerSec(0);
     }
 
+    /**
+     * Creates the emitter for the onClick explosion.
+     * @param game the mazetdgame reference
+     */
     private void createExpodesEmitter(MazeTDGame game) {
         /** Explosion effect. Uses Texture from jme3-test-data library! */
         explodesEmitter = new ParticleEmitter(
@@ -237,14 +245,27 @@ public class Orb extends ClickableEntity {
         }
     }
 
+    /**
+     * Gets the elementt type of this orb.
+     * @return the ElementType of the orb
+     */
     public ElementType getElementType() {
         return type;
     }
 
+    /**
+     * Gets the color of the orb.
+     * @return a clone of the orbs color
+     */
     ColorRGBA getOrbColor() {
         return element.color.clone();
     }
 
+    /**
+     * Applys a new material for Orbs if used in tower.
+     * @deprecated
+     */
+    @Deprecated
     public void applyTowerOrbMaterial() {
         //Material
         element.material = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
@@ -264,6 +285,9 @@ public class Orb extends ClickableEntity {
         element.geometry.setMaterial(element.material);
     }
     
+    /**
+     * Applys new size for the orb if used in tower.
+     */
     public void applyTowerOrbSize() {
         element.setScale(0.66f);
     }
@@ -382,6 +406,10 @@ public class Orb extends ClickableEntity {
             geometry.setShadowMode(ShadowMode.CastAndReceive);
         }
         
+        /**
+         * Sets the scalation of the element-geometry.
+         * @param scale the new value of scale in x,y,z
+         */
         public void setScale(float scale) {
             geometry.setLocalScale(scale);
         }

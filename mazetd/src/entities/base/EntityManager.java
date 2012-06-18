@@ -53,7 +53,8 @@ import logic.Level;
 import mazetd.MazeTDGame;
 
 /**
- *
+ * The class EntityManager is a singleton that handles all entities in MazeTD, 
+ * the updating, the resources, the IDs and all events.
  * @author Hans Ferchland
  */
 public class EntityManager {
@@ -105,6 +106,9 @@ public class EntityManager {
     //===   Methods
     //==========================================================================
 
+    /**
+     * Initializes the singleton the first time or after destroyed.
+     */
     public void initialize() {
         if (initialized) {
             return;
@@ -117,6 +121,10 @@ public class EntityManager {
         initialized = true;
     }
 
+    /**
+     * Destroys the singleton if initialized and frees all resources so if can
+     * be reinitialized.
+     */
     public void destroy() {
         if (!initialized) {
             return;
@@ -163,7 +171,7 @@ public class EntityManager {
      * @param tpf the time between the last update call
      */
     public void update(float tpf) {
-        
+
         rayCast3D.update(tpf);
         HashMap<Integer, AbstractEntity> clone = new HashMap<Integer, AbstractEntity>(entityHashMap);
         for (Map.Entry<Integer, AbstractEntity> e : clone.entrySet()) {
@@ -174,7 +182,7 @@ public class EntityManager {
     /**
      * Creates a tower on a given position.
      * @param name the towers name
-     * @param position the towers position
+     * @param square the map square to posit the tower
      * @return the tower just created
      */
     public Tower createTower(String name, MapSquare square) {
@@ -192,7 +200,9 @@ public class EntityManager {
     /**
      * Creates a creep on a given position.
      * @param name the creeps name
-     * @param position the creeps position
+     * @param position the creeps position in 3D
+     * @param healthPoints the current HP of the creep
+     * @param maxHealthPoints the maximum HP of the creep
      * @return the creep just created
      */
     public Creep createCreep(String name, Vector3f position, float healthPoints, float maxHealthPoints) {
@@ -205,15 +215,15 @@ public class EntityManager {
         CreepHandler.getInstance().
                 invokeCreepAction(
                 CreepEventType.Created, c, null);
-
-
         return c;
     }
 
     /**
      * Creates a creep on a given position.
      * @param name the creeps name
-     * @param position the creeps position
+     * @param position the creeps position in 2D with y = 0
+     * @param healthPoints the current HP of the creep
+     * @param maxHealthPoints the maximum HP of the creep
      * @return the creep just created
      */
     public Creep createCreep(String name, Vector2f position, float healthPoints, float maxHealthPoints) {
@@ -228,6 +238,7 @@ public class EntityManager {
      * Creates an orb on a given position.
      * @param name the orbs name
      * @param position the orbs position
+     * @param elementType the type of orb to create
      * @return the orb just created
      */
     public Orb createOrb(String name, Vector3f position, Orb.ElementType elementType) {
@@ -242,10 +253,10 @@ public class EntityManager {
     }
 
     /**
-     * Creates a tower on a given position.
-     * @param name the towers name
-     * @param position the towers position
-     * @return the tower just created
+     * Creates a stone on a given position.
+     * @param name the stones name
+     * @param square the map square to posit the stone
+     * @return the stone just created
      */
     public Stone createStone(String name, MapSquare square) {
         Stone s = new Stone(name, square);
@@ -283,7 +294,4 @@ public class EntityManager {
     public HashMap<Integer, Tower> getTowerHashMap() {
         return towerHashMap;
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }

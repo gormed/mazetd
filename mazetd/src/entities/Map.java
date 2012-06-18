@@ -214,6 +214,10 @@ public class Map extends Node {
 //        decorativeMapElemetns.attachChild(groundPlane);
     }
 
+    /**
+     * Creates the height map for level background.
+     * @param game the mazetdgame reference
+     */
     private void createHeightMap(MazeTDGame game) {
         AssetManager assetManager = game.getAssetManager();
         /** 1. Create terrain material and load four textures into it. */
@@ -327,8 +331,13 @@ public class Map extends Node {
         //==========================================================================
         //===   Constants
         //========================================================================== 
-
+        /**
+         * The height over zero of a map square.
+         */
         public static final float MAP_SQUARE_HEIGHT = 0.1f;
+        /**
+         * The maximum alpha fade of a map square.
+         */
         public static final float MAX_ALPHA_FADE = 0.4f;
         //==========================================================================
         //===   Private Fields

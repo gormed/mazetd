@@ -37,13 +37,97 @@ package entities.effects;
 
 import entities.Orb;
 import entities.Orb.ElementType;
+import entities.Orb.SpecialElementType;
 import java.util.ArrayList;
 
 /**
- *
+ * The class OrbEffectManager that manages the creation of several effects 
+ * including OrbEffects and SpecialOrbEffects. Handles special combinations 
+ * of orbs; gets the effects and special-effects from all Orb 
+ * combinations for towers.
+ * 
+ * @see ElementType
+ * @see SpecialElementType
+ * @see AbstractOrbEffect
  * @author Hans Ferchland
  */
 public class OrbEffectManager {
+    //==========================================================================
+    //===   Static
+    //==========================================================================
+
+    /**
+     * Defines the ElementTypes that are meant to be used for towers only 
+     * and not on a creep.
+     */
+    public static final ElementType[] TOWER_ELEMENT_TYPES = {
+        ElementType.WHITE,
+        ElementType.YELLOW};
+
+    /**
+     * Creates an OrbEffect by a given ElementType and level 0..2
+     * @param type the ElementType of the OrbEffect to create
+     * @param level the level of the OrbEffect
+     * @return the OrbEffect according to the given parameters
+     */
+    public static AbstractOrbEffect getOrbEffect(ElementType type, int level) {
+        switch (type) {
+            case BLUE:
+                return new FreezeOrbEffect(level);
+            case GREEN:
+                return new PoisonOrbEffect(level);
+            case RED:
+                return new DamageOrbEffect(level);
+            case WHITE:
+                return new RangeOrbEffect(level);
+            case YELLOW:
+                return new SpeedOrbEffect(level);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Creates a SpecialOrbEffect by a given SpecialElementType and level 0..2
+     * @param type the SpecialElementType of the OrbEffect to create
+     * @param level the level of the OrbEffect
+     * @return the OrbEffect according to the given parameters
+     */
+    public static AbstractOrbEffect getSpecialOrbEffect(SpecialElementType type, int level) {
+        switch (type) {
+            case MULTI:
+                return null;
+            case RASTA:
+                return new RastaOrbEffect(level);
+
+            case SPLASH:
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Checks if an ElementType is a TowerElement or not.
+     * @param elementType the type to check for
+     * @return true if ElementType is meant for tower, false otherwise
+     */
+    public static boolean isTowerElement(ElementType elementType) {
+        for (ElementType e : TOWER_ELEMENT_TYPES) {
+            if (e.equals(elementType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if an ElementType is a CreepElement or not.
+     * @param elementType the type to check for
+     * @return true if ElementType is meant for creeps, false otherwise
+     */
+    public static boolean isCreepElement(ElementType elementType) {
+        return !isTowerElement(elementType);
+    }
     //==========================================================================
     //===   Singleton
     //==========================================================================
@@ -132,7 +216,7 @@ public class OrbEffectManager {
         }
 
         if (fits) {
-            effects.add(AbstractOrbEffect.getSpecialOrbEffect(
+            effects.add(getSpecialOrbEffect(
                     Orb.SpecialElementType.RASTA, 0));
         }
 
@@ -145,7 +229,7 @@ public class OrbEffectManager {
         for (int i = 0; i < orbTypeCount.length; i++) {
             if (orbTypeCount[i] > 0 && orbTypeCount[i] <= 3) {
                 effects.add(
-                        AbstractOrbEffect.getOrbEffect(
+                        getOrbEffect(
                         Orb.ElementType.values()[i], orbTypeCount[i] - 1));
             }
         }

@@ -252,30 +252,35 @@ public class ScreenRayCast3D implements MouseInputListener {
                 CollisionResult closest = results.getClosestCollision();
                 Spatial n = closest.getGeometry();
                 Spatial parent;
-
+                // this is where the magic happens
+                // if there was a geometry check
                 if (n != null) {
+                    // okay, we have geometry, is it inheriting Clickable3D
                     if (n instanceof Clickable3D) {
+                        // okay than decide if we entered the geometry or
+                        // left it
                         decideLeftOrOver(n, click2d, closest);
                     }
+                    // does the node have a parent
                     parent = n.getParent();
+                    // really?
                     while (parent != null) {
+                        // okay, than check if Clickable3D
                         if (parent instanceof Clickable3D) {
                             try {
+                                // okay than decide if we entered the geometry 
+                                // or left it
                                 decideLeftOrOver(parent, click2d, closest);
                             } catch (ClassCastException castException) {
                                 System.err.println(castException.getStackTrace());
                             }
                         }
+                        // okay, that find me the next parent and do this again
                         parent = parent.getParent();
                     }
                 }
-//                // Let's interact - we mark the hit with a red dot.
-//                mark.setLocalTranslation(closest.getContactPoint());
-//                rootNode.attachChild(mark);
             } else {
-                //lastHovered = null;
-//                // No hits? Then remove the red mark.
-//                rootNode.detachChild(mark);
+                // well otherwise we have no selection at all
             }
 
         }
@@ -370,7 +375,7 @@ public class ScreenRayCast3D implements MouseInputListener {
                 CollisionResult closest = results.getClosestCollision();
                 Spatial n = closest.getGeometry();
                 Spatial parent;
-
+                // recursivly check if object is clickable or not
                 if (n != null) {
                     invokeOnClick(n, click2d, closest);
                     parent = n.getParent();
@@ -379,13 +384,9 @@ public class ScreenRayCast3D implements MouseInputListener {
                         parent = parent.getParent();
                     }
                 }
-//                // Let's interact - we mark the hit with a red dot.
-//                mark.setLocalTranslation(closest.getContactPoint());
-//                rootNode.attachChild(mark);
             } else {
+                // reset the last clicked object if none
                 lastClicked = null;
-//                // No hits? Then remove the red mark.
-//                rootNode.detachChild(mark);
             }
         }
     }
