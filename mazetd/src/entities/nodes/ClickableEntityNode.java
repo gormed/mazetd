@@ -56,10 +56,6 @@ public class ClickableEntityNode extends EntityNode implements Clickable3D {
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
-
     /**
      * Contructor of the node for the clickable geometry.
      * @param name the deseired node-name

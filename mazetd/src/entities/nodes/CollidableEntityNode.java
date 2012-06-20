@@ -74,12 +74,4 @@ public class CollidableEntityNode extends EntityNode implements Collidable3D {
     public CollidableEntity getEntity() {
         return entity;
     }
-//    @Override
-//    public int collideWith(Collidable other, CollisionResults results) {
-//        CollidableEntityNode collidableEntityNode = entity.getCollidableEntityNode();
-//        if (collidableEntityNode != null)
-//            return entity.getCollidableEntityNode().collideWith(other, results);
-//        else
-//            return 0;
-//    }
 }

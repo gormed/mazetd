@@ -49,9 +49,11 @@ import eventsystem.listener.EntityListener;
 import eventsystem.listener.TimerEventListener;
 
 /**
- * The class EventManager for all events.
+ * The class EventManager for manageing all events.
+ * It updates times events, click events, collision events,
+ * entity events, creep events ans jme3 input events.
  * @author Hans Ferchland
- * @version 0.4
+ * @version 0.5
  */
 public class EventManager {
     //==========================================================================
@@ -82,7 +84,7 @@ public class EventManager {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    //private HashMap<Integer, AbstractEvent> eventMap;
+    // references to the sub-event handler for each category
     private TimerHandler timerHandler = TimerHandler.getInstance();
     private InputHandler inputHandler = InputHandler.getInstance();
     private EntityHandler enitiyHandler = EntityHandler.getInstance();

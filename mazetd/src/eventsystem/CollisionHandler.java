@@ -85,7 +85,6 @@ public class CollisionHandler {
     //===   Methods
     //==========================================================================
 
-    // TODO: add comments and interface to the eventmanager
     /**
      * Adds a CollisionListener to the manager that listens to collision-events
      * from the list of BoundingVolumes given.
