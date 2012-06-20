@@ -1,3 +1,38 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * MazeTD Project (c) 2012 by Hady Khalifa, Ahmed Arous and Hans Ferchland
+ * 
+ * MazeTD rights are by its owners/creators.
+ * The project was created for educational purposes and may be used under 
+ * the GNU Public license only.
+ * 
+ * If you modify it please let other people have part of it!
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * GNU Public License
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License 3 as published by
+ * the Free Software Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/.
+ * 
+ * Email us: 
+ * hans[dot]ferchland[at]gmx[dot]de
+ * 
+ * 
+ * Project: MazeTD Project
+ * File: Tower.java
+ * Type: entities.Tower
+ * 
+ * Documentation created: 20.05.2012 - 21:41:15 by Ahmed Arous
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui.elements;
 
 import com.jme3.app.SimpleApplication;
@@ -20,7 +55,16 @@ import entities.Tower;
 import logic.Inventory;
 import logic.Level;
 
+/**
+ * The class "Hudscreen"  is a registered Screencontroller that lets the 
+ * application communicate with the Nifty Hud Screen.
+ *
+ * @author Ahmed Arous
+ */
 public class HudScreen extends AbstractAppState implements ScreenController {
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
 
     private GamestateManager gamestateManager;
     private Nifty nifty;
@@ -33,30 +77,50 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     private int timeElapsed;
     private int min;
     private float time;
-    private boolean paused=true;
+    private boolean paused = true;
     private Inventory inventory = Inventory.getInstance();
 
-    public HudScreen() {  
+    //==========================================================================
+    //===   Methods & Constructor
+    //==========================================================================
+    /**
+     * constructor.
+     */
+    public HudScreen() {
     }
-    
 
-    /** custom methods */
+    /**
+     * Exits Nifty for testing purposes.
+     */
     public void disableGui() {
         nifty.exit();
     }
 
+    /**
+     * @param p {@code true} stops updateloop.
+     *          {@code false} triggers updateloop.
+     */
     public void setPaused(boolean p) {
         paused = p;
     }
 
+    /**
+     * Initializes the Hudscreen instance for further game rounds.
+     */
     public void init() {
-        paused=false;
+        paused = false;
         timeElapsed = 0;
         time = 0;
         min = 0;
 
     }
 
+    /**
+     *Shows the Shop if it is hidden.
+     *Hides the Shop if it is shown.
+     * @param element The Shop element.
+     * @param ScreenID The Screen ID.
+     */
     public void showMarketplace(String element, String ScreenID) {
         Element marketPlace = nifty.getScreen(ScreenID).findElementByName(element);
         if (marketPlace.isVisible()) {
@@ -67,6 +131,9 @@ public class HudScreen extends AbstractAppState implements ScreenController {
 
     }
 
+    /**
+     * Destroys the selected Tower and reimburses the player with gold.
+     */
     public void demolishTower() {
         Tower sel = player.getSelectedTower();
         if (sel != null && !sel.isDead()) {
@@ -76,6 +143,10 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         }
     }
 
+    /**
+     * Pauses the Game and switches to nextScreen.
+     * @param nextScreen The screen that will be shown.
+     */
     public void pause(String nextScreen) {
         paused = true;
         nifty.gotoScreen(nextScreen);
@@ -83,6 +154,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         gamestateManager.pause();
     }
 
+    /**
+     * Checks if the player has the new Orbtype and replaces it with the old on.
+     * @param orbType The new Orbtype.
+     * @param slot The Slot for the new orbType.
+     */
     public void replaceOrb(String orbType, String slot) {
         int type = Integer.parseInt(orbType);
         int slotI = Integer.parseInt(slot);
@@ -109,6 +185,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
 
     }
 
+    /**
+     * Checks if the player has enpugh money and adds the selected orbtype
+     * to his inventory.
+     * @param orbType The Orbtype to be bought.
+     */
     public void buyOrb(String orbType) {
         int type = Integer.parseInt(orbType);
         ElementType element = ElementType.values()[type];
@@ -119,6 +200,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         player.chargeGold(100);
     }
 
+    /**
+     * Checks if the player ows the selected orbtype and
+     * reimburses the player with gold.
+     * @param orbType The Orbtype to be selled.
+     */
     public void sellOrb(String orbType) {
         int type = Integer.parseInt(orbType);
         ElementType element = ElementType.values()[type];
@@ -130,21 +216,35 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         player.addGold(50);
     }
 
+    /**
+     * Shows the orb selection element for the first slot.
+     */
     public void orbSelection1() {
         Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection1");
         orbSelection.show();
     }
 
+    /**
+     * Shows the orb selection element for the second slot.
+     */
     public void orbSelection2() {
         Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection2");
         orbSelection.show();
     }
 
+    /**
+     * Shows the orb selection element for the third slot.
+     */
     public void orbSelection3() {
         Element orbSelection = nifty.getCurrentScreen().findElementByName("orbSelection3");
         orbSelection.show();
     }
 
+    /**
+     * Checks if the player has selected a tower and shows or hides the 
+     * contextelement. Gets called with a given time gap.
+     * @param tpf the time gap
+     */
     public void showContext(float tpf) {
 
         if (player.getSelectedTower() != null) {
@@ -166,6 +266,10 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         }
     }
 
+    /**
+     * Gets the current wave and the maximum waves.
+     * @return The current wave and maxmum waves.
+     */
     public String getWave() {
         waveManager = WaveManager.getInstance();
         int currentWave = waveManager.getCurrentWaveCount();
@@ -174,6 +278,10 @@ public class HudScreen extends AbstractAppState implements ScreenController {
 
     }
 
+    /**
+     * Gets the elapsed time since game started.
+     * @return The elapsed time.
+     */
     public String getTime() {
         if (timeElapsed < 10 && min < 10) {
             return "0" + min + ":0" + timeElapsed;
@@ -188,6 +296,10 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         return min + ":" + timeElapsed;
     }
 
+    /**
+     * Gets the current Hp and the maximum Hp of the selected Tower.
+     * @return The current Hp and the maximum Hp.
+     */
     public String getTowerHP() {
         int hp = (int) (player.getSelectedTower().getHealthPoints() + 0.5f);
         int maxHp = (int) (player.getSelectedTower().getMaxHealthPoints() + 0.5f);
@@ -195,10 +307,19 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         return "HP: " + hp + "/" + maxHp;
     }
 
+    /**
+     * Gets the current Hp and the maximum Hp of the player.
+     * @return The current Hp and the maximum Hp.
+     */
     public String getHealth() {
         return "Health: " + player.getLives() + "/" + player.getMaxLives();
     }
 
+    /**
+     * Checks the context of the third slot that has to be shown for the 
+     * selected tower. Gets called with a given time gap.
+     * @param tpf the time gap
+     */
     private void slot3Context(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
@@ -241,6 +362,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         }
     }
 
+    /**
+     * Checks the context of the second slot that has to be shown for the 
+     * selected tower. Gets called with a given time gap.
+     * @param tpf the time gap
+     */
     private void slot2Context(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
@@ -282,6 +408,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         }
     }
 
+    /**
+     * Checks the context of the first slot that has to be shown for the 
+     * selected tower. Gets called with a given time gap.
+     * @param tpf the time gap
+     */
     private void slot1Context(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
@@ -329,6 +460,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         }
     }
 
+    /**
+     * Updates the the Healthgolbe depending on the players health.
+     * Gets called with a given time gap.
+     * @param tpf the time gap
+     */
     private void updateHealthglobe(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {
@@ -375,6 +511,11 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         }
     }
 
+    /**
+     * Updates the the text labels.
+     * Gets called with a given time gap.
+     * @param tpf the time gap
+     */
     private void updateTextLabels(float tpf) {
         if (GamestateManager.getInstance().getCurrentState().
                 equals(GamestateManager.SINGLEPLAYER_STATE)) {

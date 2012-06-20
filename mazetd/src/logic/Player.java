@@ -50,7 +50,7 @@ import eventsystem.listener.CreepListener;
 import mazetd.MazeTDGame;
 
 /**
- * The class Player represents the single player of the MazeTD game.
+ * The class "Player" represents the single player of the MazeTD game.
  * A player can select a Tower,owns gold and has a List of Elementtypes.
  * Beyond that a player can take in diffrent States in the game.
  *
@@ -90,7 +90,7 @@ public class Player implements EntityListener, CreepListener {
 
     /**
      * Gets the single reference to the player.
-     * @return the Player reference
+     * @return The Player reference
      */
     public static Player getInstance() {
         if (instance != null) {
@@ -192,7 +192,7 @@ public class Player implements EntityListener, CreepListener {
     // Live
     /**
      * Gets the current live of the Player.
-     * @return the current live.
+     * @return The current live.
      */
     public int getLives() {
         return lives;
@@ -200,14 +200,10 @@ public class Player implements EntityListener, CreepListener {
 
     /**
      * Gets the maximal live of the Player.
-     * @return the maximal live.
+     * @return The maximal live.
      */
     public int getMaxLives() {
         return maxLives;
-    }
-
-    public int getLivesLeft() {
-        return maxLives - lives;
     }
 
     /**
@@ -334,7 +330,7 @@ public class Player implements EntityListener, CreepListener {
 
     /**
      * Gets the currently selected Tower by the player.
-     * @return the selected tower.
+     * @return The selected tower.
      */
     public Tower getSelectedTower() {
         return selectedTower;
@@ -350,7 +346,7 @@ public class Player implements EntityListener, CreepListener {
 
     /**
      * Gets the amount of red Elementtypes the player owns.
-     * @return the amount of red Elementtypes.
+     * @return The amount of red Elementtypes.
      */
     public int getRedCount() {
         return redCount;
@@ -358,7 +354,7 @@ public class Player implements EntityListener, CreepListener {
 
     /**
      * Gets the amount of blue Elementtypes the player owns.
-     * @return the amount of blue Elementtypes.
+     * @return The amount of blue Elementtypes.
      */
     public int getBlueCount() {
         return blueCount;
@@ -366,7 +362,7 @@ public class Player implements EntityListener, CreepListener {
 
     /**
      * Gets the amount of green Elementtypes the player owns.
-     * @return the amount of green Elementtypes.
+     * @return The amount of green Elementtypes.
      */
     public int getGreenCount() {
         return greenCount;
@@ -374,7 +370,7 @@ public class Player implements EntityListener, CreepListener {
 
     /**
      * Gets the amount of yellow Elementtypes the player owns.
-     * @return the amount of yellow Elementtypes.
+     * @return The amount of yellow Elementtypes.
      */
     public int getYellowCount() {
         return yellowCount;
@@ -382,7 +378,7 @@ public class Player implements EntityListener, CreepListener {
 
     /**
      * Gets the amount of white Elementtypes the player owns.
-     * @return the amount of white Elementtypes.
+     * @return The amount of white Elementtypes.
      */
     public int getWhiteCount() {
         return whiteCount;
@@ -390,7 +386,7 @@ public class Player implements EntityListener, CreepListener {
 
     /**
      * Gets the current Playerstate of the player.
-     * @return the playerstate.
+     * @return The playerstate.
      */
     public PlayerState getPlayerState() {
         return playerState;
@@ -441,13 +437,21 @@ public class Player implements EntityListener, CreepListener {
             addGold(c.getGoldDrop());
         }
     }
-
+    /**
+     * is Triggered when the player dies.
+     * Changes playerstate to Lost.
+     * Pauses the game and changes to Game Over Screen.
+     */
     private void onDeath() {
         System.out.println("PLAYER HAS LOST!");
         playerState = PlayerState.LOST;
         game.getHudScreenInstance().pause("gameover");
     }
-
+    /**
+     * is Triggered when the player wins.
+     * Changes playerstate to Won.
+     * Pauses the game and changes to Winning Screen.
+     */
     private void onWin() {
         System.out.println("PLAYER HAS WON!");
         playerState = PlayerState.WON;
