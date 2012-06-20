@@ -195,7 +195,7 @@ public class Level {
 
         WaveManager.WaveDescription description;
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 10; i++) {
             description = waveManager.new WaveDescription();
             description.creepCount = 5 + Math.round(0.1f * i * i);
             description.creepDamage = 80 + 15 * i;
