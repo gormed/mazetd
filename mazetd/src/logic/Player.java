@@ -445,5 +445,6 @@ public class Player implements EntityListener, CreepListener {
     private void onWin() {
         System.out.println("PLAYER HAS WON!");
         playerState = PlayerState.WON;
+        game.getHudScreenInstance().pause("gamewon");
     }
 }

@@ -16,13 +16,10 @@
 
 <!-- ============================Start Screen==================================--> 
     <screen id="start" controller="gui.elements.MainmenuScreen">
-   
-        <layer id="background" backgroundColor="#000f"></layer>
-   
-        <layer id="foreground" backgroundColor="#0000" childLayout="vertical">
+        <layer id="foreground" backgroundImage="Interface/Textures/MazeTD.png" childLayout="vertical">
         
             <panel id="panel_top" height="10%" width="100%" align="center" childLayout="center"
-               backgroundColor="#f008">
+               backgroundColor="#f008" visible="false">
                 <text text="MazeTD" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
             </panel>
             <panel id="panel_bottom_1" height="45%" width="100%" align="center" childLayout="center">
@@ -498,7 +495,7 @@
             visibleToMouse="true" > 
                         <interact onClick="resumeGame(hud)"/>
                     </control>
-                    <control name="button" label="Leave//TODO" id="LeaveButton" align="center" valign="center" 
+                    <control name="button" label="Leave Game" id="LeaveButton" align="center" valign="center" 
             visibleToMouse="true" > 
                         <interact onClick="leaveGame(start)"/>
                     </control>
@@ -521,6 +518,23 @@
                 </panel>
                 <panel id="Menu" height="15%" width="20%" align="center" childLayout="vertical">
                     <text text="You died the most horrible death imaginable!" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
+                    <control name="button" label="Back to Menu" id="LeaveButton" align="center" valign="center" 
+                    visibleToMouse="true" > 
+                        <interact onClick="leaveGame(start)"/>
+                    </control>
+                </panel>
+            </panel>
+        </layer>
+    </screen>
+    
+        <screen id="gamewon" controller="gui.elements.PausedScreen">
+
+        <layer id="foreground" childLayout="vertical" backgroundImage="Interface/Textures/gameWon.png">
+            <panel id="panel_bottom_1" height="100%" width="100%" align="center" childLayout="vertical">
+                <panel id="Menu" height="50%" width="20%" align="center" childLayout="vertical">
+                </panel>
+                <panel id="Menu" height="15%" width="20%" align="center" childLayout="vertical">
+                    <text text="Congratulations, you successfully obliterated all evil cylinders!" font="Interface/Fonts/Default.fnt" width="100%" height="100%" />
                     <control name="button" label="Back to Menu" id="LeaveButton" align="center" valign="center" 
                     visibleToMouse="true" > 
                         <interact onClick="leaveGame(start)"/>
