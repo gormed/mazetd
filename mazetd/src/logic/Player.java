@@ -167,6 +167,8 @@ public class Player implements EntityListener, CreepListener {
         greenCount = 0;
         yellowCount = 0;
         whiteCount = 0;
+        //reset selectedTower
+        selectedTower=null;
         //reset player state
         playerState = PlayerState.PREPARING;
 
@@ -444,13 +446,11 @@ public class Player implements EntityListener, CreepListener {
         System.out.println("PLAYER HAS LOST!");
         playerState = PlayerState.LOST;
         game.getHudScreenInstance().pause("gameover");
-        setSelectedTower(null);
     }
 
     private void onWin() {
         System.out.println("PLAYER HAS WON!");
         playerState = PlayerState.WON;
         game.getHudScreenInstance().pause("gamewon");
-        setSelectedTower(null);
     }
 }
