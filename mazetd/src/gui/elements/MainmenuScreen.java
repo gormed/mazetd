@@ -1,5 +1,5 @@
 package gui.elements;
- 
+
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
@@ -14,51 +14,47 @@ import de.lessvoid.nifty.elements.Element;
 import gamestates.Gamestate;
 import gamestates.GamestateManager;
 import gui.elements.HudScreen;
- 
+
 public class MainmenuScreen extends AbstractAppState implements ScreenController {
- 
-  private Nifty nifty;
-  private Screen screen;
-  private SimpleApplication app;
-  private MazeTDGame game;
-  private SingleplayerState singleplayerState;
-  private GamestateManager gamestateManager;
-  
-  /** custom methods */ 
-  public void startGame(String nextScreen) {
-  nifty.gotoScreen(nextScreen);
-  gamestateManager = GamestateManager.getInstance();
-  gamestateManager.enterState(GamestateManager.SINGLEPLAYER_STATE);
-  game.getHudScreenInstance().timerInit();
-  }
- 
-  public void quitGame() {
-    this.game=MazeTDGame.getInstance();
-    game.stop(); 
-  }
- 
-  
-  public MainmenuScreen() { 
-   
-  } 
- 
-  /** Nifty GUI ScreenControl methods */ 
- 
-  public void bind(Nifty nifty, Screen screen) {
-    this.nifty = nifty;
-    this.screen = screen;
-  }
- 
-  public void onStartScreen() { }
- 
-  public void onEndScreen() { }
- 
-  /** jME3 AppState methods */ 
- 
+
+    private Nifty nifty;
+    private Screen screen;
+    private SimpleApplication app;
+    private MazeTDGame game;
+    private SingleplayerState singleplayerState;
+    private GamestateManager gamestateManager;
+    private HudScreen hudScreen = MazeTDGame.getInstance().getHudScreenInstance();
+
+    /** custom methods */
+    public void startGame(String nextScreen) {
+        nifty.gotoScreen(nextScreen);
+        gamestateManager = GamestateManager.getInstance();
+        gamestateManager.enterState(GamestateManager.SINGLEPLAYER_STATE);
+        hudScreen.init();
+    }
+
+    public void quitGame() {
+        this.game = MazeTDGame.getInstance();
+        game.stop();
+    }
+
+    public MainmenuScreen() {
+    }
+
+    /** Nifty GUI ScreenControl methods */
+    public void bind(Nifty nifty, Screen screen) {
+        this.nifty = nifty;
+        this.screen = screen;
+    }
+
+    public void onStartScreen() {
+    }
+
+    public void onEndScreen() {
+    }
+
+    /** jME3 AppState methods */
     @Override
     public void update(float tpf) {
     }
-
-
- 
 }

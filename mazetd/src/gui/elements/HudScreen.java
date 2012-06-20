@@ -30,25 +30,27 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     private NiftyJmeDisplay niftyDisplay;
     private Player player = Player.getInstance();
     private WaveManager waveManager;
-    private int timeElapsed = 0;
+    private int timeElapsed;
     private int min;
     private float time;
-    private boolean paused;
+    private boolean paused=true;
     private Inventory inventory = Inventory.getInstance();
 
-    public HudScreen() {
+    public HudScreen() {  
     }
+    
 
     /** custom methods */
     public void disableGui() {
         nifty.exit();
     }
 
-    public void setPaused(boolean paused) {
-        this.paused = paused;
+    public void setPaused(boolean p) {
+        paused = p;
     }
 
-    public void timerInit() {
+    public void init() {
+        paused=false;
         timeElapsed = 0;
         time = 0;
         min = 0;
