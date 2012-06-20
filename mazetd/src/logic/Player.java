@@ -136,6 +136,8 @@ public class Player implements EntityListener, CreepListener {
         gold = PLAYER_START_GOLD;
         // init lives
         lives = maxLives;
+        //reset player state
+        playerState = PlayerState.PLAYING;
         // add listeners
         EventManager.getInstance().
                 addCreepListener(this, (Creep) null);
@@ -165,6 +167,8 @@ public class Player implements EntityListener, CreepListener {
         greenCount = 0;
         yellowCount = 0;
         whiteCount = 0;
+        //reset player state
+        playerState = PlayerState.PREPARING;
 
         initialized = false;
     }
