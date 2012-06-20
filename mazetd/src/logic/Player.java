@@ -439,12 +439,14 @@ public class Player implements EntityListener, CreepListener {
     private void onDeath() {
         System.out.println("PLAYER HAS LOST!");
         playerState = PlayerState.LOST;
+        game = MazeTDGame.getInstance();
         game.getHudScreenInstance().pause("gameover");
     }
 
     private void onWin() {
         System.out.println("PLAYER HAS WON!");
         playerState = PlayerState.WON;
+        game = MazeTDGame.getInstance();
         game.getHudScreenInstance().pause("gamewon");
     }
 }
