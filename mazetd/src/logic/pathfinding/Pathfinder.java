@@ -35,6 +35,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic.pathfinding;
 
+//Imports
 import entities.Map.MapSquare;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +47,18 @@ import logic.Grid.FieldInfo;
 
 /**
  *
+ * The pathfinder is used by the creepAI and build/remove Tower events to generate 
+ * the shortest path from a start point to an end point.
+ * 
+ * - Everytime a tower has been build on the current mainpath or a tower has been removed
+ * the methode createMainPath() is called -> new MainPath will be created Queue<MapSquare>
+ * 
+ *  * - Everytime a new mainPath has been created, every creep checks if he is on the mainpath
+ *          - If he is on the mainpath(mainpath contains creeps current position) the creep  
+ *              use generated mainpath
+ *          - else the creep uses an new creted path from the creeps position to the goal
+ *              @see{ createCreepPath(FieldInfo creepPos, FieldInfo goal)}
+ * 
  * @author Hady Khalifa
  */
 public class Pathfinder {
@@ -65,18 +78,17 @@ public class Pathfinder {
     }
 
     /**
-     * 
-     * @return 
+     * Singelton
+     * @return an Instance of tehe class
      */
     public static Pathfinder getInstance() {
         return PathfinderHolder.INSTANCE;
     }
 
     /**
-     * 
+     * Singelton
      */
     private static class PathfinderHolder {
-
         private static final Pathfinder INSTANCE = new Pathfinder();
     }
     //==========================================================================
@@ -94,11 +106,20 @@ public class Pathfinder {
     //==========================================================================
     //===   Methods
     //==========================================================================
+    
+    /**
+     * initialize Singelton
+     */
     public void initialize() {
         setMainPath(createMainPath());
         lastPath = path;
     }
 
+    /**
+     * update
+     * 
+     * @param tpf 
+     */
     public void update(float tpf) {
         if (gridChanged) {
             changedSquare.getFieldInfo().incrementWeight(changedWeight);
@@ -106,85 +127,71 @@ public class Pathfinder {
                 lastPath = path;
                 path = createMainPath();
                 gridChanged = false;
-
-//                Future fut = MazeTDGame.getInstance().enqueue(new Callable() {
-//
-//                    @Override
-//                    public Object call()
-//                            throws Exception {
-//
-//                        return createMainPath();
-//                    }
-//                });
-//                try {
-//                    setMainPath((Queue<MapSquare>) fut.get());
-//                    gridChanged = false;
-//                } catch (InterruptedException ex) {
-//                    Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
-//                } catch (ExecutionException ex) {
-//                    Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
-//                }
             }
-
             setMainPath(createMainPath());
             gridChanged = false;
-//            if (DEBUG_PATH) {
-//                for (MapSquare ms : path) {
-//                    ms.setMainPathDebug(true);
-//                }
-//            }
-//            Future fut = MazeTDGame.getInstance().enqueue(new Callable() {
-//
-//                @Override
-//                public Object call()
-//                        throws Exception {
-//
-//                    return createMainPath();
-//                }
-//            });
-//            try {
-//                setMainPath((Queue<MapSquare>) fut.get());
-//                gridChanged = false;
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (ExecutionException ex) {
-//                Logger.getLogger(Pathfinder.class.getName()).log(Level.SEVERE, null, ex);
-//            }
         }
     }
 
+    /**
+     * set the MapSquare which changed by buildingTower or removingTower
+     * @param square MapSquare changed Square
+     * @param newWeight int , increase by 10000 for build a tower
+     */
     void setChangedMapSquare(MapSquare square, int newWeight) {
         changedSquare = square;
         gridChanged = true;
         changedWeight = newWeight;
     }
 
+    /**
+     * set new mainpath
+     * @param Queue<MapSquare> path 
+     */
     public void setMainPath(Queue<MapSquare> path) {
         this.path = path;
     }
 
+     /**
+     * gets the current mainPath
+     * @return Queue<MapSquare> mainpath
+     */
     public Queue<MapSquare> getMainPath() {
         return new LinkedList<MapSquare>(path);
     }
 
+    /**
+     * gets the previous mainPath for checking creeps are on the old path
+     * @return Queue<MapSquare> lastPath
+     */
     public Queue<MapSquare> getLastPath() {
         return lastPath;
     }
 
+    /**
+     * get the StartField
+     * @return FieldInfo StartField
+     */
     public FieldInfo getStartField() {
         return grid.getFieldInfo(start.x, start.y);
     }
 
+    /**
+     * get the EndField
+     * @return FieldInfo EndField
+     */
     public FieldInfo getEndField() {
         return grid.getFieldInfo(end.x, end.y);
     }
 
     /**
      * 
-     *      
-     * Ermittelt den Kürzesten Pfad zwischen dem Start- und dem Ziel-Feld;
+     * Uses the mthode findPath(grid,start,goal) to get the FieldInfo from where
+     * this methode create the concrete Path by adding the mapSquare of every parent 
+     * to a Queue.
+     * This Queue will be reversed to use ist in the right direction
      * 
-     * @return  Queue aus MapSquares in der Richtigen Reihenfolge zum begehen
+     * @return the mainPath, a Queue of MapSquares  from the start to the goal
      */
     public Queue<MapSquare> createMainPath() {
         Queue<MapSquare> tempPath = new LinkedList<MapSquare>();
@@ -201,19 +208,21 @@ public class Pathfinder {
             tempPath.add(s);
             field = field.getParent();
         }
-
-
+        //Reverse the List
         Collections.reverse((LinkedList) tempPath);
 
         return tempPath;
     }
 
     /**
+     * Uses the mthode findPath(grid,position of the creep ,goal) to get the FieldInfo from where
+     * this methode create the concrete Path by adding the mapSquare of every parent 
+     * to a Queue.
+     * This Queue will be reversed to use ist in the right direction
      * 
-     * Ermittelt den Kürzesten Pfad zwischen 2 Feldern;
      * 
-     * @param creepPos Field
-     * @return 
+     * @param creepPos FieldInfo of the Mapsquare with this Creep on it
+     * @return a Queue of MapSquares as a Path from creeps position to the goal
      */
     public Queue<MapSquare> createCreepPath(FieldInfo creepPos, FieldInfo goal) {
         Queue<MapSquare> tempPath = new LinkedList<MapSquare>();
@@ -224,7 +233,7 @@ public class Pathfinder {
             System.out.println("fehler Pathfinder-> findPath()");
         }
 
-//        while (field != null && !field.getParent().equals(start)) {
+
         while (field != null) {
             tempPath.add(field.getSquare());
             field = field.getParent();
@@ -232,11 +241,7 @@ public class Pathfinder {
                 break;
             }
         }
-//        if (DEBUG_PATH) {
-//            for (MapSquare ms : tempPath) {
-//                ms.setCreepPathDebug(true);
-//            }
-//        }
+        //Reverse the List
         Collections.reverse((LinkedList) tempPath);
 
         return tempPath;
@@ -245,13 +250,23 @@ public class Pathfinder {
     /**
      * Modified A*-Algorithm
      * 
-     * Ermittelt  den kuerzesten Pfad zwischen zwei übergebenen Feldern
-     * Wird intern genutzt
+     * 1. Add the starting square (or node) to the open list.
+     * 2. Repeat the following:
+     * 2.1 Look for the lowest F cost square on the open list. We refer to this as the current square.
+     * 2.2 Switch it to the closed list.
+     * 2.3 For each of the 4 field adjacent to this current square …
+     * - If it is not walkable or if it is on the closed list, ignore it. Otherwise do the following.           
+     * - If it isn’t on the open list, add it to the open list. Make the current square the parent of this square. Record the G costs of the square. 
+     * - If it is on the open list already, check to see if this path to that square is better(low G-Cost) @see{betterIn(FieldInfo f, ArrayList<FieldInfo> l)}
+     * - If so, change the parent of the square to the current square.
+     * 3. Stop when you:  
+     * - Add the target square to the closed list, in which case the path has been found, or
+     * - Fail to find the target square, and the open list is empty. In this case, there is no path.   
      * 
-     * @param grid
-     * @param start Field
-     * @param goal Field
-     * @return Feld - der Pfad kann von diesem Feld aus seinen Vorgaengern erstellt werden
+     * @param grid logical respresentation of the map
+     * @param start FieldInfo is starting point 
+     * @param goal FieldInfo is the end point
+     * @return FieldInfo == goal - the path can be created from this field and there parents @see{createMainPath()}
      */
     private FieldInfo findPath(Grid grid, FieldInfo start, FieldInfo goal) {
         ArrayList<FieldInfo> openList = new ArrayList<FieldInfo>();
@@ -259,7 +274,7 @@ public class Pathfinder {
 
         FieldInfo u = grid.getFieldInfo(start.getXCoord(), start.getYCoord());
         openList.add(u);
-        while (!openList.isEmpty()) {  //...und los
+        while (!openList.isEmpty()) {
             FieldInfo q = getLeastWeight(openList);  //Field aus openList mit besten Aussichten ist q
             openList.remove(q);  //Dieser wird aus der openList entfernt, um ihn nicht noch einmal zu benutzen
             ArrayList<FieldInfo> successors = new ArrayList<FieldInfo>();
@@ -273,10 +288,8 @@ public class Pathfinder {
                     fi.setG(calcG(fi));
                     successors.add(fi);
                 }
-
             } catch (ArrayIndexOutOfBoundsException aie) {
             }
-
             try {
                 //Richtung 3
                 FieldInfo fi = grid.getFieldInfo(qx + 1, qy);
@@ -298,7 +311,6 @@ public class Pathfinder {
                 }
             } catch (ArrayIndexOutOfBoundsException aie) {
             }
-
             try {
                 //Richtung 4
                 FieldInfo fi = grid.getFieldInfo(qx, qy + 1);
@@ -309,7 +321,6 @@ public class Pathfinder {
                 }
             } catch (ArrayIndexOutOfBoundsException aie) {
             }
-
             for (FieldInfo f : successors) {  //für jede Gehmöglichkeit
                 if (f.getXCoord() == goal.getXCoord() && f.getYCoord() == goal.getYCoord()) //wenn Ziel
                 {
@@ -324,14 +335,11 @@ public class Pathfinder {
                     openList.add(f);  //gibt, successor zur openList hinzufügen
                 }
             }
-
             closedList.add(q);  //Schleife beendet, q zur closedList tun
         }
         //Schleife beendet->kein Weg gefunden
-
         throw new RuntimeException("keinen Weg gefunden");
     }
-
     
     /**
      * Calculate the distance between the given field and the start field
@@ -340,23 +348,24 @@ public class Pathfinder {
      * @param field current FieldInfo in openList
      * @return distance between field and startField
      */
-    private static int calcG(FieldInfo field) 
-    {
-        FieldInfo f = field.getParent();  
+    private static int calcG(FieldInfo field) {
+        FieldInfo f = field.getParent();
         return f.getG() + 1;
     }
 
     /**
-     * Gibt das Field mit dem geringsten Gewicht aus einer ArrayList zurueck
      * 
-     * @param l Liste aus FieldInfo 
-     * @return 
+     * Returns the FieldInfo with the lowest Weigth in a ArrayList
+     * 
+     * 
+     * @param l ArrayList<FieldInfo> , in find path it's the openList 
+     * @return FieldInfo with the lowest weight in an ArrayList<FieldInfo>
      */
     private static FieldInfo getLeastWeight(ArrayList<FieldInfo> l) //Field aus open-/closedList mit niedrigster Weight suchen
     {
         FieldInfo least = null;
         for (FieldInfo f : l) {
-            if ((least == null) || (f.getWeight()+f.getG() < least.getWeight()+least.getG())) {
+            if ((least == null) || (f.getWeight() + f.getG() < least.getWeight() + least.getG())) {
                 least = f;
             }
         }
@@ -364,16 +373,17 @@ public class Pathfinder {
     }
 
     /**
+     *  check to see if this path to that square is better (lower Costs) than anoth in the openList
      * 
      * 
-     * @param f
-     * @param l
-     * @return 
+     * @param f compared FieldInfo
+     * @param l List to Compare
+     * @return an boolean value if there is an shorter PAth to the FieldInfo f in the openList or not
      */
     private static boolean betterIn(FieldInfo f, ArrayList<FieldInfo> l) //Umweg gegangen?
     {
         for (FieldInfo field : l) {
-            if (field.getXCoord() == f.getXCoord() && field.getYCoord() == f.getYCoord() && field.getWeight()+field.getG() <= f.getWeight()+f.getG()) {
+            if (field.getXCoord() == f.getXCoord() && field.getYCoord() == f.getYCoord() && field.getWeight() + field.getG() <= f.getWeight() + f.getG()) {
                 return true;
             }
         }
