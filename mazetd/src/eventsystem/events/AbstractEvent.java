@@ -60,6 +60,9 @@ public abstract class AbstractEvent extends EventObject {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /**
+     * The events unique id.
+     */
     private int eventID = getContiniousEventID();
     //==========================================================================
     //===   Constructor & Methods

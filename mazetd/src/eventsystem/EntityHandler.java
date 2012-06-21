@@ -47,7 +47,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * The class EntityHandler
+ * The class EntityHandler is responsible for invoking EntityEvents.
  * @author Hans Ferchland
  */
 public class EntityHandler {
@@ -85,8 +85,9 @@ public class EntityHandler {
     //==========================================================================
 
     /**
-     * Adds a EntityListener for any given set of AbstractEntity.
-     * @param entityListener the listener
+     * Adds a EntityListener for any given set of AbstractEntity or null if you 
+     * want to listen to all the entities events
+     * @param entityListener the listener to add
      */
     void addEntityListener(EntityListener entityListener, AbstractEntity... entitys) {
 
@@ -103,6 +104,11 @@ public class EntityHandler {
         }
     }
 
+    /**
+     * Removes a EntityListener from the handler, the listener will no longer
+     * be informed about entity events.
+     * @param listener the listener to remove
+     */
     void removeEntityListener(EntityListener listener) {
         EntityListener remove = null;
         for (Map.Entry<AbstractEntity, HashSet<EntityListener>> entry : entityListeners.entrySet()) {

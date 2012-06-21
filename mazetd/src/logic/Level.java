@@ -61,7 +61,8 @@ public class Level {
     //===   Constants
     //==========================================================================
 
-    public static final int TOWER_GOLD_COST = 20;
+    public static final int LEVEL_TOWER_GOLD_COST = 20;
+    public static final int LEVEL_MAXIMUM_WAVES = 30;
 
     //==========================================================================
     //===   Singleton
@@ -93,7 +94,6 @@ public class Level {
     private Player player = Player.getInstance();
     private boolean initialized = false;
     private EntityManager entityManager = EntityManager.getInstance();
-    private EventManager eventManager = EventManager.getInstance();
     private CreepAI creepAI = CreepAI.getInstance();
     private ScreenRayCast3D rayCast3D = ScreenRayCast3D.getInstance();
     private Collider3D collider3D = Collider3D.getInstance();
@@ -195,7 +195,7 @@ public class Level {
 
         WaveManager.WaveDescription description;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < LEVEL_MAXIMUM_WAVES; i++) {
             description = waveManager.new WaveDescription();
             description.creepCount = 5 + Math.round(0.1f * i * i);
             description.creepDamage = 80 + 15 * i;
@@ -245,14 +245,14 @@ public class Level {
 //        t.replaceOrb(Orb.ElementType.RED, 0);
 //        t.replaceOrb(Orb.ElementType.RED, 1);
 //        t.replaceOrb(Orb.ElementType.GREEN, 2);
-            player.addGold(-TOWER_GOLD_COST);
+            player.addGold(-LEVEL_TOWER_GOLD_COST);
             creepAI.addTowerToSquare(square, Pathfinder.TOWER_WEIGHT);
             return;
         }
     }
 
     public boolean enoughGold() {
-        return player.getGold() >= TOWER_GOLD_COST;
+        return player.getGold() >= LEVEL_TOWER_GOLD_COST;
     }
 
     /**

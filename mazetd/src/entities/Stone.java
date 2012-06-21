@@ -50,7 +50,9 @@ import jme3tools.optimize.GeometryBatchFactory;
 import mazetd.MazeTDGame;
 
 /**
- * The class Stone.
+ * The class Stone as a blocking element of the map/level.
+ * TODO: Hady
+ * 
  * @author Hady Khalifa
  * @version
  */
@@ -69,7 +71,7 @@ public class Stone extends AbstractEntity {
     //===   Methods & Constructor
     //==========================================================================
     /**
-     * Constructor
+     * Constructor for a stone.
      * 
      * @param name
      * @param square 

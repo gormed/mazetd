@@ -138,7 +138,7 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         Tower sel = player.getSelectedTower();
         if (sel != null && !sel.isDead()) {
             sel.demolish();
-            player.addGold(Math.round(Level.TOWER_GOLD_COST * 0.4f));
+            player.addGold(Math.round(Level.LEVEL_TOWER_GOLD_COST * 0.4f));
             player.setSelectedTower(null);
         }
     }

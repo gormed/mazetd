@@ -37,7 +37,6 @@ package mazetd;
 
 import com.jme3.collision.MotionAllowedListener;
 import com.jme3.input.InputManager;
-import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -46,11 +45,11 @@ import com.jme3.scene.Node;
 import entities.Map.MapSquare;
 
 /**
- *
+ * The class IsoCameraControl that handles the camera ingame.
  * @author Hans Ferchland
- * @version 0.1 #2
+ * @version 0.2
  */
-public class IsoCameraControl implements ActionListener {
+public class IsoCameraControl {
     //==========================================================================
     //===   Static Fields
     //==========================================================================
@@ -155,26 +154,29 @@ public class IsoCameraControl implements ActionListener {
         cam.setRotation(new Quaternion(rot));
     }
 
+    /**
+     * Checks if the camera is currently enabled
+     * @return true if enabled, false otherwise
+     */
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Sets the camaras state to the desired value.
+     * @param enabled true if the camera should update, false otherwise
+     */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    /**
+     * Focuses a given map-square.
+     * @param square the square to look at
+     */
     public void lookAtMapSquare(MapSquare square) {
         if (square != null) {
             cam.setLocation(new Vector3f(square.getLocalTranslation().x, CAMERA_HEIGHT, -CAMERA_HEIGHT / 2.2f));
         }
-    }
-
-    /**
-     * Till jet unused.
-     * @param name
-     * @param isPressed
-     * @param tpf 
-     */
-    public void onAction(String name, boolean isPressed, float tpf) {
     }
 }

@@ -39,11 +39,14 @@ import entities.Creep;
 import entities.Tower;
 
 /**
- * The class CreepEvent.
+ * The class CreepEvent that capsules all data of a creep action.
  * @author Hans Ferchland
  * @version
  */
 public class CreepEvent extends AbstractEvent {
+    /**
+     * The type of creep event.
+     */
     public enum CreepEventType {
         Death,
         ReachedEnd,
@@ -59,6 +62,12 @@ public class CreepEvent extends AbstractEvent {
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
+    /**
+     * Creates a new creep evnent by a given type and creep. Tower is optional.
+     * @param type the events type
+     * @param creep the creep that triggers the event
+     * @param target the tower if creep was killed or attacks the tower, null otherwise
+     */
     public CreepEvent(CreepEventType type, Creep creep, Tower target) {
         super(creep);
         this.creep = creep;
@@ -66,14 +75,27 @@ public class CreepEvent extends AbstractEvent {
         this.type = type;
     }
     
+    /**
+     * Gets the creep that triggered the event.
+     * @return the creep
+     */
     public Creep getCreep() {
         return creep;
     }
-
+    
+    /**
+     * The tower currently attacked by the creep, or the tower that killed the
+     * creep.
+     * @return the tower
+     */
     public Tower getTarget() {
         return target;
     }
 
+    /**
+     * Gets the type of event the creep had triggered.
+     * @return the events type
+     */
     public CreepEventType getType() {
         return type;
     }

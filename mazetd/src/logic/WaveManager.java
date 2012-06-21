@@ -46,7 +46,9 @@ import java.util.Queue;
 import logic.pathfinding.Pathfinder;
 
 /**
- *
+ * The class WaveManager handles all creepwave and is resposible for the
+ * timing of waves, spwaning next wave after old is dead and determining when
+ * the last wave was killed and the player has won.
  * @author Hans Ferchland
  */
 public class WaveManager {

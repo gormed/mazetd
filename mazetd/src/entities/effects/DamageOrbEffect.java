@@ -45,15 +45,29 @@ import entities.Orb.ElementType;
 import mazetd.MazeTDGame;
 
 /**
- * The class DamageOrbEffect.
+ * The class DamageOrbEffect for creeps. This effect will do extra 
+ * damage to the creep.
  * @author Hady Khalifa
  */
 public class DamageOrbEffect extends AbstractOrbEffect {
 
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
+    /**
+     * The damage done each level in percent of the maximum health of a creep.
+     */
     private float[] damage = {0.05f, 0.075f, 0.15f};
     // Particle
     private ParticleEmitter fireEmitter;
+    //==========================================================================
+    //===   Methods & Constructor
+    //==========================================================================
 
+    /**
+     * Creates a DamageOrbEffect with a given level.
+     * @param level the level of the effect
+     */
     public DamageOrbEffect(int level) {
         super(OrbEffectType.FIRE, ElementType.RED, level);
         createFireEmitter(MazeTDGame.getInstance());
@@ -70,10 +84,15 @@ public class DamageOrbEffect extends AbstractOrbEffect {
     @Override
     public void onStart(Creep c) {
         infected = c;
+        // get maximum health
         float hp = infected.getMaxHealthPoints();
+        // do damage in percent of the max hp
         infected.applyDamge(hp * damage[level]);
+        // attach fire effect
         infected.getCollidableEntityNode().attachChild(fireEmitter);
+        // start emitting
         emittFireParticles();
+        // remove the effect after damage
         infected.removeOrbEffect(this);
     }
 
@@ -88,7 +107,7 @@ public class DamageOrbEffect extends AbstractOrbEffect {
     private void createFireEmitter(MazeTDGame game) {
         /** Uses Texture from jme3-test-data library! */
         fireEmitter = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 15);
-        Material mat_red = new Material(game.getAssetManager(), 
+        Material mat_red = new Material(game.getAssetManager(),
                 "Common/MatDefs/Misc/Particle.j3md");
         mat_red.setTexture("Texture", game.getAssetManager().loadTexture(
                 "Textures/Effects/flame.png"));

@@ -38,15 +38,13 @@ package eventsystem;
 import entities.Creep;
 import entities.Tower;
 import eventsystem.events.CreepEvent;
-import eventsystem.events.EntityEvent;
 import eventsystem.listener.CreepListener;
-import eventsystem.listener.EntityListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 /**
- *
+ * The class CreepHandler for the handling of the creep-events.
  * @author Hans Ferchland
  */
 public class CreepHandler {
@@ -84,8 +82,8 @@ public class CreepHandler {
     //==========================================================================
 
     /**
-     * Adds a CreepListener for any given set of Creep.
-     * @param creepListener the listener
+     * Adds a CreepListener for any given set of Creeps.
+     * @param creepListener the listener to add
      */
     void addCreepListener(CreepListener creepListener, Creep... creeps) {
         for (Creep c : creeps) {
@@ -101,6 +99,11 @@ public class CreepHandler {
         }
     }
 
+    /**
+     * Removes a creeplistener from the handler, the listener will no longer
+     * be informed about creep events.
+     * @param listener the listener to remove
+     */
     void removeCreepListener(CreepListener listener) {
         CreepListener remove = null;
         for (Map.Entry<Creep, HashSet<CreepListener>> entry :
@@ -121,6 +124,14 @@ public class CreepHandler {
     //===   Inner Classes
     //==========================================================================
 
+    /**
+     * Invokes a creep action/event by a given type and the creep invoking the
+     * action. If the creep attacks a tower or is killed by a tower you can
+     * handle the tower too, but otherwise leave it null.
+     * @param actionType the type of creep-event
+     * @param creep the creep invoking the action
+     * @param target the target tower if needed, otherwise null
+     */
     public void invokeCreepAction(
             CreepEvent.CreepEventType actionType, Creep creep,
             Tower target) {

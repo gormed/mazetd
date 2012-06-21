@@ -53,29 +53,42 @@ import mazetd.IsoCameraControl;
 import mazetd.MazeTDGame;
 
 /**
- * The class SingleplayerState
- * @author Hans
- * @version
+ * The class SingleplayerState is the main state the game will process.
+ * @author Hans Ferchland
+ * @version 0.3
  */
 public class SingleplayerState extends Gamestate {
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
 
     private MazeTDGame game;
     private AmbientLight ambientLight;
     private PointLight pointLight;
     private Level level;
+    //==========================================================================
+    //===   Methods & Constructor
+    //==========================================================================
 
+    /**
+     * Creates an instance of the state.
+     */
     public SingleplayerState() {
         super(GamestateManager.SINGLEPLAYER_STATE);
     }
 
     @Override
     public void update(float tpf) {
-        
+
         updateLightsAndShadows(tpf);
         level.update(tpf);
 
     }
-
+    
+    /**
+     * Updates the shadows and light position.
+     * @param tpf the time-gap
+     */
     private void updateLightsAndShadows(float tpf) {
         pointLight.setPosition(game.getCamera().getLocation().clone());
         Vector3f camLoc = game.getCamera().getLocation().clone();
@@ -89,10 +102,10 @@ public class SingleplayerState extends Gamestate {
     @Override
     protected void loadContent(MazeTDGame game) {
         this.game = game;
-        
-        
+
+
         game.getIsoCameraControl().reset();
-        
+
         // setup level
         this.level = Level.getInstance();
         level.initialize();
@@ -108,11 +121,14 @@ public class SingleplayerState extends Gamestate {
 
         game.getRootNode().addLight(pointLight);
         game.getRootNode().addLight(ambientLight);
-        
+
         game.setPause(false);
         //test();
     }
 
+    /*
+     * Only for testing purposes.
+     */
     private void test() {
         ////////////////////////////////////////////////////////////////
         //                      TESTING CODE
@@ -163,12 +179,18 @@ public class SingleplayerState extends Gamestate {
 
     @Override
     protected void unloadContent() {
-                
+
         level.destroy();
         // remove all content from sg, gc will take care of the rest
         game.getRootNode().detachAllChildren();
         game.getRootNode().removeLight(ambientLight);
         game.getRootNode().removeLight(pointLight);
 
+    }
+
+    @Override
+    public void terminate() {
+        super.terminate();
+        unloadContent();
     }
 }

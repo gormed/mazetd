@@ -82,7 +82,7 @@ public class Player implements EntityListener, CreepListener {
     /**
      * The initial live the player starts with.
      */
-    public static final int PLAYRER_LIVES = 5;
+    public static final int PLAYRER_LIVES = 15;
     //==========================================================================
     //===   Singleton
     //==========================================================================

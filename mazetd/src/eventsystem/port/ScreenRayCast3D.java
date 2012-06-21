@@ -48,7 +48,6 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import eventsystem.EventManager;
-import eventsystem.Mappings;
 import eventsystem.listener.MouseInputListener;
 import mazetd.MazeTDGame;
 
@@ -58,6 +57,8 @@ import mazetd.MazeTDGame;
  * @author Hans Ferchland
  */
 public class ScreenRayCast3D implements MouseInputListener {
+    public static String RAYCAST_3D = "Raycast_3D";
+    
     //==========================================================================
     //===   Singleton
     //==========================================================================
@@ -66,16 +67,10 @@ public class ScreenRayCast3D implements MouseInputListener {
      * The hidden constructor of the singleton.
      */
     private ScreenRayCast3D() {
-
+        // add listener for left click
         EventManager.getInstance().addMouseButtonEvent(
-                Mappings.RAYCAST_3D,
+                RAYCAST_3D,
                 new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-
-        EventManager.getInstance().addMouseButtonEvent(
-                Mappings.RAYCAST_3D_MOVE,
-                new MouseButtonTrigger(MouseInput.BUTTON_MIDDLE),
-                new MouseButtonTrigger(MouseInput.BUTTON_MIDDLE));
-
     }
 
     /**
@@ -126,8 +121,7 @@ public class ScreenRayCast3D implements MouseInputListener {
 
         EventManager.getInstance().addMouseInputListener(
                 this,
-                Mappings.RAYCAST_3D,
-                Mappings.RAYCAST_3D_MOVE);
+                RAYCAST_3D);
         initialized = true;
     }
 
@@ -174,6 +168,10 @@ public class ScreenRayCast3D implements MouseInputListener {
         return lastHovered;
     }
 
+    /**
+     * Gets the last point hit by a ray.
+     * @return the 3D position of the hit
+     */
     public Vector3f getLastWorldHit() {
         return lastWorldHit;
     }
@@ -346,7 +344,7 @@ public class ScreenRayCast3D implements MouseInputListener {
         //===   Mouse Clicks
         //==========================================================================
 
-        if (!isPressed && name.equals(Mappings.RAYCAST_3D)) {
+        if (!isPressed && name.equals(RAYCAST_3D)) {
             // 1. Reset results list.
             CollisionResults results = new CollisionResults();
             // 2. Aim the ray from cam loc to cam direction.

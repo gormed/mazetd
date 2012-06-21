@@ -46,19 +46,20 @@ import logic.pathfinding.CreepAI;
 import mazetd.MazeTDGame;
 
 /**
- * The class RastaOrbEffect.
+ * The class RastaOrbEffect is a SpecialElementType with a unique effect if the
+ * orb-combination of a tower fits. This effect will let a hit creep 
+ * run backwards.
+ * 
  * @author Hady Khalifa
  * @version
+ * @see OrbEffectManager
  */
 public class RastaOrbEffect extends AbstractOrbEffect {
 
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private float[] damage = {4, 6, 10};
-    private float[] particlePeriod = {0.9f, 0.9f, 0.9f};
-    private float[] duration = {3, 2, 3};
-    private float particleCounter = 0;
+    private float duration = 3;
     private float durationCounter = 0;
     private boolean decaying = false;
     // Particle
@@ -68,29 +69,28 @@ public class RastaOrbEffect extends AbstractOrbEffect {
     //===   Methods & Constructor
     //==========================================================================
 
-    public RastaOrbEffect(int level) {
-        super(OrbEffectType.RASTA, SpecialElementType.RASTA, level);
-        createPoisonEmitter(MazeTDGame.getInstance());
+    /**
+     * Creates a SpeedOrbEffect.
+     */
+    public RastaOrbEffect() {
+        super(OrbEffectType.RASTA, SpecialElementType.RASTA, 0);
+        createRastaEmitter(MazeTDGame.getInstance());
     }
 
     @Override
     public void update(float tpf) {
         durationCounter += tpf;
-        particleCounter += tpf;
 
         if (decaying) {
             if (poisonEmitter.getNumVisibleParticles() == 0) {
                 infected.getCollidableEntityNode().detachChild(poisonEmitter);
             }
         } else {
-            if (durationCounter > duration[level]) {
+            if (durationCounter > duration) {
                 infected.removeOrbEffect(this);
                 decaying = true;
             }
         }
-
-
-
     }
 
     @Override
@@ -99,10 +99,15 @@ public class RastaOrbEffect extends AbstractOrbEffect {
 
     @Override
     public void onStart(Creep c) {
+        // set reversed creep mode on
         creepAI.setSomeReverse(true);
+        // gets save the infected
         infected = c;
+        // reverse path of the creep
         infected.setReverse(true);
+        // attach effect and start effect
         infected.getCollidableEntityNode().attachChild(poisonEmitter);
+        poisonEmitter.emitAllParticles();
     }
 
     @Override
@@ -110,35 +115,36 @@ public class RastaOrbEffect extends AbstractOrbEffect {
 
         infected.setReverse(false);
         creepAI.createUniqueCreepPath(infected);
+        poisonEmitter.setNumParticles(0);
     }
 
-    private void createPoisonEmitter(MazeTDGame game) {
+    /**
+     * Creates an emitter for the effect as visuals.
+     * @param game the mazetdgame reference
+     */
+    private void createRastaEmitter(MazeTDGame game) {
         /** Uses Texture from jme3-test-data library! */
-        poisonEmitter = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 3);
+        poisonEmitter = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 5);
         Material mat_red = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
         mat_red.setTexture("Texture",
-                game.getAssetManager().loadTexture("Textures/Effects/PoisonParticle.png"));
+                game.getAssetManager().loadTexture("Textures/Effects/rasta.png"));
         poisonEmitter.setMaterial(mat_red);
         poisonEmitter.setImagesX(1);
         poisonEmitter.setImagesY(1);
-        poisonEmitter.setEndColor(new ColorRGBA(0f, 1f, 0f, 1f));
-        poisonEmitter.setStartColor(new ColorRGBA(0.5f, 1f, 0f, 0.0f));
+        poisonEmitter.setEndColor(new ColorRGBA(1f, 0f, 0f, 1f));
+        poisonEmitter.setStartColor(new ColorRGBA(0f, 1f, 0f, 0.0f));
         poisonEmitter.getParticleInfluencer().setInitialVelocity(
-                new Vector3f(0, 1, 0));
-        poisonEmitter.setStartSize(0.025f);
-        poisonEmitter.setEndSize(0.075f);
+                new Vector3f(0, 1.5f, 0));
+        poisonEmitter.setStartSize(0.05f);
+        poisonEmitter.setEndSize(0.1f);
         poisonEmitter.setGravity(0f, -2f, 1f);
         poisonEmitter.setLowLife(0.6f);
-        poisonEmitter.setHighLife(1.0f);
+        poisonEmitter.setHighLife(1.2f);
+        poisonEmitter.setRotateSpeed((float) Math.PI);
+        poisonEmitter.setRandomAngle(true);
         poisonEmitter.getParticleInfluencer().setVelocityVariation(0.25f);
         poisonEmitter.preload(game.getRenderManager(), game.getViewPort());
-        poisonEmitter.setParticlesPerSec(0);
+        poisonEmitter.setParticlesPerSec(5);
 
-    }
-
-    private void emittPoisonParticles() {
-        poisonEmitter.setParticlesPerSec(3);
-        poisonEmitter.emitAllParticles();
-        poisonEmitter.setParticlesPerSec(0);
     }
 }

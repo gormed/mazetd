@@ -421,7 +421,6 @@ public class Creep extends CollidableEntity {
                             }
                         }
                     }
-                    // TODO: handle tower-attacking or greep-enters-goal 
                     // event otherwise we are attacking a tower or are 
                     // at the goal.
                     CreepHandler.getInstance().invokeCreepAction(
@@ -721,8 +720,6 @@ public class Creep extends CollidableEntity {
     }
 
     public boolean isOnSquare(MapSquare field) {
-        // TODO: check the old square too if building a tower!
-
         return field.equals(currentSquare)
                 || (lastSquare != null && field.equals(lastSquare));
     }

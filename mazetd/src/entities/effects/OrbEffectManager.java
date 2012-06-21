@@ -88,17 +88,16 @@ public class OrbEffectManager {
     }
 
     /**
-     * Creates a SpecialOrbEffect by a given SpecialElementType and level 0..2
+     * Creates a SpecialOrbEffect by a given SpecialElementType
      * @param type the SpecialElementType of the OrbEffect to create
-     * @param level the level of the OrbEffect
      * @return the OrbEffect according to the given parameters
      */
-    public static AbstractOrbEffect getSpecialOrbEffect(SpecialElementType type, int level) {
+    public static AbstractOrbEffect getSpecialOrbEffect(SpecialElementType type) {
         switch (type) {
             case MULTI:
                 return null;
             case RASTA:
-                return new RastaOrbEffect(level);
+                return new RastaOrbEffect();
 
             case SPLASH:
             default:
@@ -155,6 +154,9 @@ public class OrbEffectManager {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /**
+     * Defines the combo for the rasta tower.
+     */
     private static final ElementType[] rastOrbCombo = {ElementType.RED, ElementType.YELLOW, ElementType.GREEN};
     //==========================================================================
     //===   Methods
@@ -198,6 +200,11 @@ public class OrbEffectManager {
         return effects.toArray(effectArray);
     }
 
+    /**
+     * Gets the list of special effects for a set of three ElementTypes.
+     * @param elements the elemnts to get the effect from
+     * @return the list of AbstractOrbEffect if there is one, null otherwise
+     */
     private ArrayList<AbstractOrbEffect> getSpecialEffectList(ElementType[] elements) {
         ArrayList<AbstractOrbEffect> effects =
                 new ArrayList<AbstractOrbEffect>();
@@ -216,13 +223,18 @@ public class OrbEffectManager {
         }
 
         if (fits) {
-            effects.add(getSpecialOrbEffect(
-                    Orb.SpecialElementType.RASTA, 0));
+            effects.add(getSpecialOrbEffect(Orb.SpecialElementType.RASTA));
         }
 
         return effects;
     }
 
+    /**
+     * Gets the normal effect list from orb-type count in a tower.
+     * @param orbTypeCount the count of the 5 diffrent orb types
+     * @return the effects that are produced by the given orbs, 
+     * empty list if no orbs
+     */
     private ArrayList<AbstractOrbEffect> getEffectList(int[] orbTypeCount) {
         ArrayList<AbstractOrbEffect> effects =
                 new ArrayList<AbstractOrbEffect>();
@@ -235,7 +247,4 @@ public class OrbEffectManager {
         }
         return effects;
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }

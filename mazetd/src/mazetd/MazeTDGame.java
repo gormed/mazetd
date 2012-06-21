@@ -96,7 +96,7 @@ public class MazeTDGame extends SimpleApplication {
     private MazeTDGame() {
         super();
         assetManager = JmeSystem.newAssetManager(Thread.currentThread().getContextClassLoader().getResource("com/jme3/asset/Desktop.cfg"));
-        
+
     }
 
     /**
@@ -136,7 +136,7 @@ public class MazeTDGame extends SimpleApplication {
             new HashMap<String, AbstractAppState>();
     private GameDebugActionListener gameDebugActionListener =
             new GameDebugActionListener();
-    private boolean showFps = true;
+    private boolean showFps = false;
     /** The post processor. */
     private FilterPostProcessor postProcessor;
     private BloomFilter bloomFilter =
@@ -267,7 +267,8 @@ public class MazeTDGame extends SimpleApplication {
         // init isometric camera
         isoCameraControl = new IsoCameraControl(this);
         detachDebugCamera();
-
+        setDisplayFps(showFps);
+        setDisplayStatView(showFps);
         //init the Post-Processors
         initPostProcessors();
         // init input for debugging and camera
@@ -326,7 +327,6 @@ public class MazeTDGame extends SimpleApplication {
 
     @Override
     public void simpleRender(RenderManager rm) {
-        //TODO: add render code
     }
 
     /**

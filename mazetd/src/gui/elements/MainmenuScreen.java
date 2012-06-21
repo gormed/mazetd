@@ -35,20 +35,14 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui.elements;
 
-import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import mazetd.MazeTDGame;
-import gamestates.GamestateManager;
 import gamestates.lib.SingleplayerState;
-import de.lessvoid.nifty.elements.Element;
-import gamestates.Gamestate;
 import gamestates.GamestateManager;
-import gui.elements.HudScreen;
 
 /**
  * The class "MainmenuScreen"  is a registered Screencontroller that lets the 

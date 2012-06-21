@@ -39,9 +39,10 @@ import entities.Orb.ElementType;
 import entities.Tower;
 
 /**
- * The class SpeedOrbEffect.
+ * The class SpeedOrbEffect is the effect of the yellow orb, that increases
+ * attack rate of a tower.
  * @author Hans Ferchland
- * @version
+ * @version 0.2
  */
 public class SpeedOrbEffect extends AbstractOrbEffect {
 
@@ -49,11 +50,19 @@ public class SpeedOrbEffect extends AbstractOrbEffect {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /**
+     * The three diffrent rates for each level.
+     */
     private float[] attackRate = { 1.05f, 0.8f, 0.55f };
     private float oldAttackRate = 0;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
+
+    /**
+     * Creates a SpeedOrbEffect with a given level.
+     * @param level the level of the effect
+     */
     public SpeedOrbEffect(int level) {
         super(OrbEffectType.RATE, ElementType.YELLOW, level);
     }
@@ -71,12 +80,15 @@ public class SpeedOrbEffect extends AbstractOrbEffect {
     @Override
     public void onStart(Tower t) {
         super.onStart(t);
+        // save old attack rate
         oldAttackRate = t.getAttackRate();
+        // apply new rate
         t.setAttackRate(attackRate[level]);
     }
 
     @Override
     public void onEnd(Tower t) {
+        // reset attack rate on end
         t.setAttackRate(oldAttackRate);
         super.onEnd(t);
     }

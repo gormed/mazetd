@@ -37,11 +37,21 @@ package eventsystem.interfaces;
 
 import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResults;
+import eventsystem.port.Collider3D;
 
 /**
- *
+ * The interface Collidable3D marks any implementing object as collidable.
+ * Those objects can be added to the Collider3D.
+ * 
  * @author Hans Ferchland
+ * 
+ * @see Collider3D
  */
 public interface Collidable3D extends Collidable {
+    /**
+     * This method is invoked by the Collider3D if the object was added to the 
+     * Collider3D and a collision with this object happens.
+     * @param collisionResults the results of the collision
+     */
     public void onCollision3D(CollisionResults collisionResults);
 }

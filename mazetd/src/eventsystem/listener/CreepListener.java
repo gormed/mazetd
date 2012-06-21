@@ -42,5 +42,10 @@ import eventsystem.events.CreepEvent;
  * @author Hans Ferchland
  */
 public interface CreepListener {
+    /**
+     * Is invoked by event manager if a certain creep event happens.
+     * @param e the event infos, what creep, what event type and so on
+     * @see CreepEvent
+     */
     public void onAction(CreepEvent e);
 }

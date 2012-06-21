@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The class TimerHandler.
+ * The class TimerHandler that handles all time events through the update call.
  * @author Hans Ferchland
  */
 public class TimerHandler {
@@ -84,8 +84,8 @@ public class TimerHandler {
     //===   Methods
     //==========================================================================
     /**
-     * Updates all timer events added to the manager.
-     * @param tpf 
+     * Updates all timer events added to the manager/handler.
+     * @param tpf the time-gap
      */
     private void updateTimerEvents(float tpf) {
         TimerEvent t = new TimerEvent(this, tpf);

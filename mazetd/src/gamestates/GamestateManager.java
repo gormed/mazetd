@@ -44,6 +44,9 @@ import mazetd.MazeTDGame;
  * @version 0.1
  */
 public class GamestateManager {
+    //==========================================================================
+    //===   Static Fields
+    //==========================================================================
 
     /** The Constant SINGLEPLAYER_STATE. */
     public static final String SINGLEPLAYER_STATE = "Singleplayer";
@@ -55,15 +58,21 @@ public class GamestateManager {
     public static final String TUTORIAL_STATE = "Tutorial";
     /** The instance of the gamestate manager. */
     private static GamestateManager instance;
+    /** The flag to lock the updateing of the current state */
+    private static volatile boolean lockUpdate = false;
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
     /** The gamestates to hold. */
     private HashMap<String, Gamestate> gamestates;
     /** The current state, that will be updated. */
     private Gamestate currentState;
     /** The next state if there is a next state to enter. */
     private Gamestate nextState;
-    /** The flag to lock the updateing of the current state */
-    private static volatile boolean lockUpdate = false;
 
+    //==========================================================================
+    //===   Singleton
+    //==========================================================================
     /** Retrieves the current state of locking */
     public static synchronized boolean isLocked() {
         return lockUpdate;
@@ -97,6 +106,9 @@ public class GamestateManager {
         }
         return instance = new GamestateManager();
     }
+    //==========================================================================
+    //===   Methods
+    //==========================================================================
 
     /**
      * Initializes the GamestateManager for the first time.
@@ -171,14 +183,15 @@ public class GamestateManager {
         }
         return gamestates.get(name);
     }
-    
+
     /**
      * Gets the currently set gamestates name.
      * @return the name of the currently active gamestate
      */
     public String getCurrentState() {
-        if (currentState == null)
+        if (currentState == null) {
             return null;
+        }
         return currentState.getName();
     }
 

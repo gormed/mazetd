@@ -45,7 +45,10 @@ import entities.base.AbstractEntity;
  * @version
  */
 public class EntityEvent extends AbstractEvent {
-
+    
+    /**
+     * The type of entity-event, that happened.
+     */
     public enum EntityEventType {
 
         Click,
@@ -63,12 +66,25 @@ public class EntityEvent extends AbstractEvent {
     //===   Methods & Constructor
     //==========================================================================
 
+    /**
+     * Creates a new entity-event.
+     * @param source the firing source
+     * @param entity the entity that invoked the event
+     * @param eventType the type of event that happened
+     */
     public EntityEvent(Object source, AbstractEntity entity, EntityEventType eventType) {
         super(source);
         this.entity = entity;
         this.eventType = eventType;
     }
 
+    /**
+     * Creates a new entity-event.
+     * @param entity the entity that invoked the event
+     * @param eventType the type of event that happened
+     * @param mouse the mouse position while the event happened
+     * @param result the collision results of the ray-cast
+     */
     public EntityEvent(
             AbstractEntity entity,
             EntityEventType eventType,
@@ -81,22 +97,35 @@ public class EntityEvent extends AbstractEvent {
         this.result = result;
     }
 
+    /**
+     * Gets the entity that invoked the event.
+     * @return the invoking entity
+     */
     public AbstractEntity getEntity() {
         return entity;
     }
 
+    /**
+     * Gets the event type of the event.
+     * @return the entity events type
+     */
     public EntityEventType getEventType() {
         return eventType;
     }
 
+    /**
+     * Gets the events mouse-coordinate
+     * @return 
+     */
     public Vector2f getMouse() {
         return mouse;
     }
 
+    /**
+     * Gets the events collision results
+     * @return 
+     */
     public CollisionResult getResult() {
         return result;
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }

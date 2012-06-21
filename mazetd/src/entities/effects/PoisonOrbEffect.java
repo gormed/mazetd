@@ -45,17 +45,27 @@ import entities.Orb.ElementType;
 import mazetd.MazeTDGame;
 
 /**
- * The class PoisonOrbEffect.
+ * The class PoisonOrbEffect is a Creep effect. This effect will damage the 
+ * creep over time
  * @author Hans Ferchland
- * @version
+ * @version 0.2
  */
 public class PoisonOrbEffect extends AbstractOrbEffect {
 
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /**
+     * Percentual damage to apply to the creep each level.
+     */
     private float[] damage = {0.01f, 0.0125f, 0.02f};
+    /**
+     * Period of the effect for each level.
+     */
     private float[] damagePeriod = {0.4f, 0.4f, 0.4f};
+    /**
+     * Effect-duaration for each level.
+     */
     private float[] duration = {3, 4, 5};
     private float damageCounter = 0;
     private float durationCounter = 0;
@@ -66,6 +76,10 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
     //===   Methods & Constructor
     //==========================================================================
 
+    /**
+     * Creates a PoisonOrbEffect with a given level
+     * @param level the level of the effect
+     */
     public PoisonOrbEffect(int level) {
         super(OrbEffectType.POISON, ElementType.GREEN, level);
         createPoisonEmitter(MazeTDGame.getInstance());
@@ -90,14 +104,13 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
                 damageCounter = 0;
             }
         }
-
-
-
     }
 
     @Override
     public void onEffect() {
+        // emitt particles
         emittPoisonParticles();
+        // apply percentage damage
         float hp = infected.getMaxHealthPoints();
         infected.applyDamge(hp * damage[level]);
     }
@@ -112,6 +125,10 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
     public void onEnd(Creep c) {
     }
 
+    /**
+     * Creates a particle emitter for the effect visuals
+     * @param game the mazetdgame ref
+     */
     private void createPoisonEmitter(MazeTDGame game) {
         /** Uses Texture from jme3-test-data library! */
         poisonEmitter = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 3);
@@ -136,6 +153,9 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
 
     }
 
+    /**
+     * Emitts three particles each tick when damage is applied.
+     */
     private void emittPoisonParticles() {
         poisonEmitter.setParticlesPerSec(3);
         poisonEmitter.emitAllParticles();

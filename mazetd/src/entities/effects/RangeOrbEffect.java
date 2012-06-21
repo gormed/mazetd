@@ -39,14 +39,28 @@ import entities.Orb.ElementType;
 import entities.Tower;
 
 /**
- * The class RangeOrbEffect.
+ * The class RangeOrbEffect for a tower, this effect will increase the 
+ * range of a tower.
  * @author Hans Ferchland
  */
 public class RangeOrbEffect extends AbstractOrbEffect {
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
 
+    /**
+     * The range for each effect level
+     */
     private float[] range = { 2.5f , 3.5f, 5f };
     private float oldRange = 0;
-    
+    //==========================================================================
+    //===   Methods & Constructor
+    //==========================================================================
+
+    /**
+     * Creates a RangeOrbEffect with a given level
+     * @param level the level of the effect
+     */
     public RangeOrbEffect(int level) {
         super(OrbEffectType.RANGE, ElementType.WHITE, level);
     }
@@ -62,13 +76,16 @@ public class RangeOrbEffect extends AbstractOrbEffect {
     @Override
     public void onStart(Tower t) {
         super.onStart(t);
+        // Save old range
         oldRange = t.getTowerRange();
+        // apply new range
         t.setTowerRange(range[level]);
     }
 
     @Override
     public void onEnd(Tower t) {
         super.onEnd(t);
+        // reset range
         t.setTowerRange(oldRange);
     }
 }

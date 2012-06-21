@@ -45,9 +45,18 @@ import mazetd.MazeTDGame;
  * @version 0.1
  */
 public class MainmenuState extends Gamestate {
+    //==========================================================================
+    //===   Private Fields
+    //==========================================================================
 
     private MazeTDGame game;
+    //==========================================================================
+    //===   Methods & Constructor
+    //==========================================================================
 
+    /**
+     * Instanziates a new mainmeu state.
+     */
     public MainmenuState() {
         super(GamestateManager.MAINMENU_STATE);
     }
@@ -61,9 +70,7 @@ public class MainmenuState extends Gamestate {
         this.game = game;
     }
 
-
     @Override
     protected void unloadContent() {
-
     }
 }

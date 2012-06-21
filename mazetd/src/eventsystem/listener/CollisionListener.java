@@ -39,9 +39,16 @@ import eventsystem.events.CollisionEvent;
 import java.util.EventListener;
 
 /**
- * The interface CollisionListener.
+ * The interface CollisionListener for collision events of certain objects or
+ * all.
  * @author Hans Ferchland
  */
-public interface CollisionListener extends EventListener{
+public interface CollisionListener extends EventListener {
+    
+    /**
+     * Is invoked by event manager if a specific collision event happens.
+     * @param e the event data, containing hit object, position and other
+     * @see CollisionEvent
+     */
     public void onCollision(CollisionEvent e);
 }

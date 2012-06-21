@@ -80,19 +80,19 @@ public class Orb extends ClickableEntity {
         /** The white orb type, equals OrbEffectType.RATE */
         WHITE
     }
-    
-    
-    
+
+    /**
+     * The enum ElementType discribes which SpecialElements for orbs exist.
+     */
     public enum SpecialElementType {
+
         RASTA,
         SPLASH,
         MULTI
     }
-    
     //==========================================================================
     //===   Constants
     //==========================================================================
-    
     private static final float HEIGHT_OVER_GROUND = 0.4f;
     public static final int ORB_DECAY = 2;
     private static final int ORB_SAMPLES = 10;
@@ -101,7 +101,6 @@ public class Orb extends ClickableEntity {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
-    private Player player;
     private Vector3f position;
     private ElementType type;
     private Element element;
@@ -172,6 +171,9 @@ public class Orb extends ClickableEntity {
     public void onMouseLeft() {
     }
 
+    /**
+     * Lets an orb explode on click or tower destruction.
+     */
     void explodes() {
         emittExplosion();
         // set decaying
@@ -284,18 +286,17 @@ public class Orb extends ClickableEntity {
 
         element.geometry.setMaterial(element.material);
     }
-    
+
     /**
      * Applys new size for the orb if used in tower.
      */
     public void applyTowerOrbSize() {
         element.setScale(0.66f);
     }
-    
+
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
-
     /**
      * The class Element discribes the orb-element from the Orb.
      * @author Hans Ferchland
@@ -361,8 +362,8 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
-        
-                /**
+
+        /**
          * Creates a lila orb-element.
          * @return the lila orb-element
          */
@@ -373,8 +374,6 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
-        
-        
         private ColorRGBA color;
         private Geometry geometry;
         private Material material;
@@ -405,7 +404,7 @@ public class Orb extends ClickableEntity {
             geometry.setQueueBucket(Bucket.Transparent);
             geometry.setShadowMode(ShadowMode.CastAndReceive);
         }
-        
+
         /**
          * Sets the scalation of the element-geometry.
          * @param scale the new value of scale in x,y,z

@@ -45,7 +45,7 @@ import entities.Orb.ElementType;
 import mazetd.MazeTDGame;
 
 /**
- * The class PoisonOrbEffect.
+ * The class FreezeOrbEffect for creeps. This effect will slow a creep.
  * @author Hans Ferchland
  * @version
  */
@@ -54,7 +54,13 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /**
+     * The percentage of speed the creep will have from its original speed.
+     */
     private float[] slowValue = {0.8f, 0.6f, 0.4f};
+    /**
+     * The duration of the slow.
+     */
     private float[] duration = {4, 5, 6};
     private float durationCounter = 0;
     private boolean decaying = false;
@@ -65,6 +71,10 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
     //===   Methods & Constructor
     //==========================================================================
 
+    /**
+     * Creates a FreezeOrbEffect with a given level.
+     * @param level the level of the effect
+     */
     public FreezeOrbEffect(int level) {
         super(OrbEffectType.FROST, ElementType.BLUE, level);
         createFreezeEmitter(MazeTDGame.getInstance());
@@ -110,6 +120,10 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
         
     }
 
+    /**
+     * Creates the emitter for freeze effects.
+     * @param game the mazetdgame ref
+     */
     private void createFreezeEmitter(MazeTDGame game) {
                 /** Uses Texture from jme3-test-data library! */
         freezeEmitter = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 5);
