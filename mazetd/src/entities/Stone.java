@@ -118,44 +118,28 @@ public class Stone extends AbstractEntity {
         this.position = new Vector3f(pos.x, 0.0f, pos.z);
         square.setStone(this);
 
-
         material = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         material.setBoolean("UseMaterialColors", true);
         material.setColor("Specular", new ColorRGBA(ColorRGBA.Gray));
-
+        
         if (material.getMaterialDef().getName().equals("Phong Lighting")) {
-//            Texture t = game.getAssetManager().loadTexture("Textures/Shader/toon.png");
-//                t.setMinFilter(Texture.MinFilter.NearestNoMipMaps);
-//                t.setMagFilter(Texture.MagFilter.Nearest);
             material.setTexture("DiffuseMap", game.getAssetManager().loadTexture("Textures/Terrain/S1_LOD2D.jpg"));
             material.setTexture("NormalMap", game.getAssetManager().loadTexture("Textures/Terrain/S1_LOD2N.jpg"));
-//            material.setTexture("ColorRamp", t);
             material.setColor("Diffuse", ColorRGBA.White);
-//          material.setColor("Diffuse", new ColorRGBA(0.25f, 0.25f, 0.25f, 1.0f));
             material.setBoolean("VertexLighting", true);
         }
-
         // Geometry
         float[] randomAngles = {0, (float) (Math.PI * 2 * Math.random()), 0};
-
         // Stone Model
         Spatial stone =
                 game.getAssetManager().loadModel("Models/Stone/Stone_1.j3o");
-
         stone.setLocalScale(0.003f);
-
-
-
         stone.setMaterial(material);
         stone.setLocalRotation(new Quaternion(randomAngles));
-
         Node n = new Node("BatchNode");
         n.attachChild(stone);
-
         stone = GeometryBatchFactory.optimize(n);
         stone.setQueueBucket(Bucket.Translucent);
-
-
         // apply position to main node
         geometryNode.attachChild(stone);
         geometryNode.setLocalTranslation(position);

@@ -381,7 +381,7 @@ public class Pathfinder {
      */
     private static int calcG(FieldInfo field) {
         FieldInfo f = field.getParent();
-        return f.getG() + 1;
+        return f.getG() + 5;
     }
 
     /**
