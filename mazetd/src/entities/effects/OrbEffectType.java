@@ -35,6 +35,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package entities.effects;
 
+import entities.Orb;
+
 /**
  * The enum OrbEffectType for the types of the effect the different orb-elements
  * have.

@@ -39,32 +39,27 @@ import com.jme3.collision.CollisionResult;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Quad;
-import entities.Map;
 import entities.Map.MapSquare;
 import entities.geometry.ClickableGeometry;
 import eventsystem.EventManager;
 import eventsystem.events.TimerEvent;
 import eventsystem.listener.TimerEventListener;
 import eventsystem.port.ScreenRayCast3D;
-import logic.Level;
-import logic.Player;
-import logic.pathfinding.Pathfinder;
 import mazetd.MazeTDGame;
 
 /**
- *
+ * The class BuildTowerHUD is the HUD for the tower creation.
+ * It hovers over a selected map-square.
  * @author Hans Ferchland
  */
 public class BuildTowerHUD implements TimerEventListener {
@@ -112,6 +107,9 @@ public class BuildTowerHUD implements TimerEventListener {
     //===   Methods
     //==========================================================================
 
+    /**
+     * Initializes the HUD the first time.
+     */
     public void initialize() {
         if (initialized) {
             return;
@@ -120,6 +118,23 @@ public class BuildTowerHUD implements TimerEventListener {
         initialized = true;
     }
 
+    /**
+     * Destroys the hud on exit.
+     */
+    public void destroy() {
+        if (!initialized) {
+            return;
+        }
+
+        EventManager.getInstance().removeTimerEventListener(this);
+        ScreenRayCast3D.getInstance().removeClickableObject(translationNode);
+        initialized = false;
+    }
+
+    /**
+     * Creates the geometry and material of the hud.
+     * @param game the mazetdgame reference
+     */
     private void createHUD(MazeTDGame game) {
 
         material = new Material(game.getAssetManager(),
@@ -130,6 +145,7 @@ public class BuildTowerHUD implements TimerEventListener {
 
         Quad q = new Quad(SIGN_SIZE, SIGN_SIZE);
 
+        // create a clickable HUD-Geometry
         geometry = new ClickableGeometry("HUD_Geometry", q) {
 
             @Override
@@ -162,6 +178,9 @@ public class BuildTowerHUD implements TimerEventListener {
         translationNode.attachChild(geometry);
     }
 
+    /**
+     * Orientates the hud, so that it turns to the camera and is parallel to the map-square
+     */
     private void orientate() {
         Vector3f position = new Vector3f(SIGN_SIZE / 2, .15f, -SIGN_SIZE / 2);
 
@@ -209,19 +228,13 @@ public class BuildTowerHUD implements TimerEventListener {
         return period;
     }
 
-    public void destroy() {
-        if (!initialized) {
-            return;
-        }
-
-        EventManager.getInstance().removeTimerEventListener(this);
-        ScreenRayCast3D.getInstance().removeClickableObject(translationNode);
-        initialized = false;
-    }
-
+    /**
+     * Makes the HUD visible to the user.
+     * @param square the square where the HUD should be displayed
+     */
     public void show(MapSquare square) {
-        if (initialized && square != null &&
-                square.getTower() == null) {
+        if (initialized && square != null
+                && square.getTower() == null) {
             EventManager.getInstance().addTimerEventListener(this);
             clickPosition = ScreenRayCast3D.getInstance().getLastWorldHit().clone();
             ScreenRayCast3D.getInstance().addClickableObject(translationNode);
@@ -230,6 +243,9 @@ public class BuildTowerHUD implements TimerEventListener {
         }
     }
 
+    /**
+     * Hides the HUD from the user and detaches from the map-square.
+     */
     public void hide() {
         if (initialized) {
             currentSquare.setHovered(false);
@@ -239,7 +255,4 @@ public class BuildTowerHUD implements TimerEventListener {
             clickPosition = null;
         }
     }
-    //==========================================================================
-    //===   Inner Classes
-    //==========================================================================
 }
