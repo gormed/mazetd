@@ -62,9 +62,16 @@ public class SingleplayerState extends Gamestate {
     //===   Private Fields
     //==========================================================================
 
+    /** The game. */
     private MazeTDGame game;
+    
+    /** The ambient light. */
     private AmbientLight ambientLight;
+    
+    /** The point light. */
     private PointLight pointLight;
+    
+    /** The level. */
     private Level level;
     //==========================================================================
     //===   Methods & Constructor
@@ -77,6 +84,9 @@ public class SingleplayerState extends Gamestate {
         super(GamestateManager.SINGLEPLAYER_STATE);
     }
 
+    /* (non-Javadoc)
+     * @see gamestates.Gamestate#update(float)
+     */
     @Override
     public void update(float tpf) {
 
@@ -99,6 +109,9 @@ public class SingleplayerState extends Gamestate {
         }
     }
 
+    /* (non-Javadoc)
+     * @see gamestates.Gamestate#loadContent(mazetd.MazeTDGame)
+     */
     @Override
     protected void loadContent(MazeTDGame game) {
         this.game = game;
@@ -128,6 +141,9 @@ public class SingleplayerState extends Gamestate {
 
     /*
      * Only for testing purposes.
+     */
+    /**
+     * Test.
      */
     private void test() {
         ////////////////////////////////////////////////////////////////
@@ -177,6 +193,9 @@ public class SingleplayerState extends Gamestate {
 
     }
 
+    /* (non-Javadoc)
+     * @see gamestates.Gamestate#unloadContent()
+     */
     @Override
     protected void unloadContent() {
 
@@ -188,6 +207,9 @@ public class SingleplayerState extends Gamestate {
 
     }
 
+    /* (non-Javadoc)
+     * @see gamestates.Gamestate#terminate()
+     */
     @Override
     public void terminate() {
         super.terminate();

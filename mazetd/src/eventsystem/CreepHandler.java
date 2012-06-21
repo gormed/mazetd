@@ -60,6 +60,8 @@ public class CreepHandler {
 
     /**
      * The static method to retrive the one and only instance of CreepHandler.
+     *
+     * @return single instance of CreepHandler
      */
     public static CreepHandler getInstance() {
         return CreepHandlerHolder.INSTANCE;
@@ -70,11 +72,13 @@ public class CreepHandler {
      */
     private static class CreepHandlerHolder {
 
+        /** The Constant INSTANCE. */
         private static final CreepHandler INSTANCE = new CreepHandler();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The creep listeners. */
     private HashMap<Creep, HashSet<CreepListener>> creepListeners =
             new HashMap<Creep, HashSet<CreepListener>>();
     //==========================================================================
@@ -83,7 +87,9 @@ public class CreepHandler {
 
     /**
      * Adds a CreepListener for any given set of Creeps.
+     *
      * @param creepListener the listener to add
+     * @param creeps the creeps
      */
     void addCreepListener(CreepListener creepListener, Creep... creeps) {
         for (Creep c : creeps) {

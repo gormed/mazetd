@@ -62,10 +62,17 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
      * The duration of the slow.
      */
     private float[] duration = {4, 5, 6};
+    
+    /** The duration counter. */
     private float durationCounter = 0;
+    
+    /** The decaying. */
     private boolean decaying = false;
+    
+    /** The temp speed. */
     private float tempSpeed;
     // Particle
+    /** The freeze emitter. */
     private ParticleEmitter freezeEmitter;
     //==========================================================================
     //===   Methods & Constructor
@@ -80,6 +87,9 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
         createFreezeEmitter(MazeTDGame.getInstance());
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#update(float)
+     */
     @Override
     public void update(float tpf) {
         durationCounter += tpf;
@@ -99,10 +109,16 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
 
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEffect()
+     */
     @Override
     public void onEffect() {
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onStart(entities.Creep)
+     */
     @Override
     public void onStart(Creep c) {
         infected = c;
@@ -113,6 +129,9 @@ public class FreezeOrbEffect extends AbstractOrbEffect {
         freezeEmitter.emitAllParticles();
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEnd(entities.Creep)
+     */
     @Override
     public void onEnd(Creep c) {
         infected.setSpeed(tempSpeed);

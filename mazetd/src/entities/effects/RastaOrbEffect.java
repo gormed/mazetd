@@ -59,11 +59,19 @@ public class RastaOrbEffect extends AbstractOrbEffect {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The duration. */
     private float duration = 3;
+    
+    /** The duration counter. */
     private float durationCounter = 0;
+    
+    /** The decaying. */
     private boolean decaying = false;
     // Particle
+    /** The poison emitter. */
     private ParticleEmitter poisonEmitter;
+    
+    /** The creep ai. */
     private CreepAI creepAI = CreepAI.getInstance();
     //==========================================================================
     //===   Methods & Constructor
@@ -77,6 +85,9 @@ public class RastaOrbEffect extends AbstractOrbEffect {
         createRastaEmitter(MazeTDGame.getInstance());
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#update(float)
+     */
     @Override
     public void update(float tpf) {
         durationCounter += tpf;
@@ -93,10 +104,16 @@ public class RastaOrbEffect extends AbstractOrbEffect {
         }
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEffect()
+     */
     @Override
     public void onEffect() {
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onStart(entities.Creep)
+     */
     @Override
     public void onStart(Creep c) {
         // set reversed creep mode on
@@ -110,6 +127,9 @@ public class RastaOrbEffect extends AbstractOrbEffect {
         poisonEmitter.emitAllParticles();
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEnd(entities.Creep)
+     */
     @Override
     public void onEnd(Creep c) {
 

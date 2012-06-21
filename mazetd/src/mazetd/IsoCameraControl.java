@@ -155,7 +155,8 @@ public class IsoCameraControl {
     }
 
     /**
-     * Checks if the camera is currently enabled
+     * Checks if the camera is currently enabled.
+     *
      * @return true if enabled, false otherwise
      */
     public boolean isEnabled() {

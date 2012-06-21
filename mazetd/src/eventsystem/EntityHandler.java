@@ -63,6 +63,8 @@ public class EntityHandler {
 
     /**
      * The static method to retrive the one and only instance of EnitiyHandler.
+     *
+     * @return single instance of EntityHandler
      */
     public static EntityHandler getInstance() {
         return EnitiyHandlerHolder.INSTANCE;
@@ -73,11 +75,13 @@ public class EntityHandler {
      */
     private static class EnitiyHandlerHolder {
 
+        /** The Constant INSTANCE. */
         private static final EntityHandler INSTANCE = new EntityHandler();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The entity listeners. */
     private HashMap<AbstractEntity, HashSet<EntityListener>> entityListeners =
             new HashMap<AbstractEntity, HashSet<EntityListener>>();
     //==========================================================================
@@ -85,9 +89,11 @@ public class EntityHandler {
     //==========================================================================
 
     /**
-     * Adds a EntityListener for any given set of AbstractEntity or null if you 
-     * want to listen to all the entities events
+     * Adds a EntityListener for any given set of AbstractEntity or null if you
+     * want to listen to all the entities events.
+     *
      * @param entityListener the listener to add
+     * @param entitys the entitys
      */
     void addEntityListener(EntityListener entityListener, AbstractEntity... entitys) {
 

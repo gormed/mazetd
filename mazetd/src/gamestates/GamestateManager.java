@@ -58,7 +58,8 @@ public class GamestateManager {
     public static final String TUTORIAL_STATE = "Tutorial";
     /** The instance of the gamestate manager. */
     private static GamestateManager instance;
-    /** The flag to lock the updateing of the current state */
+    
+    /** The flag to lock the updateing of the current state. */
     private static volatile boolean lockUpdate = false;
     //==========================================================================
     //===   Private Fields
@@ -73,17 +74,25 @@ public class GamestateManager {
     //==========================================================================
     //===   Singleton
     //==========================================================================
-    /** Retrieves the current state of locking */
+    /**
+     * Retrieves the current state of locking.
+     *
+     * @return true, if is locked
+     */
     public static synchronized boolean isLocked() {
         return lockUpdate;
     }
 
-    /** Locks the current state from updating */
+    /**
+     * Locks the current state from updating.
+     */
     static synchronized void lock() {
         lockUpdate = true;
     }
 
-    /** Unlocks the current state from updating */
+    /**
+     * Unlocks the current state from updating.
+     */
     static synchronized void unlock() {
         lockUpdate = false;
     }

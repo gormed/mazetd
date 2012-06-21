@@ -53,10 +53,19 @@ public class PausedScreen extends AbstractAppState implements ScreenController {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The nifty. */
     private Nifty nifty;
+    
+    /** The screen. */
     private Screen screen;
+    
+    /** The hud screen. */
     private HudScreen hudScreen = MazeTDGame.getInstance().getHudScreenInstance();
+    
+    /** The game. */
     private MazeTDGame game = MazeTDGame.getInstance();
+    
+    /** The gamestate manager. */
     private GamestateManager gamestateManager = GamestateManager.getInstance();
 
     //==========================================================================
@@ -89,29 +98,44 @@ public class PausedScreen extends AbstractAppState implements ScreenController {
 
     /**
      * Quits the game.
-     * @param nextScreen The screen that will be shown.
+     *
      */
     public void quitGame() {
         game = MazeTDGame.getInstance();
         game.stop();
     }
 
-    /** Nifty GUI ScreenControl methods */
+    /**
+     * Nifty GUI ScreenControl methods.
+     *
+     * @param nifty the nifty
+     * @param screen the screen
+     */
     @Override
     public void bind(Nifty nifty, Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
     }
 
+    /* (non-Javadoc)
+     * @see de.lessvoid.nifty.screen.ScreenController#onStartScreen()
+     */
     @Override
     public void onStartScreen() {
     }
 
+    /* (non-Javadoc)
+     * @see de.lessvoid.nifty.screen.ScreenController#onEndScreen()
+     */
     @Override
     public void onEndScreen() {
     }
 
-    /** jME3 AppState methods */
+    /**
+     * jME3 AppState methods.
+     *
+     * @param tpf the tpf
+     */
     @Override
     public void update(float tpf) {
     }

@@ -50,6 +50,7 @@ public abstract class CollidableEntity extends AbstractEntity implements SimpleC
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The collidable entity node. */
     protected CollidableEntityNode collidableEntityNode;
     //==========================================================================
     //===   Methods & Constructor
@@ -63,9 +64,15 @@ public abstract class CollidableEntity extends AbstractEntity implements SimpleC
         super(name);
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.AbstractEntity#update(float)
+     */
     @Override
     protected abstract void update(float tpf);
 
+    /* (non-Javadoc)
+     * @see entities.base.AbstractEntity#createNode(mazetd.MazeTDGame)
+     */
     @Override
     public CollidableEntityNode createNode(MazeTDGame game) {
 
@@ -76,11 +83,17 @@ public abstract class CollidableEntity extends AbstractEntity implements SimpleC
         return collidableEntityNode;
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.low.SimpleCollidable#getCollidableEntityNode()
+     */
     @Override
     public CollidableEntityNode getCollidableEntityNode() {
         return collidableEntityNode;
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.low.SimpleCollidable#onCollision(com.jme3.collision.CollisionResults)
+     */
     @Override
     public abstract void onCollision(CollisionResults collisionResults);
 }

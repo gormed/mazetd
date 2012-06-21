@@ -46,7 +46,7 @@ public abstract class AbstractEvent extends EventObject {
     //===   Static
     //==========================================================================
 
-    /** The running eventid for all events */
+    /** The running eventid for all events. */
     private static int runningEventID = 0;
 
     /**

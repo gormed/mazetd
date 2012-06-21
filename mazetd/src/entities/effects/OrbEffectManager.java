@@ -88,7 +88,8 @@ public class OrbEffectManager {
     }
 
     /**
-     * Creates a SpecialOrbEffect by a given SpecialElementType
+     * Creates a SpecialOrbEffect by a given SpecialElementType.
+     *
      * @param type the SpecialElementType of the OrbEffect to create
      * @return the OrbEffect according to the given parameters
      */
@@ -139,6 +140,8 @@ public class OrbEffectManager {
 
     /**
      * The static method to retrive the one and only instance of OrbEffectManager.
+     *
+     * @return single instance of OrbEffectManager
      */
     public static OrbEffectManager getInstance() {
         return OrbEffectManagerHolder.INSTANCE;
@@ -149,6 +152,7 @@ public class OrbEffectManager {
      */
     private static class OrbEffectManagerHolder {
 
+        /** The Constant INSTANCE. */
         private static final OrbEffectManager INSTANCE = new OrbEffectManager();
     }
     //==========================================================================
@@ -162,8 +166,12 @@ public class OrbEffectManager {
     //===   Methods
     //==========================================================================
 
-    /** 
+    /**
      * Checks all Orbs and gets the Effects in an array by level.
+     *
+     * @param firstOrb the first orb
+     * @param secondOrb the second orb
+     * @param thirdOrb the third orb
      * @return an array with OrbEffects by level
      */
     public AbstractOrbEffect[] getOrbEffects(Orb firstOrb, Orb secondOrb, Orb thirdOrb) {

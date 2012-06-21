@@ -59,6 +59,7 @@ public class DamageOrbEffect extends AbstractOrbEffect {
      */
     private float[] damage = {0.05f, 0.075f, 0.15f};
     // Particle
+    /** The fire emitter. */
     private ParticleEmitter fireEmitter;
     //==========================================================================
     //===   Methods & Constructor
@@ -73,14 +74,23 @@ public class DamageOrbEffect extends AbstractOrbEffect {
         createFireEmitter(MazeTDGame.getInstance());
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#update(float)
+     */
     @Override
     public void update(float tpf) {
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEffect()
+     */
     @Override
     public void onEffect() {
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onStart(entities.Creep)
+     */
     @Override
     public void onStart(Creep c) {
         infected = c;
@@ -96,6 +106,9 @@ public class DamageOrbEffect extends AbstractOrbEffect {
         infected.removeOrbEffect(this);
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEnd(entities.Creep)
+     */
     @Override
     public void onEnd(Creep c) {
     }

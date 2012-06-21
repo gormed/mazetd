@@ -48,16 +48,29 @@ public class CreepEvent extends AbstractEvent {
      * The type of creep event.
      */
     public enum CreepEventType {
+        
+        /** The Death. */
         Death,
+        
+        /** The Reached end. */
         ReachedEnd,
+        
+        /** The Attacks. */
         Attacks,
+        
+        /** The Created. */
         Created
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The type. */
     private CreepEventType type;
+    
+    /** The target. */
     private Tower target;
+    
+    /** The creep. */
     private Creep creep;
     //==========================================================================
     //===   Methods & Constructor

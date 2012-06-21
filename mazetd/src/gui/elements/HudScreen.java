@@ -66,18 +66,43 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     //===   Private Fields
     //==========================================================================
 
+    /** The gamestate manager. */
     private GamestateManager gamestateManager;
+    
+    /** The nifty. */
     private Nifty nifty;
+    
+    /** The screen. */
     private Screen screen;
+    
+    /** The app. */
     private SimpleApplication app;
+    
+    /** The game. */
     private MazeTDGame game;
+    
+    /** The nifty display. */
     private NiftyJmeDisplay niftyDisplay;
+    
+    /** The player. */
     private Player player = Player.getInstance();
+    
+    /** The wave manager. */
     private WaveManager waveManager;
+    
+    /** The time elapsed. */
     private int timeElapsed;
+    
+    /** The min. */
     private int min;
+    
+    /** The time. */
     private float time;
+    
+    /** The paused. */
     private boolean paused = true;
+    
+    /** The inventory. */
     private Inventory inventory = Inventory.getInstance();
 
     //==========================================================================
@@ -97,8 +122,10 @@ public class HudScreen extends AbstractAppState implements ScreenController {
     }
 
     /**
+     * Sets the paused.
+     *
      * @param p {@code true} stops updateloop.
-     *          {@code false} triggers updateloop.
+     * {@code false} triggers updateloop.
      */
     public void setPaused(boolean p) {
         paused = p;
@@ -547,22 +574,37 @@ public class HudScreen extends AbstractAppState implements ScreenController {
         }
     }
 
-    /** Nifty GUI ScreenControl methods */
+    /**
+     * Nifty GUI ScreenControl methods.
+     *
+     * @param nifty the nifty
+     * @param screen the screen
+     */
     @Override
     public void bind(Nifty nifty, Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
     }
 
+    /* (non-Javadoc)
+     * @see de.lessvoid.nifty.screen.ScreenController#onStartScreen()
+     */
     @Override
     public void onStartScreen() {
     }
 
+    /* (non-Javadoc)
+     * @see de.lessvoid.nifty.screen.ScreenController#onEndScreen()
+     */
     @Override
     public void onEndScreen() {
     }
 
-    /** jME3 AppState methods */
+    /**
+     * jME3 AppState methods.
+     *
+     * @param tpf the tpf
+     */
     @Override
     public void update(float tpf) {
         if (!paused) {

@@ -75,20 +75,30 @@ public class EventManager {
     }
 
     /**
-     * Holder class for the EventManager
+     * Holder class for the EventManager.
      */
     private static class EventManagerHolder {
 
+        /** The Constant INSTANCE. */
         private static final EventManager INSTANCE = new EventManager();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
     // references to the sub-event handler for each category
+    /** The timer handler. */
     private TimerHandler timerHandler = TimerHandler.getInstance();
+    
+    /** The input handler. */
     private InputHandler inputHandler = InputHandler.getInstance();
+    
+    /** The enitiy handler. */
     private EntityHandler enitiyHandler = EntityHandler.getInstance();
+    
+    /** The collision handler. */
     private CollisionHandler collisionHandler = CollisionHandler.getInstance();
+    
+    /** The creep handler. */
     private CreepHandler creepHandler = CreepHandler.getInstance();
     //==========================================================================
     //===   Methods
@@ -185,7 +195,9 @@ public class EventManager {
 
     /**
      * Adds a EntityListener any entity-event.
+     *
      * @param entityListener the listener
+     * @param entitys the entitys
      */
     public void addEntityListener(EntityListener entityListener, AbstractEntity... entitys) {
 
@@ -203,7 +215,9 @@ public class EventManager {
 
     /**
      * Adds a CreepListener for any entity-event.
+     *
      * @param creepListener the listener
+     * @param creeps the creeps
      */
     public void addCreepListener(CreepListener creepListener, Creep... creeps) {
 

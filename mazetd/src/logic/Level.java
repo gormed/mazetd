@@ -61,7 +61,10 @@ public class Level {
     //===   Constants
     //==========================================================================
 
+    /** The Constant LEVEL_TOWER_GOLD_COST. */
     public static final int LEVEL_TOWER_GOLD_COST = 20;
+    
+    /** The Constant LEVEL_MAXIMUM_WAVES. */
     public static final int LEVEL_MAXIMUM_WAVES = 30;
 
     //==========================================================================
@@ -75,6 +78,8 @@ public class Level {
 
     /**
      * The static method to retrive the one and only instance of Level.
+     *
+     * @return single instance of Level
      */
     public static Level getInstance() {
         return LevelHolder.INSTANCE;
@@ -85,24 +90,52 @@ public class Level {
      */
     private static class LevelHolder {
 
+        /** The Constant INSTANCE. */
         private static final Level INSTANCE = new Level();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The game. */
     private MazeTDGame game = MazeTDGame.getInstance();
+    
+    /** The player. */
     private Player player = Player.getInstance();
+    
+    /** The initialized. */
     private boolean initialized = false;
+    
+    /** The entity manager. */
     private EntityManager entityManager = EntityManager.getInstance();
+    
+    /** The creep ai. */
     private CreepAI creepAI = CreepAI.getInstance();
+    
+    /** The ray cast3 d. */
     private ScreenRayCast3D rayCast3D = ScreenRayCast3D.getInstance();
+    
+    /** The collider3 d. */
     private Collider3D collider3D = Collider3D.getInstance();
+    
+    /** The wave manager. */
     private WaveManager waveManager = WaveManager.getInstance();
+    
+    /** The pathfinder. */
     private Pathfinder pathfinder = Pathfinder.getInstance();
+    
+    /** The main level node. */
     private Node mainLevelNode;
+    
+    /** The static level elements. */
     private Node staticLevelElements;
+    
+    /** The dynamic level elements. */
     private Node dynamicLevelElements;
+    
+    /** The map. */
     private Map map = Map.getInstance();
+    
+    /** The grid. */
     private Grid grid = Grid.getInstance();
     //==========================================================================
     //===   Methods
@@ -212,7 +245,8 @@ public class Level {
 
     /**
      * Updates the level components.
-     * @param tpf 
+     *
+     * @param tpf the tpf
      */
     public void update(float tpf) {
         player.update(tpf);
@@ -232,10 +266,10 @@ public class Level {
 
     /**
      * Erzeugt ein grafisches Tower-Objekt an der Position des übergebenen Squares
-     * - Liegt der erzeugte Tower auf dem Path wird ein neuer Path generiert 
-     *   und allen Creeps übergeben
-     * 
-     * @param square 
+     * - Liegt der erzeugte Tower auf dem Path wird ein neuer Path generiert
+     * und allen Creeps übergeben.
+     *
+     * @param square the square
      */
     public void buildTower(MapSquare square) {
         // add tower
@@ -251,6 +285,11 @@ public class Level {
         }
     }
 
+    /**
+     * Enough gold.
+     *
+     * @return true, if successful
+     */
     public boolean enoughGold() {
         return player.getGold() >= LEVEL_TOWER_GOLD_COST;
     }
@@ -267,6 +306,11 @@ public class Level {
         }
     }
 
+    /**
+     * Creates the stones.
+     *
+     * @param mapSquares the map squares
+     */
     private void createStones(HashSet<MapSquare> mapSquares) {
         for (MapSquare s : mapSquares) {
             if (Math.random() < 0.05) {
@@ -277,9 +321,10 @@ public class Level {
 
     /**
      * Erzeugt ein grafisches Stone-Objekt an der Position des übergebenen Squares
-     * - Stone-Objekte sind unzerstoerbar und durchquerbar
-     * 
-     * @param square 
+     * - Stone-Objekte sind unzerstoerbar und durchquerbar.
+     *
+     * @param square the square
+     * @return the stone
      */
     public Stone buildStone(MapSquare square) {
         // add tower

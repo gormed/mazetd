@@ -63,22 +63,30 @@ import logic.Grid.FieldInfo;
  */
 public class Pathfinder {
 
+    /** The DEBU g_ path. */
     public static boolean DEBUG_PATH = true;
+    
+    /** The TOWE r_ weight. */
     public static int TOWER_WEIGHT = 10000;
+    
+    /** The STON e_ weight. */
     public static int STONE_WEIGHT = 50000;
+    
+    /** The NORMA l_ weight. */
     public static int NORMAL_WEIGHT = 1000;
     //==========================================================================
     //===   Singleton
     //==========================================================================
 
     /**
-     * Constructor Pathfinder
+     * Constructor Pathfinder.
      */
     private Pathfinder() {
     }
 
     /**
-     * Singelton
+     * Singelton.
+     *
      * @return an Instance of tehe class
      */
     public static Pathfinder getInstance() {
@@ -86,21 +94,38 @@ public class Pathfinder {
     }
 
     /**
-     * Singelton
+     * Singelton.
      */
     private static class PathfinderHolder {
+        
+        /** The Constant INSTANCE. */
         private static final Pathfinder INSTANCE = new Pathfinder();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The path. */
     private Queue<MapSquare> path;
+    
+    /** The last path. */
     private Queue<MapSquare> lastPath;
+    
+    /** The grid. */
     private Grid grid = Grid.getInstance();
+    
+    /** The grid changed. */
     private boolean gridChanged = false;
+    
+    /** The changed square. */
     private MapSquare changedSquare;
+    
+    /** The changed weight. */
     private int changedWeight;
+    
+    /** The start. */
     private Point2i start = new Point2i(0, Grid.getInstance().getTotalHeight() / 2);
+    
+    /** The end. */
     private Point2i end = new Point2i(Grid.getInstance().getTotalWidth() - 1, Grid.getInstance().getTotalHeight() / 2);
 
     //==========================================================================
@@ -108,7 +133,7 @@ public class Pathfinder {
     //==========================================================================
     
     /**
-     * initialize Singelton
+     * initialize Singelton.
      */
     public void initialize() {
         setMainPath(createMainPath());
@@ -116,9 +141,9 @@ public class Pathfinder {
     }
 
     /**
-     * update
-     * 
-     * @param tpf 
+     * update.
+     *
+     * @param tpf the tpf
      */
     public void update(float tpf) {
         if (gridChanged) {
@@ -134,7 +159,8 @@ public class Pathfinder {
     }
 
     /**
-     * set the MapSquare which changed by buildingTower or removingTower
+     * set the MapSquare which changed by buildingTower or removingTower.
+     *
      * @param square MapSquare changed Square
      * @param newWeight int , increase by 10000 for build a tower
      */
@@ -145,23 +171,26 @@ public class Pathfinder {
     }
 
     /**
-     * set new mainpath
-     * @param Queue<MapSquare> path 
+     * set new mainpath.
+     *
+     * @param path the new main path
      */
     public void setMainPath(Queue<MapSquare> path) {
         this.path = path;
     }
 
      /**
-     * gets the current mainPath
-     * @return Queue<MapSquare> mainpath
-     */
+      * gets the current mainPath.
+      *
+      * @return Queue<MapSquare> mainpath
+      */
     public Queue<MapSquare> getMainPath() {
         return new LinkedList<MapSquare>(path);
     }
 
     /**
-     * gets the previous mainPath for checking creeps are on the old path
+     * gets the previous mainPath for checking creeps are on the old path.
+     *
      * @return Queue<MapSquare> lastPath
      */
     public Queue<MapSquare> getLastPath() {
@@ -169,7 +198,8 @@ public class Pathfinder {
     }
 
     /**
-     * get the StartField
+     * get the StartField.
+     *
      * @return FieldInfo StartField
      */
     public FieldInfo getStartField() {
@@ -177,7 +207,8 @@ public class Pathfinder {
     }
 
     /**
-     * get the EndField
+     * get the EndField.
+     *
      * @return FieldInfo EndField
      */
     public FieldInfo getEndField() {
@@ -216,12 +247,12 @@ public class Pathfinder {
 
     /**
      * Uses the mthode findPath(grid,position of the creep ,goal) to get the FieldInfo from where
-     * this methode create the concrete Path by adding the mapSquare of every parent 
+     * this methode create the concrete Path by adding the mapSquare of every parent
      * to a Queue.
      * This Queue will be reversed to use ist in the right direction
-     * 
-     * 
+     *
      * @param creepPos FieldInfo of the Mapsquare with this Creep on it
+     * @param goal the goal
      * @return a Queue of MapSquares as a Path from creeps position to the goal
      */
     public Queue<MapSquare> createCreepPath(FieldInfo creepPos, FieldInfo goal) {
@@ -343,8 +374,8 @@ public class Pathfinder {
     
     /**
      * Calculate the distance between the given field and the start field
-     * Used to optimize findPath() -> find the shortest Path
-     * 
+     * Used to optimize findPath() -> find the shortest Path.
+     *
      * @param field current FieldInfo in openList
      * @return distance between field and startField
      */
@@ -354,11 +385,9 @@ public class Pathfinder {
     }
 
     /**
-     * 
-     * Returns the FieldInfo with the lowest Weigth in a ArrayList
-     * 
-     * 
-     * @param l ArrayList<FieldInfo> , in find path it's the openList 
+     * Returns the FieldInfo with the lowest Weigth in a ArrayList.
+     *
+     * @param l ArrayList<FieldInfo> , in find path it's the openList
      * @return FieldInfo with the lowest weight in an ArrayList<FieldInfo>
      */
     private static FieldInfo getLeastWeight(ArrayList<FieldInfo> l) //Field aus open-/closedList mit niedrigster Weight suchen
@@ -373,9 +402,8 @@ public class Pathfinder {
     }
 
     /**
-     *  check to see if this path to that square is better (lower Costs) than anoth in the openList
-     * 
-     * 
+     * check to see if this path to that square is better (lower Costs) than anoth in the openList.
+     *
      * @param f compared FieldInfo
      * @param l List to Compare
      * @return an boolean value if there is an shorter PAth to the FieldInfo f in the openList or not

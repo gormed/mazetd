@@ -57,6 +57,8 @@ import mazetd.MazeTDGame;
  * @author Hans Ferchland
  */
 public class ScreenRayCast3D implements MouseInputListener {
+    
+    /** The RAYCAS t_3 d. */
     public static String RAYCAST_3D = "Raycast_3D";
     
     //==========================================================================
@@ -82,27 +84,46 @@ public class ScreenRayCast3D implements MouseInputListener {
     }
 
     /**
-     * Holder class for the ScreenRayCast3D
+     * Holder class for the ScreenRayCast3D.
      */
     private static class ScreenRayCast3DHolder {
 
+        /** The Constant INSTANCE. */
         private static final ScreenRayCast3D INSTANCE = new ScreenRayCast3D();
     }
     //==========================================================================
     //===   Static Fields
     //==========================================================================
+    /** The Constant MOUSE_MOVEMENT_TOLERANCE. */
     public static final float MOUSE_MOVEMENT_TOLERANCE = 0.25f;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The clickable3 d. */
     private Node clickable3D;
+    
+    /** The last clicked. */
     private Clickable3D lastClicked = null;
+    
+    /** The last hovered. */
     private Clickable3D lastHovered = null;
+    
+    /** The game. */
     private MazeTDGame game = MazeTDGame.getInstance();
+    
+    /** The input manager. */
     private InputManager inputManager = MazeTDGame.getInstance().getInputManager();
+    
+    /** The last world hit. */
     private Vector3f lastWorldHit;
+    
+    /** The cam. */
     private Camera cam = MazeTDGame.getInstance().getCamera();
+    
+    /** The last mouse position. */
     private Vector2f lastMousePosition = Vector2f.ZERO.clone();
+    
+    /** The initialized. */
     private boolean initialized;
     //==========================================================================
     //===   Methods
@@ -308,9 +329,10 @@ public class ScreenRayCast3D implements MouseInputListener {
 
     /**
      * Desides if a node was left with mouse-pointer or entered.
-     * @param node
-     * @param click2d
-     * @param closest 
+     *
+     * @param spatial the spatial
+     * @param click2d the click2d
+     * @param closest the closest
      */
     private void decideLeftOrOver(Spatial spatial, Vector2f click2d, CollisionResult closest) {
         if (spatial instanceof Clickable3D) {
@@ -391,7 +413,8 @@ public class ScreenRayCast3D implements MouseInputListener {
 
     /**
      * Invokes a RayCast3DNodes onClick method.
-     * @param r the hit RayCast3DNode
+     *
+     * @param spatial the spatial
      * @param click2d the screen pos
      * @param closest the 3d hit params
      */

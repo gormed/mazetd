@@ -61,10 +61,19 @@ public class Stone extends AbstractEntity {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The square. */
     private final MapSquare square;
+    
+    /** The position. */
     private Vector3f position;
+    
+    /** The material. */
     private Material material;
+    
+    /** The geometry. */
     private Geometry geometry;
+    
+    /** The color. */
     private ColorRGBA color;
 
     //==========================================================================
@@ -72,9 +81,9 @@ public class Stone extends AbstractEntity {
     //==========================================================================
     /**
      * Constructor for a stone.
-     * 
-     * @param name
-     * @param square 
+     *
+     * @param name the name
+     * @param square the square
      */
     public Stone(String name, MapSquare square) {
         super(name);
@@ -82,10 +91,16 @@ public class Stone extends AbstractEntity {
         this.color = new ColorRGBA(0, 0, 0, 1f);
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.AbstractEntity#update(float)
+     */
     @Override
     protected void update(float tpf) {
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.AbstractEntity#createNode(mazetd.MazeTDGame)
+     */
     @Override
     public Node createNode(MazeTDGame game) {
         super.createNode(game);

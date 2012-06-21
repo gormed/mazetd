@@ -49,14 +49,26 @@ public class Inventory {
     //===   Private Fields
     //==========================================================================
 
+    /** The player. */
     private Player player = Player.getInstance();
+    
+    /** The tower. */
     private Tower tower;
+    
+    /** The type. */
     private Orb.ElementType type;
+    
+    /** The instance. */
     public static Inventory instance;
 
     //==========================================================================
     //===   Singleton
     //========================================================================== 
+    /**
+     * Gets the single instance of Inventory.
+     *
+     * @return single instance of Inventory
+     */
     public static Inventory getInstance() {
         if (instance != null) {
             return instance;

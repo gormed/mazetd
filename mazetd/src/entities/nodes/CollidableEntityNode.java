@@ -50,6 +50,7 @@ public class CollidableEntityNode extends EntityNode implements Collidable3D {
     //===   Private Fields
     //==========================================================================
 
+    /** The entity. */
     protected CollidableEntity entity;
     //==========================================================================
     //===   Methods & Constructor
@@ -65,11 +66,17 @@ public class CollidableEntityNode extends EntityNode implements Collidable3D {
         this.entity = entity;
     }
 
+    /* (non-Javadoc)
+     * @see eventsystem.interfaces.Collidable3D#onCollision3D(com.jme3.collision.CollisionResults)
+     */
     @Override
     public void onCollision3D(CollisionResults collisionResults) {
         entity.onCollision(collisionResults);
     }
 
+    /* (non-Javadoc)
+     * @see entities.nodes.EntityNode#getEntity()
+     */
     @Override
     public CollidableEntity getEntity() {
         return entity;

@@ -58,6 +58,8 @@ public class TimerHandler {
 
     /**
      * The static method to retrive the one and only instance of TimerHandler.
+     *
+     * @return single instance of TimerHandler
      */
     public static TimerHandler getInstance() {
         return TimerHandlerHolder.INSTANCE;
@@ -68,15 +70,21 @@ public class TimerHandler {
      */
     private static class TimerHandlerHolder {
 
+        /** The Constant INSTANCE. */
         private static final TimerHandler INSTANCE = new TimerHandler();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The timer event listeners. */
     private HashMap<TimerEventListener, Float> timerEventListeners =
             new HashMap<TimerEventListener, Float>();
+    
+    /** The removed event listeners. */
     private ArrayList<TimerEventListener> removedEventListeners =
             new ArrayList<TimerEventListener>();
+    
+    /** The added event listeners. */
     private ArrayList<TimerEventListener> addedEventListeners =
             new ArrayList<TimerEventListener>();
 

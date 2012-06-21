@@ -96,20 +96,23 @@ public class Map extends Node {
     }
 
     /**
-     * Holder class for the EventManager
+     * Holder class for the EventManager.
      */
     private static class MapHolder {
 
+        /** The Constant INSTANCE. */
         private static final Map INSTANCE = new Map();
     }
     //==========================================================================
     //===   Static Fields and Methods
     //==========================================================================
-    /** default color of a square */
+    /** default color of a square. */
     public static ColorRGBA SQUARE_COLOR = new ColorRGBA(0, 1, 0, 0.0f);
-    /** default size of a square */
+    
+    /** default size of a square. */
     public static float SQUARE_SIZE = 0.95f;
-    /** running id of the squares */
+    
+    /** running id of the squares. */
     private static int runningSquareID = 0;
 
     /**
@@ -122,20 +125,49 @@ public class Map extends Node {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The ground plane. */
     private Geometry groundPlane;
+    
+    /** The ground material. */
     private Material groundMaterial;
+    
+    /** The height map. */
     private AbstractHeightMap heightMap;
+    
+    /** The height map material. */
     private Material heightMapMaterial;
+    
+    /** The terrain. */
     private TerrainQuad terrain;
+    
+    /** The clickable map elements. */
     private Node clickableMapElements;
+    
+    /** The decorative map elemetns. */
     private Node decorativeMapElemetns;
+    
+    /** The total height. */
     private float totalHeight;
+    
+    /** The total width. */
     private float totalWidth;
+    
+    /** The game. */
     private MazeTDGame game = MazeTDGame.getInstance();
+    
+    /** The grid. */
     private Grid grid = Grid.getInstance();
+    
+    /** The entity manager. */
     private EntityManager entityManager = EntityManager.getInstance();
+    
+    /** The map squares. */
     private HashSet<MapSquare> mapSquares = new HashSet<MapSquare>();
+    
+    /** The build tower hud. */
     private BuildTowerHUD buildTowerHUD = BuildTowerHUD.getInstance();
+    
+    /** The initialized. */
     private boolean initialized = false;
     //==========================================================================
     //===   Methods & Constructor
@@ -187,6 +219,8 @@ public class Map extends Node {
 
     /**
      * Creates the ground-plane of the map/level.
+     *
+     * @param game the game
      */
     private void createGround(MazeTDGame game) {
         Quad q = new Quad(totalWidth, totalHeight);
@@ -342,14 +376,31 @@ public class Map extends Node {
         //==========================================================================
         //===   Private Fields
         //==========================================================================
+        /** The material. */
         private Material material;
+        
+        /** The geometry. */
         private ClickableGeometry geometry;
+        
+        /** The hovered. */
         private boolean hovered = false;
+        
+        /** The creep path. */
         private boolean creepPath;
+        
+        /** The creep on. */
         private boolean creepOn;
+        
+        /** The fade color. */
         private ColorRGBA fadeColor = SQUARE_COLOR.clone();
+        
+        /** The field. */
         private FieldInfo field;
+        
+        /** The tower. */
         private Tower tower;
+        
+        /** The stone. */
         private Stone stone;
         //==========================================================================
         //===   Methods & Constructor
@@ -357,6 +408,8 @@ public class Map extends Node {
 
         /**
          * Contructor for a map square, name and mesh will be generated automaticly.
+         *
+         * @param field the field
          */
         public MapSquare(FieldInfo field) {
             super("MapSquare_" + getContinousSquareID());
@@ -366,7 +419,8 @@ public class Map extends Node {
 
         /**
          * Gets the geometry that is clickable (the whole square^^).
-         * @return 
+         *
+         * @return the geometry
          */
         public ClickableGeometry getGeometry() {
             return geometry;
@@ -400,9 +454,8 @@ public class Map extends Node {
         }
 
         /**
-         * Builds a Stone on this field 
-         * Used b
-         * 
+         * Builds a Stone on this field
+         * Used b.
          */
         public void buildStoneOnField() {
             if (this.getFieldInfo().getWeight() < Pathfinder.TOWER_WEIGHT
@@ -417,6 +470,10 @@ public class Map extends Node {
         /**
          * Checks if a Creep is on this map-sqaure.
          * TODO: fix this, not nessecary
+         *
+         * @param field the field
+         * @param creeps the creeps
+         * @return true, if is creep on field
          */
         private boolean isCreepOnField(FieldInfo field, HashMap<Integer, Creep> creeps) {
             for (Creep creep : creeps.values()) {
@@ -483,7 +540,8 @@ public class Map extends Node {
         }
 
         /**
-         * Gets the pathfinding info from this mapsquare
+         * Gets the pathfinding info from this mapsquare.
+         *
          * @return the map sqaures equivalent grind-field info
          */
         public FieldInfo getFieldInfo() {
@@ -491,8 +549,9 @@ public class Map extends Node {
         }
 
         /**
-         * Shows the creeps path if debugging
-         * @param value 
+         * Shows the creeps path if debugging.
+         *
+         * @param value the new creep path debug
          */
         public void setCreepPathDebug(boolean value) {
             creepPath = value;
@@ -508,7 +567,8 @@ public class Map extends Node {
         }
 
         /**
-         * Checks if map-square bears a tower
+         * Checks if map-square bears a tower.
+         *
          * @return true if tower on, false otherwise
          */
         public boolean hasTower() {
@@ -524,7 +584,8 @@ public class Map extends Node {
         }
 
         /**
-         * Applys a stone to this map-square
+         * Applys a stone to this map-square.
+         *
          * @param stone the stont to apply
          */
         void setStone(Stone stone) {
@@ -532,7 +593,8 @@ public class Map extends Node {
         }
 
         /**
-         * Sets the tower on this map-square if placed
+         * Sets the tower on this map-square if placed.
+         *
          * @param t the tower to set
          */
         void setTower(Tower t) {
@@ -547,6 +609,9 @@ public class Map extends Node {
             hovered = value;
         }
 
+        /* (non-Javadoc)
+         * @see eventsystem.listener.TimerEventListener#onTimedEvent(eventsystem.events.TimerEvent)
+         */
         @Override
         public void onTimedEvent(TimerEvent t) {
             // fades the field in if enough gold, hovered and not faded to max value
@@ -585,6 +650,9 @@ public class Map extends Node {
 
         }
 
+        /* (non-Javadoc)
+         * @see eventsystem.listener.TimerEventListener#getPeriod()
+         */
         @Override
         public float getPeriod() {
             return 0.02f;

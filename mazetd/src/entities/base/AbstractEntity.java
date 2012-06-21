@@ -48,7 +48,7 @@ public abstract class AbstractEntity {
     //===   private, package & protected Fields
     //==========================================================================
 
-    /** the unique id of the entity! */
+    /** the unique id of the entity!. */
     protected int id;
     /** the desired name of an entity, could be twice in the game. */
     protected String name;
@@ -79,8 +79,10 @@ public abstract class AbstractEntity {
     }
 
     /**
-     * Creates the geometry node and returns it. Generally all geometry of an 
+     * Creates the geometry node and returns it. Generally all geometry of an
      * entity is placed unter this node! This node will be added to se SG.
+     *
+     * @param game the game
      * @return the created main-geometry node
      */
     public Node createNode(MazeTDGame game) {
@@ -104,7 +106,8 @@ public abstract class AbstractEntity {
     }
 
     /**
-     * Gets the entity-id from this entity; this id is unique!
+     * Gets the entity-id from this entity; this id is unique!.
+     *
      * @return the entities unique id
      */
     public int getEntityId() {

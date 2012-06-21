@@ -52,19 +52,25 @@ public class ClickableEntityNode extends EntityNode implements Clickable3D {
     //===   Private Fields
     //==========================================================================
 
+    /** The entity. */
     protected ClickableEntity entity;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
     /**
      * Contructor of the node for the clickable geometry.
+     *
      * @param name the deseired node-name
+     * @param entity the entity
      */
     public ClickableEntityNode(String name, ClickableEntity entity) {
         super(entity, name);
         this.entity = entity;
     }
 
+    /* (non-Javadoc)
+     * @see eventsystem.interfaces.Clickable3D#onRayCastClick(com.jme3.math.Vector2f, com.jme3.collision.CollisionResult)
+     */
     @Override
     public void onRayCastClick(Vector2f mouse, CollisionResult result) {
         entity.onClick();
@@ -72,6 +78,9 @@ public class ClickableEntityNode extends EntityNode implements Clickable3D {
                 EntityEventType.Click, entity, mouse, result);
     }
 
+    /* (non-Javadoc)
+     * @see eventsystem.interfaces.Clickable3D#onRayCastMouseOver(com.jme3.math.Vector2f, com.jme3.collision.CollisionResult)
+     */
     @Override
     public void onRayCastMouseOver(Vector2f mouse, CollisionResult result) {
         entity.onMouseOver();
@@ -79,6 +88,9 @@ public class ClickableEntityNode extends EntityNode implements Clickable3D {
                 EntityEventType.MouseOver, entity, mouse, result);
     }
 
+    /* (non-Javadoc)
+     * @see eventsystem.interfaces.Clickable3D#onRayCastMouseLeft(com.jme3.math.Vector2f, com.jme3.collision.CollisionResult)
+     */
     @Override
     public void onRayCastMouseLeft(Vector2f mouse, CollisionResult result) {
         entity.onMouseLeft();
@@ -86,6 +98,9 @@ public class ClickableEntityNode extends EntityNode implements Clickable3D {
                 EntityEventType.MouseLeft, entity, mouse, result);
     }
 
+    /* (non-Javadoc)
+     * @see entities.nodes.EntityNode#getEntity()
+     */
     @Override
     public ClickableEntity getEntity() {
         return entity;

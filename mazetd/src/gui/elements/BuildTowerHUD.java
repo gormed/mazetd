@@ -64,7 +64,10 @@ import mazetd.MazeTDGame;
  */
 public class BuildTowerHUD implements TimerEventListener {
 
+    /** The Constant ICON_FADE_DIST. */
     public static final float ICON_FADE_DIST = 0.25f;
+    
+    /** The Constant SIGN_SIZE. */
     public static final float SIGN_SIZE = 0.7f;
     //==========================================================================
     //===   Singleton
@@ -78,6 +81,8 @@ public class BuildTowerHUD implements TimerEventListener {
 
     /**
      * The static method to retrive the one and only instance of BuildTowerHUD.
+     *
+     * @return single instance of BuildTowerHUD
      */
     public static BuildTowerHUD getInstance() {
         return BuildTowerHUDHolder.INSTANCE;
@@ -88,20 +93,40 @@ public class BuildTowerHUD implements TimerEventListener {
      */
     private static class BuildTowerHUDHolder {
 
+        /** The Constant INSTANCE. */
         private static final BuildTowerHUD INSTANCE = new BuildTowerHUD();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The geometry. */
     private Geometry geometry;
+    
+    /** The material. */
     private Material material;
+    
+    /** The translation node. */
     private Node translationNode;
+    
+    /** The initialized. */
     private boolean initialized = false;
+    
+    /** The period. */
     private float period = 0f;
+    
+    /** The scale. */
     private float scale = 0.0f;
+    
+    /** The game. */
     private MazeTDGame game = MazeTDGame.getInstance();
+    
+    /** The current square. */
     private MapSquare currentSquare;
+    
+    /** The click position. */
     private Vector3f clickPosition;
+    
+    /** The cam. */
     private Camera cam = MazeTDGame.getInstance().getCamera();
     //==========================================================================
     //===   Methods
@@ -179,7 +204,7 @@ public class BuildTowerHUD implements TimerEventListener {
     }
 
     /**
-     * Orientates the hud, so that it turns to the camera and is parallel to the map-square
+     * Orientates the hud, so that it turns to the camera and is parallel to the map-square.
      */
     private void orientate() {
         Vector3f position = new Vector3f(SIGN_SIZE / 2, .15f, -SIGN_SIZE / 2);
@@ -197,6 +222,9 @@ public class BuildTowerHUD implements TimerEventListener {
 
     }
 
+    /* (non-Javadoc)
+     * @see eventsystem.listener.TimerEventListener#onTimedEvent(eventsystem.events.TimerEvent)
+     */
     @Override
     public void onTimedEvent(TimerEvent t) {
         if (clickPosition != null) {
@@ -223,6 +251,9 @@ public class BuildTowerHUD implements TimerEventListener {
         }
     }
 
+    /* (non-Javadoc)
+     * @see eventsystem.listener.TimerEventListener#getPeriod()
+     */
     @Override
     public float getPeriod() {
         return period;

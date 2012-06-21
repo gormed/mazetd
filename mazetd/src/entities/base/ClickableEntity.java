@@ -50,19 +50,24 @@ public abstract class ClickableEntity extends AbstractEntity implements SimpleCl
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The clickable entity node. */
     protected ClickableEntityNode clickableEntityNode;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
 
     /**
-     * Constructs an ClickableEntity by a given name
+     * Constructs an ClickableEntity by a given name.
+     *
      * @param name the desired name
      */
     public ClickableEntity(String name) {
         super(name);
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.AbstractEntity#createNode(mazetd.MazeTDGame)
+     */
     @Override
     public Node createNode(MazeTDGame game) {
         
@@ -73,6 +78,9 @@ public abstract class ClickableEntity extends AbstractEntity implements SimpleCl
         return clickableEntityNode;
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.low.SimpleClickable#getClickableEntityNode()
+     */
     @Override
     public ClickableEntityNode getClickableEntityNode() {
         return clickableEntityNode;

@@ -49,16 +49,21 @@ import entities.Orb;
  */
 public enum OrbEffectType {
 
-    /** Posion effect for orbs, does damage over time*/
+    /** Posion effect for orbs, does damage over time. */
     POISON,
-    /** Frost effect for orbs, slows the target*/
+    
+    /** Frost effect for orbs, slows the target. */
     FROST,
-    /** Fire effect for orbs, does additional damage*/
+    
+    /** Fire effect for orbs, does additional damage. */
     FIRE,
-    /** Range effect for orbs, increases the range of a tower*/
+    
+    /** Range effect for orbs, increases the range of a tower. */
     RANGE,
-    /** Attack rate effect for orbs, increases the attack-rate of the tower*/
+    
+    /** Attack rate effect for orbs, increases the attack-rate of the tower. */
     RATE,
-    /** Attack rate effect for orbs, increases the attack-rate of the tower*/
+    
+    /** Attack rate effect for orbs, increases the attack-rate of the tower. */
     RASTA
 }

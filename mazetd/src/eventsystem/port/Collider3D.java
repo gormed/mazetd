@@ -60,6 +60,8 @@ public class Collider3D {
 
     /**
      * The static method to retrive the one and only instance of Collider3D.
+     *
+     * @return single instance of Collider3D
      */
     public static Collider3D getInstance() {
         return Collider3DHolder.INSTANCE;
@@ -70,15 +72,25 @@ public class Collider3D {
      */
     private static class Collider3DHolder {
 
+        /** The Constant INSTANCE. */
         private static final Collider3D INSTANCE = new Collider3D();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The collision node. */
     private Node collisionNode;
+    
+    /** The collision results. */
     private CollisionResults collisionResults;
+    
+    /** The current collidable. */
     private BoundingVolume currentCollidable;
+    
+    /** The game. */
     private MazeTDGame game = MazeTDGame.getInstance();
+    
+    /** The initialized. */
     private boolean initialized;
     //==========================================================================
     //===   Methods

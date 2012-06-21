@@ -51,16 +51,28 @@ public class EntityEvent extends AbstractEvent {
      */
     public enum EntityEventType {
 
+        /** The Click. */
         Click,
+        
+        /** The Mouse over. */
         MouseOver,
+        
+        /** The Mouse left. */
         MouseLeft
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The entity. */
     private AbstractEntity entity;
+    
+    /** The event type. */
     private EntityEventType eventType;
+    
+    /** The mouse. */
     private Vector2f mouse;
+    
+    /** The result. */
     private CollisionResult result;
     //==========================================================================
     //===   Methods & Constructor
@@ -114,16 +126,18 @@ public class EntityEvent extends AbstractEvent {
     }
 
     /**
-     * Gets the events mouse-coordinate
-     * @return 
+     * Gets the events mouse-coordinate.
+     *
+     * @return the mouse
      */
     public Vector2f getMouse() {
         return mouse;
     }
 
     /**
-     * Gets the events collision results
-     * @return 
+     * Gets the events collision results.
+     *
+     * @return the result
      */
     public CollisionResult getResult() {
         return result;

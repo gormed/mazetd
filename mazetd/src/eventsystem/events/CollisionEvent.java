@@ -48,7 +48,10 @@ public class CollisionEvent extends AbstractEvent {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The self. */
     private Collidable self;
+    
+    /** The with. */
     private CollisionResults with;
     //==========================================================================
     //===   Methods & Constructor
@@ -65,7 +68,8 @@ public class CollisionEvent extends AbstractEvent {
     }
 
     /**
-     * Gets the main actor in the collision
+     * Gets the main actor in the collision.
+     *
      * @return the main collidable
      */
     public Collidable getSelf() {

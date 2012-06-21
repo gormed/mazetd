@@ -54,6 +54,8 @@ public class SpeedOrbEffect extends AbstractOrbEffect {
      * The three diffrent rates for each level.
      */
     private float[] attackRate = { 1.05f, 0.8f, 0.55f };
+    
+    /** The old attack rate. */
     private float oldAttackRate = 0;
     //==========================================================================
     //===   Methods & Constructor
@@ -67,16 +69,25 @@ public class SpeedOrbEffect extends AbstractOrbEffect {
         super(OrbEffectType.RATE, ElementType.YELLOW, level);
     }
     
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#update(float)
+     */
     @Override
     public void update(float tpf) {
         
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEffect()
+     */
     @Override
     public void onEffect() {
         
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onStart(entities.Tower)
+     */
     @Override
     public void onStart(Tower t) {
         super.onStart(t);
@@ -86,6 +97,9 @@ public class SpeedOrbEffect extends AbstractOrbEffect {
         t.setAttackRate(attackRate[level]);
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEnd(entities.Tower)
+     */
     @Override
     public void onEnd(Tower t) {
         // reset attack rate on end

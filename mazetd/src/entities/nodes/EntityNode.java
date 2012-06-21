@@ -49,6 +49,7 @@ public class EntityNode extends Node {
     //===   Private Fields
     //==========================================================================
 
+    /** The entity. */
     protected AbstractEntity entity;
     //==========================================================================
     //===   Methods & Constructor

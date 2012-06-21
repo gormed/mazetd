@@ -79,19 +79,40 @@ class Projectile extends AbstractEntity {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The geometry. */
     private Geometry geometry;
+    
+    /** The speed. */
     private float speed = PROJECTILE_BASE_SPEED;
+    
+    /** The position. */
     private Vector3f position;
+    
+    /** The target. */
     private Creep target;
+    
+    /** The damage. */
     private float damage;
+    
+    /** The material. */
     private Material material;
+    
+    /** The color. */
     private final ColorRGBA color;
+    
+    /** The orb effects. */
     private AbstractOrbEffect[] orbEffects = new AbstractOrbEffect[3];
+    
+    /** The decays. */
     private boolean decays = false;
+    
+    /** The fade counter. */
     private float fadeCounter = 0;
     // floating Particles
+    /** The floating emitter. */
     private ParticleEmitter floatingEmitter;
     // impact Particles
+    /** The impact emitter. */
     private ParticleEmitter impactEmitter;
     //==========================================================================
     //===   Methods & Constructor
@@ -119,6 +140,9 @@ class Projectile extends AbstractEntity {
         this.orbEffects = effects;
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.AbstractEntity#update(float)
+     */
     @Override
     public void update(float tpf) {
         if (target != null) {
@@ -133,6 +157,9 @@ class Projectile extends AbstractEntity {
         }
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.AbstractEntity#createNode(mazetd.MazeTDGame)
+     */
     @Override
     public Node createNode(MazeTDGame game) {
         super.createNode(game);
@@ -220,6 +247,8 @@ class Projectile extends AbstractEntity {
 
     /**
      * Creates the geometry for the Projectirl.
+     *
+     * @param game the game
      */
     private void createGeometry(MazeTDGame game) {
         Sphere s = new Sphere(5, 5, 0.1f);
@@ -262,6 +291,9 @@ class Projectile extends AbstractEntity {
     /*
      * Is called from the projectile if the target was hit. Does the 
      * proper damage and destroys the projectile.
+     */
+    /**
+     * On hit.
      */
     private void onHit() {
         System.out.println(target.getName() + " recieved " + damage + " damage!");

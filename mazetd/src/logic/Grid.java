@@ -40,26 +40,33 @@ import entities.Map.MapSquare;
 import logic.pathfinding.Pathfinder;
 
 /**
- *
  * Class Grid
- * The logical respresentation of the Field
- * 
+ * The logical respresentation of the Field.
+ *
  * @author Hady Khalifa
  */
 public class Grid {
 
-        /**
-     * private data fields
-     */
+        /** private data fields. */
     public static final int GRID_HEIGHT = 9;
+    
+    /** The Constant GRID_WIDTH. */
     public static final int GRID_WIDTH = 27;
+    
+    /** The grid. */
     private static FieldInfo[][] grid;
+    
+    /** The end field. */
     private static FieldInfo startField, endField;
+    
+    /** The total height. */
     private int totalHeight;
+    
+    /** The total width. */
     private int totalWidth;
 
     /**
-     * Constructor
+     * Constructor.
      */
     private Grid() {
         totalHeight = GRID_HEIGHT;
@@ -68,7 +75,8 @@ public class Grid {
     }
 
     /**
-     * 
+     * Gets the single instance of Grid.
+     *
      * @return GridHolder.INSTANCE
      */
     public static Grid getInstance() {
@@ -77,15 +85,16 @@ public class Grid {
 
     /**
      * innerClass gridHolder
-     * use for Singelton-Pattern
+     * use for Singelton-Pattern.
      */
     private static class GridHolder {
 
+        /** The Constant INSTANCE. */
         private static final Grid INSTANCE = new Grid();
     }
 
     /**
-     * initialize the Grid singelton
+     * initialize the Grid singelton.
      */
     public void initialize() {
         totalHeight = GRID_HEIGHT;
@@ -94,12 +103,10 @@ public class Grid {
     }
 
     /**
-     * 
      * init method of the grid
      * create an 2-dimensional Array of FieldInfo
-     * initialize the weigth of every fieldInfo
-     * 
-     * 
+     * initialize the weigth of every fieldInfo.
+     *
      * @param width - the width of the field
      * @param height - the height of the field
      */
@@ -118,7 +125,8 @@ public class Grid {
     }
 
     /**
-     * get the endField of the grid
+     * get the endField of the grid.
+     *
      * @return endfield FieldInfo
      */
     public static FieldInfo getEndField() {
@@ -126,7 +134,8 @@ public class Grid {
     }
 
     /**
-     * get the startField of the grid
+     * get the startField of the grid.
+     *
      * @return startfield FieldInfo
      */
     public static FieldInfo getStartField() {
@@ -134,8 +143,8 @@ public class Grid {
     }
 
     /**
-     * 
-     * get the total height of the grid
+     * get the total height of the grid.
+     *
      * @return totalWidth
      */
     public int getTotalWidth() {
@@ -143,7 +152,8 @@ public class Grid {
     }
 
     /**
-     * get the total height of the grid
+     * get the total height of the grid.
+     *
      * @return totalHeight
      */
     public int getTotalHeight() {
@@ -152,9 +162,10 @@ public class Grid {
 
     /**
      * Get the fieldInfo by coords
-     * used for create paths
+     * used for create paths.
+     *
      * @param xCoord of the fieldinfo
-     * @param yCoord of the fieldinfo 
+     * @param yCoord of the fieldinfo
      * @return FieldInfo
      */
     public FieldInfo getFieldInfo(int xCoord, int yCoord) {
@@ -162,10 +173,10 @@ public class Grid {
     }
 
     /**
-     * set a new weigth to fieldinfo
-     * 
+     * set a new weigth to fieldinfo.
+     *
      * @param xCoord of the fieldinfo
-     * @param yCoord of the fieldinfo 
+     * @param yCoord of the fieldinfo
      */
     void setTower(int xCoord, int yCoord) {
         grid[xCoord][yCoord].setWeight(Pathfinder.TOWER_WEIGHT);
@@ -173,26 +184,34 @@ public class Grid {
 
     /**
      * innerClass FieldInfo
-     * logical represantation of the mapsquare
+     * logical represantation of the mapsquare.
      */
     public class FieldInfo {
 
-        /**
-         * private Data Fields
-         */
+        /** private Data Fields. */
         private int g;
+        
+        /** The x coord. */
         private int xCoord;
+        
+        /** The y coord. */
         private int yCoord;
+        
+        /** The weight. */
         private int weight;
+        
+        /** The square. */
         private MapSquare square;
+        
+        /** The parent. */
         private FieldInfo parent;
 
         /**
-         * FieldInfo Constructor
-         * 
+         * FieldInfo Constructor.
+         *
          * @param xCoord - used for ID
          * @param yCoord - used for ID
-         * @param weigth - used for create paths
+         * @param weight the weight
          */
         private FieldInfo(int xCoord, int yCoord, int weight) {
             this.xCoord = xCoord;
@@ -202,15 +221,17 @@ public class Grid {
         }
 
         /**
-         * set G (distance between startfield an this)
-         * @param g 
+         * set G (distance between startfield an this).
+         *
+         * @param g the new g
          */
         public void setG(int g) {
             this.g = g;
         }
 
         /**
-         * get G (distance between startfield an this)
+         * get G (distance between startfield an this).
+         *
          * @return int
          */
         public int getG() {
@@ -218,7 +239,8 @@ public class Grid {
         }
 
         /**
-         * Set parent
+         * Set parent.
+         *
          * @param field FieldInfo, used for create paths
          */
         public void setParent(FieldInfo field) {
@@ -228,8 +250,9 @@ public class Grid {
         /**
          * Setter
          * change value of weigth
-         * used by build towers
-         * @param value 
+         * used by build towers.
+         *
+         * @param weight the weight
          */
         public void incrementWeight(int weight) {
             this.weight += weight;
@@ -238,15 +261,17 @@ public class Grid {
         /**
          * setter
          * change value of weigth
-         * used by removing towers
-         * @param weight 
+         * used by removing towers.
+         *
+         * @param weight the weight
          */
         public void decrementWeight(int weight) {
             this.weight -= weight;
         }
 
         /**
-         * Used for testing
+         * Used for testing.
+         *
          * @return String for System.out.print
          */
         @Override
@@ -257,7 +282,8 @@ public class Grid {
         }
 
         /**
-         * related MapSquare(visual, geographic) to the Fieldinfo(logical, numerical)
+         * related MapSquare(visual, geographic) to the Fieldinfo(logical, numerical).
+         *
          * @param m MapSquare
          */
         public void setMapSquare(MapSquare m) {
@@ -266,8 +292,9 @@ public class Grid {
 
         /**
          * set the weigth
-         * used for incremend / decremend weigth when building towers
-         * @param weight 
+         * used for incremend / decremend weigth when building towers.
+         *
+         * @param weight the new weight
          */
         public void setWeight(int weight) {
             this.weight = weight;
@@ -275,15 +302,17 @@ public class Grid {
 
         /**
          * get the Weight of the FieldInfo; distance to the endField;
-         * calculated initial; used for create paths
-         * @return weigth int 
+         * calculated initial; used for create paths.
+         *
+         * @return weigth int
          */
         public int getWeight() {
             return weight;
         }
 
         /**
-         * get XCoord in logical grid
+         * get XCoord in logical grid.
+         *
          * @return int XCoord
          */
         public int getXCoord() {
@@ -291,7 +320,8 @@ public class Grid {
         }
 
         /**
-         * get YCoord in logical grid
+         * get YCoord in logical grid.
+         *
          * @return int XCoord
          */
         public int getYCoord() {
@@ -299,7 +329,8 @@ public class Grid {
         }
 
         /**
-         * get Parent
+         * get Parent.
+         *
          * @return Parent FieldInfo, used for create paths
          */
         public FieldInfo getParent() {
@@ -307,7 +338,8 @@ public class Grid {
         }
 
         /**
-         * get Square
+         * get Square.
+         *
          * @return MapSquare related to the FIeldInfo
          */
         public MapSquare getSquare() {

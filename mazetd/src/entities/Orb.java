@@ -86,28 +86,54 @@ public class Orb extends ClickableEntity {
      */
     public enum SpecialElementType {
 
+        /** The RASTA. */
         RASTA,
+        
+        /** The SPLASH. */
         SPLASH,
+        
+        /** The MULTI. */
         MULTI
     }
     //==========================================================================
     //===   Constants
     //==========================================================================
+    /** The Constant HEIGHT_OVER_GROUND. */
     private static final float HEIGHT_OVER_GROUND = 0.4f;
+    
+    /** The Constant ORB_DECAY. */
     public static final int ORB_DECAY = 2;
+    
+    /** The Constant ORB_SAMPLES. */
     private static final int ORB_SAMPLES = 10;
+    
+    /** The Constant ORB_SIZE. */
     private static final float ORB_SIZE = 0.15f;
+    
+    /** The game. */
     private static MazeTDGame game = MazeTDGame.getInstance();
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The position. */
     private Vector3f position;
+    
+    /** The type. */
     private ElementType type;
+    
+    /** The element. */
     private Element element;
+    
+    /** The height. */
     private float height = 0.4f;
+    
+    /** The deacying. */
     private boolean deacying = false;
+    
+    /** The decay time. */
     private float decayTime = 0;
     // Particle
+    /** The explodes emitter. */
     private ParticleEmitter explodesEmitter;
 
     //==========================================================================
@@ -125,6 +151,9 @@ public class Orb extends ClickableEntity {
         this.type = type;
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.ClickableEntity#createNode(mazetd.MazeTDGame)
+     */
     @Override
     public Node createNode(MazeTDGame game) {
         super.createNode(game);
@@ -139,6 +168,9 @@ public class Orb extends ClickableEntity {
         return clickableEntityNode;
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.AbstractEntity#update(float)
+     */
     @Override
     protected void update(float tpf) {
 
@@ -157,16 +189,25 @@ public class Orb extends ClickableEntity {
 
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.ClickableEntity#onClick()
+     */
     @Override
     public void onClick() {
         explodes();
         Player.getInstance().addOrb(this.getElementType());
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.ClickableEntity#onMouseOver()
+     */
     @Override
     public void onMouseOver() {
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.ClickableEntity#onMouseLeft()
+     */
     @Override
     public void onMouseLeft() {
     }
@@ -374,12 +415,18 @@ public class Orb extends ClickableEntity {
 
             return e;
         }
+        
+        /** The color. */
         private ColorRGBA color;
+        
+        /** The geometry. */
         private Geometry geometry;
+        
+        /** The material. */
         private Material material;
 
         /**
-         * Hidden constructor, only static creation should happen!
+         * Hidden constructor, only static creation should happen!.
          */
         private Element() {
         }

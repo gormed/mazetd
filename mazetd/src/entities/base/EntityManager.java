@@ -69,7 +69,9 @@ public class EntityManager {
     }
 
     /**
-     * The static method to retrive the one and only instance of EntityManager.
+     * The static method to retrieve the one and only instance of EntityManager.
+     *
+     * @return single instance of EntityManager
      */
     public static EntityManager getInstance() {
         return EntityManagerHolder.INSTANCE;
@@ -80,27 +82,51 @@ public class EntityManager {
      */
     private static class EntityManagerHolder {
 
+        /** The Constant INSTANCE. */
         private static final EntityManager INSTANCE = new EntityManager();
     }
     //==========================================================================
     //===   Static Fields & Methods
     //==========================================================================
+    /** The running entity id. */
     private static int runningEntityID = 0;
 
+    /**
+     * Gets the continuous entity id.
+     *
+     * @return the continuous entity id
+     */
     static int getContinousEntityID() {
         return runningEntityID++;
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The entity hash map. */
     private HashMap<Integer, AbstractEntity> entityHashMap = new HashMap<Integer, AbstractEntity>();
+    
+    /** The tower hash map. */
     private HashMap<Integer, Tower> towerHashMap = new HashMap<Integer, Tower>();
+    
+    /** The creep hash map. */
     private HashMap<Integer, Creep> creepHashMap = new HashMap<Integer, Creep>();
+    
+    /** The orb hash map. */
     private HashMap<Integer, Orb> orbHashMap = new HashMap<Integer, Orb>();
+    
+    /** The stone hash map. */
     private HashMap<Integer, Stone> stoneHashMap = new HashMap<Integer, Stone>();
+    
+    /** The game. */
     private MazeTDGame game = MazeTDGame.getInstance();
+    
+    /** The ray cast3d. */
     private ScreenRayCast3D rayCast3D = ScreenRayCast3D.getInstance();
+    
+    /** The collider3d. */
     private Collider3D collider3D = Collider3D.getInstance();
+    
+    /** The initialized. */
     private boolean initialized = false;
     //==========================================================================
     //===   Methods
@@ -138,13 +164,14 @@ public class EntityManager {
     }
 
     /**
-     * This method adds any given AbstractEntity to the EntityManagers hashmap, 
-     * so it will be updated!
+     * This method adds any given AbstractEntity to the EntityManagers hashmap,
+     * so it will be updated!.
+     *
      * @param entity the entity inheriting AbstractEntity to add
      * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
-     *         (A <tt>null</tt> return can also indicate that the map
-     *         previously associated <tt>null</tt> with <tt>key</tt>.)
+     * <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     * (A <tt>null</tt> return can also indicate that the map
+     * previously associated <tt>null</tt> with <tt>key</tt>.)
      */
     public AbstractEntity addEntity(AbstractEntity entity) {
         return entityHashMap.put(entity.getEntityId(), entity);

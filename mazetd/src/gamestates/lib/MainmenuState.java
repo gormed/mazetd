@@ -49,6 +49,7 @@ public class MainmenuState extends Gamestate {
     //===   Private Fields
     //==========================================================================
 
+    /** The game. */
     private MazeTDGame game;
     //==========================================================================
     //===   Methods & Constructor
@@ -61,15 +62,24 @@ public class MainmenuState extends Gamestate {
         super(GamestateManager.MAINMENU_STATE);
     }
 
+    /* (non-Javadoc)
+     * @see gamestates.Gamestate#update(float)
+     */
     @Override
     public void update(float tpf) {
     }
 
+    /* (non-Javadoc)
+     * @see gamestates.Gamestate#loadContent(mazetd.MazeTDGame)
+     */
     @Override
     protected void loadContent(MazeTDGame game) {
         this.game = game;
     }
 
+    /* (non-Javadoc)
+     * @see gamestates.Gamestate#unloadContent()
+     */
     @Override
     protected void unloadContent() {
     }

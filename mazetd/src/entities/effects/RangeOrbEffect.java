@@ -48,31 +48,41 @@ public class RangeOrbEffect extends AbstractOrbEffect {
     //===   Private Fields
     //==========================================================================
 
-    /**
-     * The range for each effect level
-     */
+    /** The range for each effect level. */
     private float[] range = { 2.5f , 3.5f, 5f };
+    
+    /** The old range. */
     private float oldRange = 0;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
 
     /**
-     * Creates a RangeOrbEffect with a given level
+     * Creates a RangeOrbEffect with a given level.
+     *
      * @param level the level of the effect
      */
     public RangeOrbEffect(int level) {
         super(OrbEffectType.RANGE, ElementType.WHITE, level);
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#update(float)
+     */
     @Override
     public void update(float tpf) {
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEffect()
+     */
     @Override
     public void onEffect() {
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onStart(entities.Tower)
+     */
     @Override
     public void onStart(Tower t) {
         super.onStart(t);
@@ -82,6 +92,9 @@ public class RangeOrbEffect extends AbstractOrbEffect {
         t.setTowerRange(range[level]);
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEnd(entities.Tower)
+     */
     @Override
     public void onEnd(Tower t) {
         super.onEnd(t);

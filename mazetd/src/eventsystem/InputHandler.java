@@ -61,6 +61,8 @@ public class InputHandler {
 
     /**
      * The static method to retrive the one and only instance of InputHandler.
+     *
+     * @return single instance of InputHandler
      */
     public static InputHandler getInstance() {
         return InputHandlerHolder.INSTANCE;
@@ -71,11 +73,13 @@ public class InputHandler {
      */
     private static class InputHandlerHolder {
 
+        /** The Constant INSTANCE. */
         private static final InputHandler INSTANCE = new InputHandler();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The input manager. */
     private InputManager inputManager;
     //==========================================================================
     //===   Methods

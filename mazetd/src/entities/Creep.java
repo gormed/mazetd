@@ -85,55 +85,136 @@ public class Creep extends CollidableEntity {
     //===   Constants
     //==========================================================================
 
+    /** The Constant CREEP_BASE_DAMAGE. */
     public static final float CREEP_BASE_DAMAGE = 50.0f;
+    
+    /** The Constant CREEP_BASE_ORB_DROP. */
     public static final float CREEP_BASE_ORB_DROP = 0.0f;
+    
+    /** The Constant CREEP_BASE_SPEED. */
     public static final float CREEP_BASE_SPEED = 1.1f;
+    
+    /** The Constant CREEP_DECAY. */
     public static final float CREEP_DECAY = 1f;
+    
+    /** The Constant CREEP_DESTROY_PARTICLES. */
     public static final int CREEP_DESTROY_PARTICLES = 10;
+    
+    /** The Constant CREEP_GOLD_PARTICLES. */
     public static final int CREEP_GOLD_PARTICLES = 5;
+    
+    /** The Constant CREEP_GROUND_RADIUS. */
     public static final float CREEP_GROUND_RADIUS = 0.25f;
+    
+    /** The Constant CREEP_HEIGHT. */
     public static final float CREEP_HEIGHT = 0.5f;
+    
+    /** The Constant CREEP_MAX_HP. */
     public static final int CREEP_MAX_HP = 100;
+    
+    /** The Constant CREEP_MIN_DISTANCE. */
     public static final float CREEP_MIN_DISTANCE = 0.5f;
+    
+    /** The Constant CREEP_SAMPLES. */
     private static final int CREEP_SAMPLES = CREEP_DESTROY_PARTICLES;
+    
+    /** The Constant CREEP_TOP_RADIUS. */
     public static final float CREEP_TOP_RADIUS = 0.1f;
+    
+    /** The Constant CREEP_BASE_DAMAGE_INTERVAL. */
     private static final float CREEP_BASE_DAMAGE_INTERVAL = 1f;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
     // visual
+    /** The geometry. */
     private Geometry geometry;
+    
+    /** The material. */
     private Material material;
+    
+    /** The position. */
     private Vector3f position;
+    
+    /** The destination. */
     private Vector3f destination;
+    
+    /** The decaying. */
     private boolean decaying = false;
+    
+    /** The decay time. */
     private float decayTime = 0;
+    
+    /** The debug geometry. */
     private ClickableGeometry debugGeometry;
+    
+    /** The debug path toggle. */
     private boolean debugPathToggle = false;
+    
+    /** The health bar. */
     private HealthBar healthBar;
     // logic
+    /** The health points. */
     private float healthPoints = CREEP_MAX_HP;
+    
+    /** The max health points. */
     private float maxHealthPoints = CREEP_MAX_HP;
+    
+    /** The attacker. */
     private Tower attacker;
+    
+    /** The target. */
     private Tower target;
+    
+    /** The player. */
     private Player player = Player.getInstance();
+    
+    /** The orb effects. */
     private HashSet<AbstractOrbEffect> orbEffects = new HashSet<AbstractOrbEffect>();
+    
+    /** The speed. */
     private float speed = CREEP_BASE_SPEED;
+    
+    /** The moving. */
     private boolean moving = true;
+    
+    /** The attacking. */
     private boolean attacking = false;
+    
+    /** The reverted. */
     public boolean reverted = false;
+    
+    /** The dropping. */
     private boolean dropping = false;
+    
+    /** The gold drop. */
     private int goldDrop = 0;
+    
+    /** The orb drop rate. */
     private float orbDropRate = CREEP_BASE_ORB_DROP;
+    
+    /** The damage. */
     private float damage = CREEP_BASE_DAMAGE;
+    
+    /** The damage interval. */
     private float damageInterval = CREEP_BASE_DAMAGE_INTERVAL;
+    
+    /** The interval counter. */
     private float intervalCounter = 0;
     // Pathfinding
+    /** The path. */
     private Queue<Map.MapSquare> path;
+    
+    /** The current square. */
     private MapSquare currentSquare;
+    
+    /** The last square. */
     private MapSquare lastSquare = null;
     //Particles
+    /** The gold emitter. */
     private ParticleEmitter goldEmitter;
+    
+    /** The destroyed emitter. */
     private ParticleEmitter destroyedEmitter;
     //==========================================================================
     //===   Methods & Constructor
@@ -141,9 +222,11 @@ public class Creep extends CollidableEntity {
 
     /**
      * The constructor of the entity with a given name, hp and position.
+     *
      * @param name the desired name of the creep
      * @param position the position on the map
      * @param healthPoints the HP of the creep
+     * @param maxHealthPoints the max health points
      */
     public Creep(String name, Vector3f position, float healthPoints, float maxHealthPoints) {
         super(name);
@@ -155,10 +238,16 @@ public class Creep extends CollidableEntity {
         start(path.poll().getLocalTranslation());
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.CollidableEntity#onCollision(com.jme3.collision.CollisionResults)
+     */
     @Override
     public void onCollision(CollisionResults collisionResults) {
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.CollidableEntity#createNode(mazetd.MazeTDGame)
+     */
     @Override
     public CollidableEntityNode createNode(MazeTDGame game) {
         super.createNode(game);
@@ -173,6 +262,9 @@ public class Creep extends CollidableEntity {
         return collidableEntityNode;
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.CollidableEntity#update(float)
+     */
     @Override
     protected void update(float tpf) {
         // update the bar
@@ -524,6 +616,9 @@ public class Creep extends CollidableEntity {
         moving = false;
     }
 
+    /**
+     * Destroy.
+     */
     public void destroy() {
         this.healthPoints = 0;
         triggerDestroyedEmitter();
@@ -719,6 +814,12 @@ public class Creep extends CollidableEntity {
 //        moveTo(path.poll().getLocalTranslation());
     }
 
+    /**
+     * Checks if is on square.
+     *
+     * @param field the field
+     * @return true, if is on square
+     */
     public boolean isOnSquare(MapSquare field) {
         return field.equals(currentSquare)
                 || (lastSquare != null && field.equals(lastSquare));
@@ -750,7 +851,8 @@ public class Creep extends CollidableEntity {
 
     /**
      * Sets the gold dropped by this creep on death.
-     * @param value 
+     *
+     * @param value the new gold drop
      */
     public void setGoldDrop(int value) {
         goldDrop = value;
@@ -766,7 +868,8 @@ public class Creep extends CollidableEntity {
 
     /**
      * Sets the orb drop rate by this creep on death.
-     * @param value 
+     *
+     * @param value the new orb drop rate
      */
     @Deprecated
     public void setOrbDropRate(float value) {
@@ -817,18 +920,36 @@ public class Creep extends CollidableEntity {
         //==========================================================================
         //===   Constants
         //==========================================================================
+        /** The Constant BAR_HEIGHT. */
         public static final float BAR_HEIGHT = 0.1f;
+        
+        /** The Constant BAR_WIDTH. */
         public static final float BAR_WIDTH = 0.5f;
+        
+        /** The Constant FRAME_HEIGHT. */
         public static final float FRAME_HEIGHT = 0.15f;
+        
+        /** The Constant FRAME_WIDTH. */
         public static final float FRAME_WIDTH = 0.55f;
         //==========================================================================
         //===   Private Fields
         //==========================================================================
+        /** The bar material. */
         private Material barMaterial;
+        
+        /** The frame material. */
         private Material frameMaterial;
+        
+        /** The bar geometry. */
         private Geometry barGeometry;
+        
+        /** The frame geometry. */
         private Geometry frameGeometry;
+        
+        /** The creep. */
         private Creep creep;
+        
+        /** The cam. */
         private Camera cam;
         //==========================================================================
         //===   Methods & Constructor

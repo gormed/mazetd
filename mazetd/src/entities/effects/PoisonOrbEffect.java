@@ -67,17 +67,25 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
      * Effect-duaration for each level.
      */
     private float[] duration = {3, 4, 5};
+    
+    /** The damage counter. */
     private float damageCounter = 0;
+    
+    /** The duration counter. */
     private float durationCounter = 0;
+    
+    /** The decaying. */
     private boolean decaying = false;
     // Particle
+    /** The poison emitter. */
     private ParticleEmitter poisonEmitter;
     //==========================================================================
     //===   Methods & Constructor
     //==========================================================================
 
     /**
-     * Creates a PoisonOrbEffect with a given level
+     * Creates a PoisonOrbEffect with a given level.
+     *
      * @param level the level of the effect
      */
     public PoisonOrbEffect(int level) {
@@ -85,6 +93,9 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
         createPoisonEmitter(MazeTDGame.getInstance());
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#update(float)
+     */
     @Override
     public void update(float tpf) {
         damageCounter += tpf;
@@ -106,6 +117,9 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
         }
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEffect()
+     */
     @Override
     public void onEffect() {
         // emitt particles
@@ -115,18 +129,25 @@ public class PoisonOrbEffect extends AbstractOrbEffect {
         infected.applyDamge(hp * damage[level]);
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onStart(entities.Creep)
+     */
     @Override
     public void onStart(Creep c) {
         infected = c;
         infected.getCollidableEntityNode().attachChild(poisonEmitter);
     }
 
+    /* (non-Javadoc)
+     * @see entities.effects.AbstractOrbEffect#onEnd(entities.Creep)
+     */
     @Override
     public void onEnd(Creep c) {
     }
 
     /**
-     * Creates a particle emitter for the effect visuals
+     * Creates a particle emitter for the effect visuals.
+     *
      * @param game the mazetdgame ref
      */
     private void createPoisonEmitter(MazeTDGame game) {

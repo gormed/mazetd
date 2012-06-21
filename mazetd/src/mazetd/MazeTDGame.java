@@ -75,24 +75,40 @@ import java.util.HashMap;
  */
 public class MazeTDGame extends SimpleApplication {
 
+    /** The Hud screen instance. */
     private HudScreen HudScreenInstance;
+    
+    /** The Constant HUD_SCREEN. */
     public static final String HUD_SCREEN = "HUDScreen";
+    
+    /** The Constant MAIN_MENU_SCREEN. */
     public static final String MAIN_MENU_SCREEN = "MainMenueScreen";
     //==========================================================================
     //===   Constants
     //==========================================================================
+    /** The Constant PAUSE_SCREEN. */
     public static final String PAUSE_SCREEN = "PauseScreen";
+    
+    /** The Constant SHADOWS_ENABLED. */
     private static final boolean SHADOWS_ENABLED = true;
+    
+    /** The Constant SSAO_ENABLED. */
     private static final boolean SSAO_ENABLED = false;
     //==========================================================================
     //===   Singleton and Main-method
     //==========================================================================
-    /** The single reference to the game*/
+    /** The single reference to the game. */
     private static MazeTDGame instance;
+    
+    /** The was paused. */
     private boolean wasPaused;
+    
+    /** The pause. */
     private boolean pause;
 
-    /** The hidden contructor of the game*/
+    /**
+     * The hidden contructor of the game.
+     */
     private MazeTDGame() {
         super();
         assetManager = JmeSystem.newAssetManager(Thread.currentThread().getContextClassLoader().getResource("com/jme3/asset/Desktop.cfg"));
@@ -112,7 +128,8 @@ public class MazeTDGame extends SimpleApplication {
 
     /**
      * Main invocation method.
-     * @param args 
+     *
+     * @param args the arguments
      */
     public static void main(String[] args) {
         getInstance().initSettings();
@@ -122,25 +139,47 @@ public class MazeTDGame extends SimpleApplication {
     //==========================================================================
     //===   Static Fields
     //==========================================================================
+    /** The Constant INPUT_MAPPING_CAMERA_DEBUG. */
     public static final String INPUT_MAPPING_CAMERA_DEBUG = "MAZETDGAME_CameraDebug";
+    
+    /** The Constant BLOOM_INTENSITY. */
     public static final float BLOOM_INTENSITY = 1.0f;
+    
+    /** The Constant BLOOM_SAMPLING_FACTOR. */
     public static final int BLOOM_SAMPLING_FACTOR = 2;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The gamestate manager. */
     private GamestateManager gamestateManager;
+    
+    /** The ray cast3 d. */
     private ScreenRayCast3D rayCast3D;
+    
+    /** The event manager. */
     private EventManager eventManager;
+    
+    /** The iso camera control. */
     private IsoCameraControl isoCameraControl;
+    
+    /** The app states. */
     private HashMap<String, AbstractAppState> appStates =
             new HashMap<String, AbstractAppState>();
+    
+    /** The game debug action listener. */
     private GameDebugActionListener gameDebugActionListener =
             new GameDebugActionListener();
+    
+    /** The show fps. */
     private boolean showFps = false;
     /** The post processor. */
     private FilterPostProcessor postProcessor;
+    
+    /** The bloom filter. */
     private BloomFilter bloomFilter =
             new BloomFilter(BloomFilter.GlowMode.Objects);
+    
+    /** The pssm shadow renderer. */
     private PssmShadowRenderer pssmShadowRenderer;
     //==========================================================================
     //===   Package Fields
@@ -218,7 +257,7 @@ public class MazeTDGame extends SimpleApplication {
     }
 
     /**
-     * Initis the base-inputs for debugging
+     * Initis the base-inputs for debugging.
      */
     private void initDebugInputs() {
         if (inputManager != null) {
@@ -241,12 +280,18 @@ public class MazeTDGame extends SimpleApplication {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.jme3.app.SimpleApplication#start()
+     */
     @Override
     public void start() {
         super.start();
 
     }
 
+    /* (non-Javadoc)
+     * @see com.jme3.app.Application#stop()
+     */
     @Override
     public void stop() {
 
@@ -254,12 +299,18 @@ public class MazeTDGame extends SimpleApplication {
         super.stop();
     }
 
+    /* (non-Javadoc)
+     * @see com.jme3.app.Application#loseFocus()
+     */
     @Override
     public void loseFocus() {
         wasPaused = true;
         super.loseFocus();
     }
 
+    /* (non-Javadoc)
+     * @see com.jme3.app.SimpleApplication#initialize()
+     */
     @Override
     public void initialize() {
         // init Application
@@ -285,24 +336,34 @@ public class MazeTDGame extends SimpleApplication {
 
     }
 
-    /** Enables the debug camera */
+    /**
+     * Enables the debug camera.
+     */
     private void attachDebugCamera() {
         flyCam.setEnabled(true);
         isoCameraControl.setEnabled(false);
         flyCam.setDragToRotate(true);
     }
 
-    /** Disables the debug camera */
+    /**
+     * Disables the debug camera.
+     */
     private void detachDebugCamera() {
         isoCameraControl.reset();
         flyCam.setEnabled(false);
         isoCameraControl.setEnabled(true);
     }
 
+    /* (non-Javadoc)
+     * @see com.jme3.app.SimpleApplication#simpleInitApp()
+     */
     @Override
     public void simpleInitApp() {
     }
 
+    /* (non-Javadoc)
+     * @see com.jme3.app.SimpleApplication#simpleUpdate(float)
+     */
     @Override
     public void simpleUpdate(float tpf) {
 
@@ -325,12 +386,15 @@ public class MazeTDGame extends SimpleApplication {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.jme3.app.SimpleApplication#simpleRender(com.jme3.renderer.RenderManager)
+     */
     @Override
     public void simpleRender(RenderManager rm) {
     }
 
     /**
-     * Initializes settings for the game, currently using settings from SolarWars
+     * Initializes settings for the game, currently using settings from SolarWars.
      */
     public void initSettings() {
         if (settings == null) {
@@ -354,22 +418,47 @@ public class MazeTDGame extends SimpleApplication {
         }
     }
 
+    /**
+     * Gets the pssm shadow renderer.
+     *
+     * @return the pssm shadow renderer
+     */
     public PssmShadowRenderer getPssmShadowRenderer() {
         return pssmShadowRenderer;
     }
 
+    /**
+     * Gets the iso camera control.
+     *
+     * @return the iso camera control
+     */
     public IsoCameraControl getIsoCameraControl() {
         return isoCameraControl;
     }
 
+    /**
+     * Gets the hud screen instance.
+     *
+     * @return the hud screen instance
+     */
     public HudScreen getHudScreenInstance() {
         return HudScreenInstance;
     }
 
+    /**
+     * Checks if is pause.
+     *
+     * @return true, if is pause
+     */
     public boolean isPause() {
         return pause;
     }
 
+    /**
+     * Sets the pause.
+     *
+     * @param pause the new pause
+     */
     public void setPause(boolean pause) {
         this.pause = pause;
     }
@@ -386,6 +475,9 @@ public class MazeTDGame extends SimpleApplication {
      */
     private class GameDebugActionListener implements ActionListener {
 
+        /* (non-Javadoc)
+         * @see com.jme3.input.controls.ActionListener#onAction(java.lang.String, boolean, float)
+         */
         @Override
         public void onAction(String name, boolean value, float tpf) {
             if (!value) {

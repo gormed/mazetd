@@ -53,7 +53,10 @@ import logic.pathfinding.Pathfinder;
  */
 public class WaveManager {
 
+    /** The Constant WAVE_CREEP_INTERVAL. */
     public static final float WAVE_CREEP_INTERVAL = 2f;
+    
+    /** The Constant WAVE_PAUSE_TIME. */
     public static final float WAVE_PAUSE_TIME = 5f;
     //==========================================================================
     //===   Singleton
@@ -67,6 +70,8 @@ public class WaveManager {
 
     /**
      * The static method to retrive the one and only instance of WaveManager.
+     *
+     * @return single instance of WaveManager
      */
     public static WaveManager getInstance() {
         return WaveManagerHolder.INSTANCE;
@@ -77,30 +82,56 @@ public class WaveManager {
      */
     private static class WaveManagerHolder {
 
+        /** The Constant INSTANCE. */
         private static final WaveManager INSTANCE = new WaveManager();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The wave descriptions. */
     private Queue<WaveDescription> waveDescriptions =
             new LinkedList<WaveDescription>();
+    
+    /** The initialized. */
     private boolean initialized;
+    
+    /** The max waves. */
     private int maxWaves;
+    
+    /** The completed. */
     private boolean completed = false;
+    
+    /** The current wave count. */
     private int currentWaveCount = 0;
+    
+    /** The creep generation count. */
     private int creepGenerationCount = 0;
+    
+    /** The current wave. */
     private WaveDescription currentWave;
-    /** is true if all creeps contained by the wave are spawned */
+    
+    /** is true if all creeps contained by the wave are spawned. */
     private boolean waveCompletlySpawned = false;
+    
+    /** The start timer. */
     private WaveTimer startTimer;
+    
+    /** The wave timer. */
     private WaveTimer waveTimer;
+    
+    /** The entity manager. */
     private EntityManager entityManager = EntityManager.getInstance();
+    
+    /** The creeps. */
     private HashMap<Integer, Creep> creeps =
             EntityManager.getInstance().getCreepHashMap();
 
     //==========================================================================
     //===   Methods
     //==========================================================================
+    /**
+     * Initialize.
+     */
     public void initialize() {
         if (initialized) {
             return;
@@ -118,11 +149,19 @@ public class WaveManager {
         initialized = true;
     }
 
+    /**
+     * Load waves.
+     *
+     * @param descriptions the descriptions
+     */
     public void loadWaves(Queue<WaveDescription> descriptions) {
         this.waveDescriptions = descriptions;
         this.maxWaves = waveDescriptions.size();
     }
 
+    /**
+     * Destroy.
+     */
     public void destroy() {
         if (!initialized) {
             return;
@@ -138,10 +177,18 @@ public class WaveManager {
         initialized = false;
     }
 
+    /**
+     * Checks if is initialized.
+     *
+     * @return true, if is initialized
+     */
     public boolean isInitialized() {
         return initialized;
     }
 
+    /**
+     * Setup start timer.
+     */
     private void setupStartTimer() {
         startTimer = new WaveTimer(WAVE_PAUSE_TIME) {
 
@@ -154,6 +201,9 @@ public class WaveManager {
 
     }
 
+    /**
+     * Start waves.
+     */
     private void startWaves() {
         // start the wave timer and kill the start timer
         EventManager.getInstance().removeTimerEventListener(startTimer);
@@ -162,6 +212,9 @@ public class WaveManager {
         currentWaveCount = 0;
     }
 
+    /**
+     * Setup wave timer.
+     */
     private void setupWaveTimer() {
         waveTimer = new WaveTimer(WAVE_CREEP_INTERVAL) {
 
@@ -172,6 +225,11 @@ public class WaveManager {
         };
     }
 
+    /**
+     * Update waves.
+     *
+     * @param t the t
+     */
     private void updateWaves(TimerEvent t) {
 
         boolean stillCreeps = (creeps.size() > 0);
@@ -200,6 +258,9 @@ public class WaveManager {
         }
     }
 
+    /**
+     * Wave killed.
+     */
     private void waveKilled() {
         if (currentWaveCount < maxWaves - 1) {
             currentWaveCount++;
@@ -212,6 +273,11 @@ public class WaveManager {
         }
     }
 
+    /**
+     * Generate creep.
+     *
+     * @return the creep
+     */
     private Creep generateCreep() {
 
         float maxCreepHealthPoints = currentWave.maxCreepHealthPoints;
@@ -236,24 +302,49 @@ public class WaveManager {
 
     }
 
+    /**
+     * Gets the current wave.
+     *
+     * @return the current wave
+     */
     public WaveDescription getCurrentWave() {
         return currentWave;
     }
 
+    /**
+     * Gets the current wave count.
+     *
+     * @return the current wave count
+     */
     public int getCurrentWaveCount() {
         return currentWaveCount;
     }
 
+    /**
+     * Gets the max waves.
+     *
+     * @return the max waves
+     */
     public int getmaxWaves() {
         return maxWaves;
     }
 
+    /**
+     * Sets the start wave.
+     *
+     * @param startWave the new start wave
+     */
     public void setStartWave(int startWave) {
         if (startWave < maxWaves) {
             this.currentWaveCount = startWave;
         }
     }
 
+    /**
+     * Checks if is completed.
+     *
+     * @return true, if is completed
+     */
     public boolean isCompleted() {
         return completed;
     }
@@ -261,49 +352,122 @@ public class WaveManager {
     //==========================================================================
     //===   Inner Classes
     //==========================================================================
+    /**
+     * The Class WaveTimer.
+     */
     private abstract class WaveTimer implements TimerEventListener {
 
+        /** The period. */
         private float period;
 
+        /**
+         * Instantiates a new wave timer.
+         *
+         * @param period the period
+         */
         public WaveTimer(float period) {
             this.period = period;
         }
 
+        /* (non-Javadoc)
+         * @see eventsystem.listener.TimerEventListener#onTimedEvent(eventsystem.events.TimerEvent)
+         */
         @Override
         public abstract void onTimedEvent(TimerEvent t);
 
+        /* (non-Javadoc)
+         * @see eventsystem.listener.TimerEventListener#getPeriod()
+         */
         @Override
         public float getPeriod() {
             return period;
         }
     }
 
+    /**
+     * The Class WaveDescription.
+     */
     public class WaveDescription {
         // Gold
 
+        /** The gold at end. */
         public int goldAtEnd;
         //Creeps
+        /** The creep count. */
         public int creepCount;
+        
+        /** The max creep health points. */
         public float maxCreepHealthPoints;
+        
+        /** The creep speed. */
         public float creepSpeed;
+        
+        /** The creep damage. */
         public float creepDamage;
+        
+        /** The creep orb drop rate. */
         public float creepOrbDropRate;
+        
+        /** The creep gold drop. */
         public int creepGoldDrop;
         //Boss
+        /** The has boss. */
         public boolean hasBoss;
+        
+        /** The boss at first. */
         public boolean bossAtFirst;
+        
+        /** The boss count. */
         public int bossCount;
+        
+        /** The max boss health points. */
         public float maxBossHealthPoints;
+        
+        /** The boss speed. */
         public float bossSpeed;
+        
+        /** The boss damage. */
         public float bossDamage;
+        
+        /** The boss orb drop rate. */
         public float bossOrbDropRate;
+        
+        /** The boss orb drop count. */
         public float bossOrbDropCount;
+        
+        /** The boss gold drop. */
         public float bossGoldDrop;
+        
+        /** The number of orb drobs. */
         public int numberOfOrbDrobs;
 
+        /**
+         * Instantiates a new wave description.
+         */
         public WaveDescription() {
         }
 
+        /**
+         * Instantiates a new wave description.
+         *
+         * @param goldAtStart the gold at start
+         * @param creepCount the creep count
+         * @param maxCreepHealthPoints the max creep health points
+         * @param creepSpeed the creep speed
+         * @param creepDamage the creep damage
+         * @param creepOrbDropRate the creep orb drop rate
+         * @param creepGoldDrop the creep gold drop
+         * @param hasBoss the has boss
+         * @param bossAtFirst the boss at first
+         * @param bossCount the boss count
+         * @param maxBossHealthPoints the max boss health points
+         * @param bossSpeed the boss speed
+         * @param bossDamage the boss damage
+         * @param bossOrbDropRate the boss orb drop rate
+         * @param bossOrbDropCount the boss orb drop count
+         * @param bossGoldDrop the boss gold drop
+         * @param numberOfOrbDrobs the number of orb drobs
+         */
         public WaveDescription(int goldAtStart,
                 int creepCount, float maxCreepHealthPoints, float creepSpeed,
                 float creepDamage, float creepOrbDropRate, int creepGoldDrop,
@@ -329,6 +493,11 @@ public class WaveManager {
             this.numberOfOrbDrobs = numberOfOrbDrobs;
         }
 
+        /**
+         * Drop orb.
+         *
+         * @return true, if successful
+         */
         private boolean dropOrb() {
             if (Math.random() <= 0.25f && numberOfOrbDrobs > 0) {
                 numberOfOrbDrobs--;

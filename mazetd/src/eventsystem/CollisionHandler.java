@@ -63,6 +63,8 @@ public class CollisionHandler {
 
     /**
      * The static method to retrive the one and only instance of CollisionHandler.
+     *
+     * @return single instance of CollisionHandler
      */
     public static CollisionHandler getInstance() {
         return CollisionHandlerHolder.INSTANCE;
@@ -73,13 +75,17 @@ public class CollisionHandler {
      */
     private static class CollisionHandlerHolder {
 
+        /** The Constant INSTANCE. */
         private static final CollisionHandler INSTANCE = new CollisionHandler();
     }
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The collision listeners. */
     private HashMap<BoundingVolume, HashSet<CollisionListener>> collisionListeners =
             new HashMap<BoundingVolume, HashSet<CollisionListener>>();
+    
+    /** The collider3 d. */
     private Collider3D collider3D = Collider3D.getInstance();
     //==========================================================================
     //===   Methods

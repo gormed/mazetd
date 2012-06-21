@@ -123,47 +123,114 @@ public class Tower extends ClickableEntity {
      * The base-width of the tower.
      */
     public static final float TOWER_SIZE = 0.3f;
+    
+    /** The Constant RANGE_CYLINDER_HEIGHT. */
     private static final float RANGE_CYLINDER_HEIGHT = 0.01f;
+    
+    /** The Constant TOWER_SAMPLES. */
     private static final int TOWER_SAMPLES = 15;
+    
+    /** The Constant ROOF_SIZE. */
     private static final float ROOF_SIZE = 0.35f;
+    
+    /** The Constant GAME. */
     private static final MazeTDGame GAME = MazeTDGame.getInstance();
+    
+    /** The hovered tower. */
     private static Tower hoveredTower = null;
     //==========================================================================
     //===   Private Fields
     //==========================================================================
     //visual
+    /** The roof geometry. */
     private Geometry roofGeometry;
+    
+    /** The wall geometry. */
     private Geometry wallGeometry;
+    
+    /** The tower geometry. */
     private Spatial towerGeometry;
+    
+    /** The collision cylinder. */
     private Geometry collisionCylinder;
+    
+    /** The roof material. */
     private Material roofMaterial;
+    
+    /** The wall material. */
     private Material wallMaterial;
+    
+    /** The collision material. */
     private Material collisionMaterial;
+    
+    /** The projectile color. */
     private ColorRGBA projectileColor = new ColorRGBA(0.5f, 0.5f, 0.5f, 1f);
+    
+    /** The position. */
     private Vector3f position;
+    
+    /** The deacying. */
     private boolean deacying = false;
+    
+    /** The decay time. */
     private float decayTime = 0;
+    
+    /** The fade color. */
     private ColorRGBA fadeColor = new ColorRGBA();
     //logic
+    /** The tower range. */
     private float towerRange = TOWER_BASE_RANGE;
+    
+    /** The target. */
     private Creep target;
+    
+    /** The square. */
     private Map.MapSquare square;
+    
+    /** The health points. */
     private float healthPoints = TOWER_HP;
+    
+    /** The max health points. */
     private float maxHealthPoints = TOWER_HP;
+    
+    /** The damage max. */
     private float damageMax = TOWER_BASE_DAMAGE;
+    
+    /** The additional damage. */
     private float additionalDamage = TOWER_ADDITIONAL_DAMAGE;
+    
+    /** The damage interval. */
     private float damageInterval = TOWER_BASE_DAMAGE_INTERVAL;
+    
+    /** The interval counter. */
     private float intervalCounter = 0;
+    
+    /** The first orb. */
     private Orb firstOrb;
+    
+    /** The second orb. */
     private Orb secondOrb;
+    
+    /** The third orb. */
     private Orb thirdOrb;
+    
+    /** The orb node pos. */
     private Node orbNodePos;
+    
+    /** The orb node rot. */
     private Node orbNodeRot;
+    
+    /** The orb rotation. */
     private float orbRotation = 0;
+    
+    /** The orb effects. */
     private ArrayList<AbstractOrbEffect> orbEffects =
             new ArrayList<AbstractOrbEffect>();
+    
+    /** The effect manager. */
     private OrbEffectManager effectManager = OrbEffectManager.getInstance();
     //jme3
+    /** The attack range collision node. */
     private Node attackRangeCollisionNode;
     //particle
 
@@ -172,14 +239,18 @@ public class Tower extends ClickableEntity {
     //==========================================================================
     /**
      * Contructor of a basical tower for MazeTD.
+     *
      * @param name the name of the tower
-     * @param position the desired position
+     * @param square the square
      */
     public Tower(String name, Map.MapSquare square) {
         super(name);
         this.square = square;
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.ClickableEntity#createNode(mazetd.MazeTDGame)
+     */
     @Override
     public Node createNode(MazeTDGame game) {
         super.createNode(game);
@@ -337,6 +408,9 @@ public class Tower extends ClickableEntity {
         attackRangeCollisionNode.attachChild(collisionCylinder);
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.AbstractEntity#update(float)
+     */
     @Override
     protected void update(float tpf) {
         // if dead and therfore decaying
@@ -380,11 +454,17 @@ public class Tower extends ClickableEntity {
         updateOrbs(tpf);
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.ClickableEntity#onClick()
+     */
     @Override
     public void onClick() {
         System.out.println("You clicked tower: #" + getEntityId() + " - " + getName());
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.ClickableEntity#onMouseOver()
+     */
     @Override
     public void onMouseOver() {
         if (hoveredTower != null) {
@@ -394,6 +474,9 @@ public class Tower extends ClickableEntity {
         hoveredTower = this;
     }
 
+    /* (non-Javadoc)
+     * @see entities.base.ClickableEntity#onMouseLeft()
+     */
     @Override
     public void onMouseLeft() {
         hoveredTower = null;
@@ -421,6 +504,11 @@ public class Tower extends ClickableEntity {
 //        }
     }
 
+    /**
+     * Update orb effects.
+     *
+     * @param tpf the tpf
+     */
     private void updateOrbEffects(float tpf) {
         for (AbstractOrbEffect e : orbEffects) {
             e.update(tpf);
@@ -526,8 +614,10 @@ public class Tower extends ClickableEntity {
     }
 
     /**
-     * Checks if a creep entered the range of the tower and sets target 
+     * Checks if a creep entered the range of the tower and sets target
      * if found a creep.
+     *
+     * @return the creep
      */
     private Creep checkForRangedEnter() {
         // collide with the current collidables
@@ -612,7 +702,8 @@ public class Tower extends ClickableEntity {
 
     /**
      * Sets the creep-target for the tower.
-     * @param target 
+     *
+     * @param target the new target
      */
     void setTarget(Creep target) {
         this.target = target;
@@ -627,7 +718,8 @@ public class Tower extends ClickableEntity {
     }
 
     /**
-     * Gets the current HP of the tower,
+     * Gets the current HP of the tower,.
+     *
      * @return the numeric value of the HP
      */
     public float getHealthPoints() {
@@ -676,7 +768,8 @@ public class Tower extends ClickableEntity {
     }
 
     /**
-     * Gets the first orb placed in this tower
+     * Gets the first orb placed in this tower.
+     *
      * @return the orb in slot 0
      */
     public Orb getFirstOrb() {
@@ -684,7 +777,8 @@ public class Tower extends ClickableEntity {
     }
 
     /**
-     * Gets the second orb placed in this tower
+     * Gets the second orb placed in this tower.
+     *
      * @return the orb in slot 1
      */
     public Orb getSecondOrb() {
@@ -692,7 +786,8 @@ public class Tower extends ClickableEntity {
     }
 
     /**
-     * Gets the third orb placed in this tower
+     * Gets the third orb placed in this tower.
+     *
      * @return the orb in slot 2
      */
     public Orb getThirdOrb() {
@@ -747,10 +842,11 @@ public class Tower extends ClickableEntity {
     }
 
     /**
-     * Please use replaceOrb(). 
+     * Please use replaceOrb().
      * Places an orb at the next free position (max. three orbs.
-     * 
+     *
      * @param type the desired orb-type to add
+     * @param slot the slot
      */
     @Deprecated
     public void placeOrb(Orb.ElementType type, int slot) {
@@ -872,7 +968,9 @@ public class Tower extends ClickableEntity {
 
     /**
      * Created an orb for the tower.
+     *
      * @param type the type to create
+     * @param slot the slot
      * @return the created orb
      */
     private Orb createTowerOrb(Orb.ElementType type, int slot) {
@@ -933,6 +1031,8 @@ public class Tower extends ClickableEntity {
 
         /**
          * The static method to retrive the one and only instance of TowerSelection.
+         *
+         * @return single instance of TowerSelection
          */
         public static TowerSelection getInstance() {
             return TowerSelectionHolder.INSTANCE;
@@ -943,14 +1043,22 @@ public class Tower extends ClickableEntity {
          */
         private static class TowerSelectionHolder {
 
+            /** The Constant INSTANCE. */
             private static final TowerSelection INSTANCE = new TowerSelection();
         }
         //==========================================================================
         //===   Private Fields
         //==========================================================================
+        /** The selected tower. */
         private Tower selectedTower;
+        
+        /** The material. */
         private Material material;
+        
+        /** The color. */
         private ColorRGBA color = new ColorRGBA(ColorRGBA.Green);
+        
+        /** The height. */
         private float height = 0.2f;
         //==========================================================================
         //===   Methods

@@ -54,11 +54,22 @@ public abstract class AbstractOrbEffect {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The effect type. */
     protected OrbEffectType effectType;
+    
+    /** The element type. */
     protected Orb.ElementType elementType;
+    
+    /** The special element type. */
     protected Orb.SpecialElementType specialElementType;
+    
+    /** The level. */
     protected int level;
+    
+    /** The infected. */
     protected Creep infected;
+    
+    /** The enhanced. */
     protected Tower enhanced;
     //==========================================================================
     //===   Methods & Constructor
@@ -66,10 +77,11 @@ public abstract class AbstractOrbEffect {
 
     /**
      * Creates an AbstractOrbEffect by the effect type and the orbs level.
-     * 
-     * @see OrbEffectType
+     *
      * @param effectType the desired type
+     * @param elementType the element type
      * @param level the desired level
+     * @see OrbEffectType
      */
     public AbstractOrbEffect(OrbEffectType effectType, ElementType elementType, int level) {
         this.elementType = elementType;
@@ -79,10 +91,11 @@ public abstract class AbstractOrbEffect {
 
     /**
      * Creates an AbstractOrbEffect by the effect type and the orbs level.
-     * 
-     * @see OrbEffectType
+     *
+     * @param effectType the effect type
      * @param specialElementType the desired type
      * @param level the desired level
+     * @see OrbEffectType
      */
     public AbstractOrbEffect(OrbEffectType effectType, SpecialElementType specialElementType, int level) {
         this.specialElementType = specialElementType;
@@ -92,7 +105,8 @@ public abstract class AbstractOrbEffect {
 
     /**
      * Updated the orb effect over time if timed (like poison).
-     * @param tpf 
+     *
+     * @param tpf the tpf
      */
     public abstract void update(float tpf);
 

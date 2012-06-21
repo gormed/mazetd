@@ -67,9 +67,16 @@ public class Player implements EntityListener, CreepListener {
      */
     public enum PlayerState {
 
+        /** The PREPARING. */
         PREPARING,
+        
+        /** The PLAYING. */
         PLAYING,
+        
+        /** The LOST. */
         LOST,
+        
+        /** The WON. */
         WON
     }
     //==========================================================================
@@ -86,6 +93,7 @@ public class Player implements EntityListener, CreepListener {
     //==========================================================================
     //===   Singleton
     //==========================================================================
+    /** The instance. */
     private static Player instance;
 
     /**
@@ -99,6 +107,9 @@ public class Player implements EntityListener, CreepListener {
         return instance = new Player();
     }
 
+    /**
+     * Instantiates a new player.
+     */
     private Player() {
         inventory = new ArrayList<Orb.ElementType>();
         lives = maxLives;
@@ -106,19 +117,46 @@ public class Player implements EntityListener, CreepListener {
     //==========================================================================
     //===   Private Fields
     //==========================================================================
+    /** The selected tower. */
     private Tower selectedTower;
+    
+    /** The red count. */
     private int redCount = 0;
+    
+    /** The blue count. */
     private int blueCount = 0;
+    
+    /** The green count. */
     private int greenCount = 0;
+    
+    /** The yellow count. */
     private int yellowCount = 0;
+    
+    /** The white count. */
     private int whiteCount = 0;
+    
+    /** The gold. */
     private int gold = 0;
+    
+    /** The max lives. */
     private int maxLives = PLAYRER_LIVES;
+    
+    /** The lives. */
     private int lives = PLAYRER_LIVES;
+    
+    /** The type. */
     private Orb.ElementType type;
+    
+    /** The inventory. */
     private ArrayList<Orb.ElementType> inventory;
+    
+    /** The game. */
     private MazeTDGame game = MazeTDGame.getInstance();
+    
+    /** The initialized. */
     private boolean initialized = false;
+    
+    /** The player state. */
     private PlayerState playerState = PlayerState.PREPARING;
 
     //==========================================================================
@@ -175,6 +213,11 @@ public class Player implements EntityListener, CreepListener {
         initialized = false;
     }
 
+    /**
+     * Update.
+     *
+     * @param tpf the tpf
+     */
     public void update(float tpf) {
         if (!initialized
                 || playerState == PlayerState.LOST
@@ -408,6 +451,9 @@ public class Player implements EntityListener, CreepListener {
         return lives > 0;
     }
 
+    /* (non-Javadoc)
+     * @see eventsystem.listener.EntityListener#onAction(eventsystem.events.EntityEvent)
+     */
     @Override
     public void onAction(EntityEvent entityEvent) {
         // get the entity
@@ -424,6 +470,9 @@ public class Player implements EntityListener, CreepListener {
         }
     }
 
+    /* (non-Javadoc)
+     * @see eventsystem.listener.CreepListener#onAction(eventsystem.events.CreepEvent)
+     */
     @Override
     public void onAction(CreepEvent e) {
         if (e.getType().equals(CreepEventType.ReachedEnd)) {
