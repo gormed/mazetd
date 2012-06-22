@@ -414,7 +414,7 @@ public class MazeTDGame extends SimpleApplication {
             settings.put("UseInput", true);
             settings.put("VSync", false);
             settings.put("FrameRate", 100);
-            //settings.put("SettingsDialogImage", "/Interface/solarwars_v2.png");
+            settings.put("SettingsDialogImage", "/Interface/Logo.png");
         }
     }
 
