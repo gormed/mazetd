@@ -47,7 +47,7 @@ import mazetd.MazeTDGame;
 /**
  * The class FreezeOrbEffect for creeps. This effect will slow a creep.
  * @author Hans Ferchland
- * @version
+ * @version 1.0
  */
 public class FreezeOrbEffect extends AbstractOrbEffect {
 

@@ -51,7 +51,7 @@ import mazetd.MazeTDGame;
  * run backwards.
  * 
  * @author Hady Khalifa
- * @version
+ * @version 1.0
  * @see OrbEffectManager
  */
 public class RastaOrbEffect extends AbstractOrbEffect {

@@ -42,7 +42,7 @@ import entities.base.AbstractEntity;
 /**
  * The class EntityEvent for all events of an entity.
  * @author Hans Ferchland
- * @version
+ * @version 1.0
  */
 public class EntityEvent extends AbstractEvent {
     

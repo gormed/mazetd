@@ -157,9 +157,7 @@ public class EntityHandler {
      * @param result the collision result if its a mouse-event or 
      * collision event
      * @see EntityEvent
-     * @see EntityEvent.EntityEventType
      * @see ClickableEntity
-     * @see ClickableEntity.ClickableEntityNode
      */
     public void invokeEntityAction(
             EntityEvent.EntityEventType actionType, SimpleClickable entity,

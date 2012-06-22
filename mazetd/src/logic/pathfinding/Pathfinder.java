@@ -57,7 +57,7 @@ import logic.Grid.FieldInfo;
  *          - If he is on the mainpath(mainpath contains creeps current position) the creep  
  *              use generated mainpath
  *          - else the creep uses an new creted path from the creeps position to the goal
- *              @see{ createCreepPath(FieldInfo creepPos, FieldInfo goal)}
+ *              
  * 
  * @author Hady Khalifa
  */
@@ -279,6 +279,7 @@ public class Pathfinder {
     }
 
     /**
+     * 
      * Modified A*-Algorithm
      * 
      * 1. Add the starting square (or node) to the open list.
@@ -288,7 +289,7 @@ public class Pathfinder {
      * 2.3 For each of the 4 field adjacent to this current square …
      * - If it is not walkable or if it is on the closed list, ignore it. Otherwise do the following.           
      * - If it isn’t on the open list, add it to the open list. Make the current square the parent of this square. Record the G costs of the square. 
-     * - If it is on the open list already, check to see if this path to that square is better(low G-Cost) @see{betterIn(FieldInfo f, ArrayList<FieldInfo> l)}
+     * - If it is on the open list already, check to see if this path to that square is better(low G-Cost) 
      * - If so, change the parent of the square to the current square.
      * 3. Stop when you:  
      * - Add the target square to the closed list, in which case the path has been found, or
@@ -299,7 +300,7 @@ public class Pathfinder {
      * @param goal FieldInfo is the end point
      * @return FieldInfo == goal - the path can be created from this field and there parents @see{createMainPath()}
      */
-    private FieldInfo findPath(Grid grid, FieldInfo start, FieldInfo goal) {
+    protected FieldInfo findPath(Grid grid, FieldInfo start, FieldInfo goal) {
         ArrayList<FieldInfo> openList = new ArrayList<FieldInfo>();
         ArrayList<FieldInfo> closedList = new ArrayList<FieldInfo>();
 

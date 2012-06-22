@@ -41,7 +41,7 @@ import com.jme3.collision.CollisionResults;
 /**
  * The class CollisionEvent that capsules the collision data for listeners.
  * @author Hans Ferchland
- * @version
+ * @version 1.0
  */
 public class CollisionEvent extends AbstractEvent {
 

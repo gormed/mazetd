@@ -54,7 +54,7 @@ import mazetd.MazeTDGame;
  * TODO: Hady
  * 
  * @author Hady Khalifa
- * @version
+ * @version 1.0
  */
 public class Stone extends AbstractEntity {
 

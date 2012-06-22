@@ -43,7 +43,7 @@ import mazetd.MazeTDGame;
 /**
  * The class ClickableEntity.
  * @author Hans Ferchland
- * @version 
+ * @version 1.0
  */
 public abstract class ClickableEntity extends AbstractEntity implements SimpleClickable {
 

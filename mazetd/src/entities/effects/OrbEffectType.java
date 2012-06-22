@@ -42,7 +42,6 @@ import entities.Orb;
  * have.
  * 
  * @see Orb
- * @see Orb.ElementType
  * @see OrbEffectManager
  * @author Hans Ferchland
  * @version 0.2

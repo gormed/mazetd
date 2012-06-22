@@ -41,7 +41,7 @@ import entities.Tower;
 /**
  * The class CreepEvent that capsules all data of a creep action.
  * @author Hans Ferchland
- * @version
+ * @version 1.0
  */
 public class CreepEvent extends AbstractEvent {
     /**
